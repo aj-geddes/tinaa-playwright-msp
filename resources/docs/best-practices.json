@@ -1,0 +1,430 @@
+{
+  "id": "playwright-best-practices",
+  "name": "Playwright Testing Best Practices",
+  "description": "Comprehensive guide to writing maintainable, reliable, and efficient Playwright tests",
+  "sections": {
+    "test_organization": {
+      "title": "Test Organization & Structure",
+      "practices": [
+        {
+          "name": "Use Page Object Model",
+          "description": "Encapsulate page interactions in reusable classes",
+          "example": [
+            "// pages/LoginPage.ts",
+            "export class LoginPage {",
+            "  constructor(private page: Page) {}",
+            "  ",
+            "  async login(email: string, password: string) {",
+            "    await this.page.fill('#email', email);",
+            "    await this.page.fill('#password', password);",
+            "    await this.page.click('button[type=\"submit\"]');",
+            "  }",
+            "  ",
+            "  async getErrorMessage() {",
+            "    return this.page.locator('.error-message').textContent();",
+            "  }",
+            "}"
+          ]
+        },
+        {
+          "name": "Group Related Tests",
+          "description": "Use describe blocks to organize test suites",
+          "example": [
+            "test.describe('User Authentication', () => {",
+            "  test.describe('Login', () => {",
+            "    test('successful login', async ({ page }) => {});",
+            "    test('invalid credentials', async ({ page }) => {});",
+            "  });",
+            "  ",
+            "  test.describe('Registration', () => {",
+            "    test('new user signup', async ({ page }) => {});",
+            "    test('duplicate email', async ({ page }) => {});",
+            "  });",
+            "});"
+          ]
+        },
+        {
+          "name": "Use Fixtures for Common Setup",
+          "description": "Create custom fixtures for repeated test setup",
+          "example": [
+            "// fixtures.ts",
+            "export const test = base.extend({",
+            "  authenticatedPage: async ({ page }, use) => {",
+            "    await page.goto('/login');",
+            "    await page.fill('#email', 'test@example.com');",
+            "    await page.fill('#password', 'password');",
+            "    await page.click('button[type=\"submit\"]');",
+            "    await page.waitForURL('/dashboard');",
+            "    await use(page);",
+            "  }",
+            "});"
+          ]
+        }
+      ]
+    },
+    "selector_strategies": {
+      "title": "Selector Best Practices",
+      "practices": [
+        {
+          "name": "Prefer User-Facing Attributes",
+          "description": "Use selectors that reflect how users interact with the page",
+          "good": [
+            "page.getByRole('button', { name: 'Submit' })",
+            "page.getByLabel('Email address')",
+            "page.getByText('Welcome back')",
+            "page.getByPlaceholder('Search products')"
+          ],
+          "avoid": [
+            "page.locator('.btn-primary-2xl-new')",
+            "page.locator('#__next > div > div:nth-child(3)')",
+            "page.locator('body > div > span > button')"
+          ]
+        },
+        {
+          "name": "Use Data Test IDs Sparingly",
+          "description": "Only use data-testid when other selectors are unstable",
+          "example": [
+            "// When necessary, use semantic test IDs",
+            "page.locator('[data-testid=\"product-price\"]')",
+            "page.locator('[data-testid=\"checkout-total\"]')",
+            "",
+            "// Avoid generic IDs",
+            "// Bad: data-testid=\"div-1\"",
+            "// Good: data-testid=\"user-profile-menu\""
+          ]
+        },
+        {
+          "name": "Chain Selectors for Precision",
+          "description": "Combine selectors to target specific elements",
+          "example": [
+            "// Target specific item in a list",
+            "page.locator('.product-card').filter({ hasText: 'Laptop' })",
+            "  .getByRole('button', { name: 'Add to Cart' })",
+            "",
+            "// Within a specific section",
+            "page.locator('section').filter({ has: page.locator('h2', { hasText: 'Featured' }) })",
+            "  .locator('.product-grid')"
+          ]
+        }
+      ]
+    },
+    "waiting_strategies": {
+      "title": "Waiting & Synchronization",
+      "practices": [
+        {
+          "name": "Rely on Auto-Waiting",
+          "description": "Playwright automatically waits for elements to be actionable",
+          "good": [
+            "// Playwright waits for button to be visible, enabled, and stable",
+            "await page.click('button');",
+            "",
+            "// Waits for element to appear",
+            "await expect(page.locator('.success')).toBeVisible();"
+          ],
+          "avoid": [
+            "// Don't use arbitrary waits",
+            "await page.waitForTimeout(3000);",
+            "await page.click('button');"
+          ]
+        },
+        {
+          "name": "Use Explicit Waits When Needed",
+          "description": "Wait for specific conditions when auto-waiting isn't enough",
+          "example": [
+            "// Wait for network idle",
+            "await page.waitForLoadState('networkidle');",
+            "",
+            "// Wait for specific response",
+            "await page.waitForResponse(response =>",
+            "  response.url().includes('/api/data') && response.status() === 200",
+            ");",
+            "",
+            "// Wait for function",
+            "await page.waitForFunction(() => document.querySelectorAll('.item').length >= 10);"
+          ]
+        }
+      ]
+    },
+    "error_handling": {
+      "title": "Error Handling & Debugging",
+      "practices": [
+        {
+          "name": "Use Soft Assertions",
+          "description": "Continue test execution to gather all failures",
+          "example": [
+            "test('form validation', async ({ page }) => {",
+            "  await page.goto('/form');",
+            "  await page.click('button[type=\"submit\"]');",
+            "  ",
+            "  // Soft assertions - test continues even if one fails",
+            "  await expect.soft(page.locator('#name-error')).toBeVisible();",
+            "  await expect.soft(page.locator('#email-error')).toBeVisible();",
+            "  await expect.soft(page.locator('#phone-error')).toBeVisible();",
+            "});"
+          ]
+        },
+        {
+          "name": "Add Meaningful Test Descriptions",
+          "description": "Include context in test names and error messages",
+          "example": [
+            "test('user can update profile when authenticated', async ({ page }) => {",
+            "  // Add custom error messages",
+            "  await expect(page.locator('.profile-form'), ",
+            "    'Profile form should be visible after login'",
+            "  ).toBeVisible();",
+            "});"
+          ]
+        },
+        {
+          "name": "Capture Debug Information",
+          "description": "Use screenshots and traces for debugging",
+          "example": [
+            "test.afterEach(async ({ page }, testInfo) => {",
+            "  if (testInfo.status !== 'passed') {",
+            "    await page.screenshot({",
+            "      path: `screenshots/${testInfo.title}-failure.png`,",
+            "      fullPage: true",
+            "    });",
+            "  }",
+            "});"
+          ]
+        }
+      ]
+    },
+    "performance": {
+      "title": "Performance Optimization",
+      "practices": [
+        {
+          "name": "Parallelize Independent Tests",
+          "description": "Run tests in parallel when they don't share state",
+          "example": [
+            "// playwright.config.ts",
+            "export default defineConfig({",
+            "  workers: process.env.CI ? 2 : undefined,",
+            "  fullyParallel: true,",
+            "  // Disable parallel for specific tests",
+            "  projects: [{",
+            "    name: 'sequential-tests',",
+            "    testMatch: '**/sequential/*.spec.ts',",
+            "    fullyParallel: false",
+            "  }]",
+            "});"
+          ]
+        },
+        {
+          "name": "Reuse Authentication State",
+          "description": "Share login state across tests",
+          "example": [
+            "// global-setup.ts",
+            "async function globalSetup() {",
+            "  const browser = await chromium.launch();",
+            "  const page = await browser.newPage();",
+            "  await page.goto('/login');",
+            "  await page.fill('#email', 'test@example.com');",
+            "  await page.fill('#password', 'password');",
+            "  await page.click('button[type=\"submit\"]');",
+            "  await page.context().storageState({ path: 'auth.json' });",
+            "  await browser.close();",
+            "}"
+          ]
+        },
+        {
+          "name": "Use API for Test Setup",
+          "description": "Use API calls instead of UI for complex setup",
+          "example": [
+            "test.beforeEach(async ({ request }) => {",
+            "  // Create test data via API",
+            "  await request.post('/api/products', {",
+            "    data: { name: 'Test Product', price: 99.99 }",
+            "  });",
+            "});",
+            "",
+            "test('display product', async ({ page }) => {",
+            "  // Test only the display, not creation",
+            "  await page.goto('/products');",
+            "  await expect(page.locator('.product')).toContainText('Test Product');",
+            "});"
+          ]
+        }
+      ]
+    },
+    "reliability": {
+      "title": "Test Reliability",
+      "practices": [
+        {
+          "name": "Handle Dynamic Content",
+          "description": "Account for content that changes between test runs",
+          "example": [
+            "// Mask dynamic content in visual tests",
+            "await expect(page).toHaveScreenshot({",
+            "  mask: [page.locator('.timestamp'), page.locator('.user-id')]",
+            "});",
+            "",
+            "// Use patterns for dynamic values",
+            "await expect(page.locator('.order-number')).toHaveText(/Order #\\d{6}/);"
+          ]
+        },
+        {
+          "name": "Isolate Test Data",
+          "description": "Each test should create its own test data",
+          "example": [
+            "test('update user', async ({ page, request }) => {",
+            "  // Create unique user for this test",
+            "  const userId = `user-${Date.now()}`;",
+            "  await request.post('/api/users', {",
+            "    data: { id: userId, name: 'Test User' }",
+            "  });",
+            "  ",
+            "  // Test with isolated data",
+            "  await page.goto(`/users/${userId}/edit`);",
+            "  // ... rest of test",
+            "});"
+          ]
+        },
+        {
+          "name": "Implement Retry Logic",
+          "description": "Configure retries for flaky tests",
+          "example": [
+            "// playwright.config.ts",
+            "export default defineConfig({",
+            "  retries: process.env.CI ? 2 : 0,",
+            "  // Retry only on specific errors",
+            "  use: {",
+            "    // Retry on specific network errors",
+            "    navigationTimeout: 30000,",
+            "  }",
+            "});"
+          ]
+        }
+      ]
+    },
+    "maintenance": {
+      "title": "Test Maintenance",
+      "practices": [
+        {
+          "name": "Keep Tests DRY",
+          "description": "Extract common functionality into utilities",
+          "example": [
+            "// utils/test-helpers.ts",
+            "export async function createTestUser(request: APIRequestContext) {",
+            "  const user = {",
+            "    email: `test-${Date.now()}@example.com`,",
+            "    password: 'TestPass123!'",
+            "  };",
+            "  await request.post('/api/users', { data: user });",
+            "  return user;",
+            "}",
+            "",
+            "// Use in tests",
+            "test('user flow', async ({ request }) => {",
+            "  const user = await createTestUser(request);",
+            "  // Use user in test",
+            "});"
+          ]
+        },
+        {
+          "name": "Version Control Test Data",
+          "description": "Track test fixtures and data in version control",
+          "example": [
+            "// fixtures/products.json",
+            "{",
+            "  \"laptop\": {",
+            "    \"name\": \"Gaming Laptop\",",
+            "    \"price\": 1299.99,",
+            "    \"category\": \"Electronics\"",
+            "  }",
+            "}",
+            "",
+            "// Load in tests",
+            "import products from './fixtures/products.json';",
+            "test('display product', async ({ page }) => {",
+            "  await page.goto(`/products/${products.laptop.id}`);",
+            "});"
+          ]
+        }
+      ]
+    },
+    "ci_cd": {
+      "title": "CI/CD Integration",
+      "practices": [
+        {
+          "name": "Optimize for CI",
+          "description": "Configure tests specifically for CI environments",
+          "example": [
+            "// playwright.config.ts",
+            "export default defineConfig({",
+            "  use: {",
+            "    // Disable animations in CI",
+            "    screenshot: process.env.CI ? 'only-on-failure' : 'off',",
+            "    video: process.env.CI ? 'retain-on-failure' : 'off',",
+            "    trace: process.env.CI ? 'on-first-retry' : 'off',",
+            "  },",
+            "  ",
+            "  // Different timeout for CI",
+            "  timeout: process.env.CI ? 60000 : 30000,",
+            "});"
+          ]
+        },
+        {
+          "name": "Shard Tests in CI",
+          "description": "Split tests across multiple machines",
+          "example": [
+            "# .github/workflows/tests.yml",
+            "strategy:",
+            "  matrix:",
+            "    shard: [1/4, 2/4, 3/4, 4/4]",
+            "steps:",
+            "  - run: npx playwright test --shard=${{ matrix.shard }}"
+          ]
+        }
+      ]
+    }
+  },
+  "anti_patterns": {
+    "title": "Common Anti-Patterns to Avoid",
+    "items": [
+      {
+        "name": "Hard-coded waits",
+        "problem": "await page.waitForTimeout(5000);",
+        "solution": "Use proper wait conditions or Playwright's auto-waiting"
+      },
+      {
+        "name": "Testing implementation details",
+        "problem": "Asserting on CSS classes, internal state",
+        "solution": "Test user-visible behavior and outcomes"
+      },
+      {
+        "name": "Shared test state",
+        "problem": "Tests depend on execution order",
+        "solution": "Each test should be independent and create its own data"
+      },
+      {
+        "name": "Overly complex selectors",
+        "problem": "page.locator('div > span:nth-child(3) > button.primary')",
+        "solution": "Use semantic selectors based on user-facing attributes"
+      },
+      {
+        "name": "Ignoring test failures",
+        "problem": "Skipping flaky tests instead of fixing them",
+        "solution": "Investigate and fix the root cause of flakiness"
+      }
+    ]
+  },
+  "checklist": {
+    "title": "Test Quality Checklist",
+    "items": [
+      "Tests can run in any order",
+      "Tests clean up after themselves",
+      "Selectors are based on user-facing attributes",
+      "No hard-coded wait times",
+      "Meaningful test and assertion messages",
+      "Proper error handling and debugging info",
+      "Tests run in parallel where possible",
+      "Authentication state is reused",
+      "API is used for complex setup",
+      "Visual tests mask dynamic content",
+      "Tests work in CI environment",
+      "Flaky tests are fixed, not skipped"
+    ]
+  }
+}

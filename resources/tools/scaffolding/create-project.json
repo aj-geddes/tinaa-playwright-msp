@@ -1,0 +1,96 @@
+{
+  "id": "project-scaffolder",
+  "name": "Playwright Project Scaffolder",
+  "description": "Generate new Playwright projects with best practices",
+  "type": "scaffolding",
+  "templates": {
+    "basic": {
+      "name": "Basic Project",
+      "description": "Simple Playwright project setup",
+      "structure": {
+        "playwright.config.ts": "Basic configuration file",
+        "tests/": "Test directory",
+        "tests/example.spec.ts": "Example test file",
+        "package.json": "Node.js project file",
+        ".gitignore": "Git ignore patterns",
+        ".github/workflows/playwright.yml": "GitHub Actions workflow"
+      }
+    },
+    "advanced": {
+      "name": "Advanced Project with POM",
+      "description": "Full-featured project with Page Object Model",
+      "structure": {
+        "playwright.config.ts": "Advanced configuration with projects",
+        "tests/": "Test specifications",
+        "pages/": "Page Object Model classes",
+        "fixtures/": "Custom fixtures and helpers",
+        "data/": "Test data files",
+        "utils/": "Utility functions",
+        "types/": "TypeScript type definitions",
+        "global-setup.ts": "Global setup script",
+        "global-teardown.ts": "Global teardown script",
+        ".env.example": "Environment variables template",
+        "package.json": "Dependencies and scripts",
+        "tsconfig.json": "TypeScript configuration",
+        ".eslintrc.js": "ESLint configuration",
+        ".prettierrc": "Prettier configuration"
+      }
+    },
+    "api": {
+      "name": "API Testing Project",
+      "description": "Project focused on API testing",
+      "structure": {
+        "playwright.config.ts": "API-focused configuration",
+        "tests/api/": "API test files",
+        "fixtures/api-client.ts": "Custom API client fixture",
+        "schemas/": "JSON schemas for validation",
+        "mocks/": "Mock data and handlers",
+        "utils/api-helpers.ts": "API testing utilities"
+      }
+    },
+    "mobile": {
+      "name": "Mobile Testing Project",
+      "description": "Mobile web testing setup",
+      "structure": {
+        "playwright.config.ts": "Mobile device configurations",
+        "tests/mobile/": "Mobile-specific tests",
+        "fixtures/mobile-helpers.ts": "Mobile testing helpers",
+        "devices/": "Custom device definitions"
+      }
+    }
+  },
+  "commands": {
+    "create": {
+      "syntax": "npm init playwright@latest [project-name]",
+      "interactive": true,
+      "prompts": [
+        "Do you want to use TypeScript or JavaScript?",
+        "Where to put your end-to-end tests?",
+        "Add a GitHub Actions workflow?",
+        "Install Playwright browsers?"
+      ]
+    },
+    "custom": {
+      "syntax": "npx create-playwright-project [template] [name]",
+      "examples": [
+        "npx create-playwright-project advanced my-app",
+        "npx create-playwright-project api api-tests",
+        "npx create-playwright-project mobile mobile-app"
+      ]
+    }
+  },
+  "post_creation": {
+    "steps": [
+      "cd [project-name]",
+      "npm install",
+      "npx playwright install",
+      "npm test"
+    ],
+    "recommendations": [
+      "Set up pre-commit hooks with Husky",
+      "Configure VS Code with Playwright extension",
+      "Set up environment variables",
+      "Configure CI/CD pipeline"
+    ]
+  }
+}

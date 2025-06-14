@@ -1,0 +1,174 @@
+{
+  "id": "playwright-code-reviewer",
+  "name": "Playwright Test Code Reviewer Prompts",
+  "description": "MCP prompts for reviewing and improving Playwright test code quality",
+  "prompts": {
+    "comprehensive_review": {
+      "name": "Comprehensive Test Code Review",
+      "prompt": "Review the following Playwright test code for quality, maintainability, and best practices:\n\n{test_code}\n\nReview criteria:\n1. **Code Quality**: Structure, readability, naming conventions\n2. **Test Design**: Independence, repeatability, coverage\n3. **Playwright Best Practices**: Selector usage, waiting strategies, assertions\n4. **Performance**: Execution speed, parallelization opportunities\n5. **Maintainability**: Reusability, modularity, documentation\n6. **Error Handling**: Failure messages, debugging support\n\nProvide:\n- Severity rating for each issue (Critical/High/Medium/Low)\n- Specific code improvements with examples\n- Overall quality score (1-10)\n- Priority-ordered action items",
+      "focus_areas": [
+        "Selector stability",
+        "Flakiness potential",
+        "Code duplication",
+        "Test isolation",
+        "Resource cleanup"
+      ]
+    },
+    "selector_review": {
+      "name": "Selector Strategy Review",
+      "prompt": "Analyze the selector usage in the following Playwright tests:\n\n{test_code}\n\nReview for:\n1. Selector reliability and maintenance burden\n2. Proper use of Playwright locator methods\n3. Accessibility-first approaches\n4. Performance implications\n5. Cross-browser compatibility\n\nFor each selector found:\n- Rate stability (1-5)\n- Suggest improvements\n- Provide refactored version\n- Explain the benefits",
+      "best_practices": {
+        "prefer": ["getByRole", "getByLabel", "getByText", "getByTestId"],
+        "avoid": ["CSS selectors with classes", "XPath", "nth-child selectors"],
+        "consider": ["data-testid for complex cases", "Combining locators", "Parent-child relationships"]
+      }
+    },
+    "performance_analysis": {
+      "name": "Test Performance Analysis",
+      "prompt": "Analyze the performance characteristics of this test suite:\n\n{test_suite}\n\nAnalyze:\n1. Test execution time bottlenecks\n2. Unnecessary waits or delays\n3. Inefficient setup/teardown\n4. Parallelization opportunities\n5. Resource usage patterns\n\nProvide:\n- Performance hotspots with timings\n- Optimization recommendations\n- Expected performance improvements\n- Refactored code for critical paths",
+      "optimization_targets": [
+        "Reduce hard waits",
+        "Batch API calls",
+        "Reuse browser contexts",
+        "Parallel test execution",
+        "Efficient data setup"
+      ]
+    },
+    "flakiness_detection": {
+      "name": "Flaky Test Detection",
+      "prompt": "Analyze the following tests for potential flakiness:\n\n{test_code}\n\nIdentify:\n1. Race condition risks\n2. Timing-dependent assertions\n3. External dependency issues\n4. Non-deterministic behaviors\n5. Environment-specific problems\n\nFor each potential issue:\n- Explain why it might cause flakiness\n- Provide reliability score (1-10)\n- Suggest fixes with code examples\n- Recommend prevention strategies",
+      "common_issues": [
+        "Hard-coded timeouts",
+        "Order-dependent tests",
+        "Shared state",
+        "Network dependencies",
+        "Animation timing"
+      ]
+    },
+    "accessibility_audit": {
+      "name": "Accessibility Test Review",
+      "prompt": "Review the accessibility testing coverage in:\n\n{test_code}\n\nAudit for:\n1. WCAG compliance testing\n2. Keyboard navigation coverage\n3. Screen reader compatibility\n4. ARIA attribute validation\n5. Color contrast checks\n6. Focus management testing\n\nProvide:\n- Coverage gaps with severity\n- Missing test scenarios\n- Code additions needed\n- Tool recommendations",
+      "compliance_levels": ["WCAG 2.1 Level A", "WCAG 2.1 Level AA", "Section 508"]
+    },
+    "security_review": {
+      "name": "Security Test Review",
+      "prompt": "Review the security testing aspects of:\n\n{test_code}\n\nCheck for:\n1. Sensitive data handling\n2. Authentication test coverage\n3. Authorization scenarios\n4. Input validation testing\n5. Security header verification\n6. Credential management\n\nIdentify:\n- Security test gaps\n- Unsafe practices\n- Missing attack scenarios\n- Compliance issues",
+      "security_checks": [
+        "No hardcoded credentials",
+        "Proper data masking",
+        "Secure test data",
+        "Attack vector coverage",
+        "Session handling"
+      ]
+    },
+    "pattern_compliance": {
+      "name": "Design Pattern Compliance Review",
+      "prompt": "Review the following code for design pattern compliance:\n\n{test_code}\n\nExpected patterns:\n{expected_patterns}\n\nVerify:\n1. Correct pattern implementation\n2. Consistency across codebase\n3. Pattern appropriateness\n4. Abstraction levels\n5. Separation of concerns\n\nReport:\n- Pattern violations\n- Improvement opportunities\n- Refactoring suggestions\n- Anti-patterns found",
+      "common_patterns": [
+        "Page Object Model",
+        "Fixture Pattern",
+        "Builder Pattern",
+        "Repository Pattern"
+      ]
+    },
+    "test_coverage_analysis": {
+      "name": "Test Coverage Analysis",
+      "prompt": "Analyze test coverage for the following application features:\n\nFeatures: {feature_list}\nExisting tests: {test_files}\n\nAnalyze:\n1. Feature coverage percentage\n2. Critical path coverage\n3. Edge case handling\n4. Error scenario coverage\n5. Cross-browser testing\n\nProvide:\n- Coverage heat map\n- Missing test scenarios\n- Priority recommendations\n- Test generation suggestions",
+      "coverage_types": [
+        "Functional coverage",
+        "UI element coverage",
+        "User journey coverage",
+        "API endpoint coverage",
+        "Error handling coverage"
+      ]
+    },
+    "maintenance_review": {
+      "name": "Test Maintenance Review",
+      "prompt": "Review test maintainability for:\n\n{test_code}\n\nEvaluate:\n1. Code duplication levels\n2. Hardcoded values\n3. Configuration management\n4. Test data handling\n5. Documentation quality\n6. Debugging support\n\nProvide:\n- Maintenance risk score\n- Refactoring priorities\n- Documentation gaps\n- Tooling recommendations",
+      "maintainability_factors": [
+        "DRY principle adherence",
+        "Clear naming conventions",
+        "Modular structure",
+        "Version control friendly",
+        "Easy debugging"
+      ]
+    },
+    "ci_integration_review": {
+      "name": "CI/CD Integration Review",
+      "prompt": "Review CI/CD integration for Playwright tests:\n\nCI Config: {ci_config}\nTest Suite: {test_structure}\n\nEvaluate:\n1. Pipeline efficiency\n2. Parallelization setup\n3. Failure handling\n4. Reporting configuration\n5. Resource optimization\n\nSuggest:\n- Pipeline improvements\n- Optimal sharding strategy\n- Caching opportunities\n- Artifact management\n- Monitoring setup",
+      "ci_platforms": ["GitHub Actions", "Jenkins", "GitLab CI", "CircleCI", "Azure DevOps"]
+    },
+    "migration_review": {
+      "name": "Test Migration Review",
+      "prompt": "Review migration plan from {source_framework} to Playwright:\n\nCurrent tests: {current_tests}\nMigration approach: {migration_plan}\n\nEvaluate:\n1. Migration completeness\n2. Feature parity\n3. Performance implications\n4. Risk assessment\n5. Rollback strategy\n\nProvide:\n- Migration checklist\n- Risk mitigation steps\n- Timeline estimation\n- Training needs",
+      "migration_considerations": [
+        "Selector differences",
+        "API changes",
+        "Assertion methods",
+        "Configuration mapping",
+        "CI/CD updates"
+      ]
+    },
+    "api_test_review": {
+      "name": "API Test Integration Review",
+      "prompt": "Review API testing integration in Playwright tests:\n\n{test_code}\n\nEvaluate:\n1. API usage efficiency\n2. Request/response validation\n3. Error handling\n4. Mock strategy\n5. Performance impact\n\nSuggest:\n- API test improvements\n- Mock vs real API usage\n- Response validation\n- Error scenarios\n- Performance optimizations",
+      "api_best_practices": [
+        "Proper authentication",
+        "Response schema validation",
+        "Error status handling",
+        "Timeout configuration",
+        "Request throttling"
+      ]
+    }
+  },
+  "review_templates": {
+    "quick_review": {
+      "name": "Quick Code Review Template",
+      "sections": [
+        "**Critical Issues**: Must fix before merge",
+        "**Improvements**: Should address soon",
+        "**Suggestions**: Nice to have enhancements",
+        "**Positive Aspects**: What's done well"
+      ]
+    },
+    "detailed_review": {
+      "name": "Detailed Review Template",
+      "sections": [
+        "**Executive Summary**: Overall assessment",
+        "**Critical Findings**: Blocking issues",
+        "**Code Quality**: Structure and style",
+        "**Test Effectiveness**: Coverage and reliability",
+        "**Performance**: Speed and efficiency",
+        "**Maintainability**: Long-term considerations",
+        "**Security**: Safety and compliance",
+        "**Recommendations**: Prioritized action items"
+      ]
+    }
+  },
+  "automation_helpers": {
+    "review_checklist_generator": {
+      "prompt": "Generate a custom review checklist for {project_type} using Playwright based on:\n- Tech stack: {tech_stack}\n- Team size: {team_size}\n- Quality goals: {quality_goals}\n\nCreate a comprehensive checklist with priorities and automation opportunities."
+    },
+    "review_automation_setup": {
+      "prompt": "Set up automated code review for Playwright tests including:\n1. Pre-commit hooks\n2. CI checks\n3. Custom linting rules\n4. Automated suggestions\n\nProvide configuration files and setup instructions."
+    }
+  },
+  "metrics": {
+    "review_scoring": {
+      "categories": [
+        {"name": "Code Quality", "weight": 0.25},
+        {"name": "Test Design", "weight": 0.25},
+        {"name": "Performance", "weight": 0.20},
+        {"name": "Maintainability", "weight": 0.20},
+        {"name": "Documentation", "weight": 0.10}
+      ],
+      "scoring_guide": {
+        "10-9": "Excellent - Production ready",
+        "8-7": "Good - Minor improvements needed",
+        "6-5": "Fair - Several issues to address",
+        "4-3": "Poor - Major refactoring required",
+        "2-1": "Critical - Significant rewrite needed"
+      }
+    }
+  }
+}

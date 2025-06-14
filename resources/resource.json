@@ -1,0 +1,206 @@
+{
+  "name": "playwright-resources",
+  "version": "0.1.0",
+  "description": "Comprehensive Playwright testing resources for TINAA MCP server",
+  "framework": "gofastmcp.com v2.8.0",
+  "categories": {
+    "tools": {
+      "description": "CLI helpers and automation tools",
+      "items": [
+        {
+          "id": "playwright-installer",
+          "name": "Playwright Installer",
+          "path": "tools/cli/install.json",
+          "description": "Install and configure Playwright with browsers"
+        },
+        {
+          "id": "test-runner",
+          "name": "Test Runner",
+          "path": "tools/cli/run.json",
+          "description": "Run tests with various configurations"
+        },
+        {
+          "id": "project-scaffolder",
+          "name": "Project Scaffolder",
+          "path": "tools/scaffolding/create-project.json",
+          "description": "Generate new Playwright projects with best practices"
+        },
+        {
+          "id": "pom-generator",
+          "name": "Page Object Model Generator",
+          "path": "tools/scaffolding/pom-generator.json",
+          "description": "Create Page Object Model structure"
+        },
+        {
+          "id": "ci-integration",
+          "name": "CI/CD Integration",
+          "path": "tools/ci/setup.json",
+          "description": "Setup CI/CD pipelines for various platforms"
+        },
+        {
+          "id": "visual-diff-tool",
+          "name": "Visual Diff Tool",
+          "path": "tools/visual-testing/screenshot-diff.json",
+          "description": "Capture and compare screenshots"
+        },
+        {
+          "id": "trace-viewer",
+          "name": "Trace Viewer Helper",
+          "path": "tools/trace/viewer.json",
+          "description": "Launch and analyze trace files"
+        },
+        {
+          "id": "state-manager",
+          "name": "State Manager",
+          "path": "tools/state-management/storage-state.json",
+          "description": "Manage authentication and storage states"
+        }
+      ]
+    },
+    "quickstarts": {
+      "description": "Quick start guides for different testing scenarios",
+      "items": [
+        {
+          "id": "web-basic",
+          "name": "Basic Web Testing",
+          "path": "quickstarts/web/basic.json",
+          "description": "Get started with web UI testing"
+        },
+        {
+          "id": "mobile-testing",
+          "name": "Mobile Testing",
+          "path": "quickstarts/mobile/setup.json",
+          "description": "Test mobile web applications"
+        },
+        {
+          "id": "api-testing",
+          "name": "API Testing",
+          "path": "quickstarts/api/rest.json",
+          "description": "Test REST APIs with Playwright"
+        },
+        {
+          "id": "hybrid-testing",
+          "name": "Hybrid Testing",
+          "path": "quickstarts/hybrid/ui-api.json",
+          "description": "Combine UI and API testing"
+        }
+      ]
+    },
+    "examples": {
+      "description": "Real-world testing examples",
+      "items": [
+        {
+          "id": "login-flow",
+          "name": "Login Flow Testing",
+          "path": "examples/login-flows/oauth.json",
+          "description": "Test various authentication flows"
+        },
+        {
+          "id": "crud-forms",
+          "name": "CRUD Form Testing",
+          "path": "examples/crud-forms/validation.json",
+          "description": "Test form creation, updates, and validation"
+        },
+        {
+          "id": "shopping-cart",
+          "name": "E-commerce Testing",
+          "path": "examples/shopping-carts/checkout.json",
+          "description": "Test shopping cart and checkout flows"
+        },
+        {
+          "id": "dashboard",
+          "name": "Dashboard Testing",
+          "path": "examples/dashboards/data-viz.json",
+          "description": "Test complex dashboards and data visualizations"
+        }
+      ]
+    },
+    "docs": {
+      "description": "Comprehensive documentation",
+      "items": [
+        {
+          "id": "architecture",
+          "name": "Test Architecture",
+          "path": "docs/architecture/structure.md",
+          "description": "Best practices for test structure and organization"
+        },
+        {
+          "id": "locators",
+          "name": "Locator Strategies",
+          "path": "docs/locators/best-practices.md",
+          "description": "Reliable element selection strategies"
+        },
+        {
+          "id": "fixtures",
+          "name": "Fixtures Guide",
+          "path": "docs/fixtures/setup.md",
+          "description": "Using fixtures for test setup and teardown"
+        },
+        {
+          "id": "debugging",
+          "name": "Debugging Guide",
+          "path": "docs/debugging/trace-viewer.md",
+          "description": "Debug tests with trace viewer and other tools"
+        }
+      ]
+    },
+    "prompts": {
+      "description": "MCP prompts for test generation and optimization",
+      "items": [
+        {
+          "id": "generate-test",
+          "name": "Generate Test",
+          "path": "prompts/generate-test.mcp",
+          "description": "Convert flow descriptions to Playwright tests"
+        },
+        {
+          "id": "convert-recorder",
+          "name": "Convert Recorder JSON",
+          "path": "prompts/convert-recorder-json.mcp",
+          "description": "Convert Chrome Recorder exports to Playwright"
+        },
+        {
+          "id": "optimize-locators",
+          "name": "Optimize Locators",
+          "path": "prompts/optimize-locators.mcp",
+          "description": "Improve locator reliability"
+        },
+        {
+          "id": "trace-diagnosis",
+          "name": "Trace Diagnosis",
+          "path": "prompts/trace-diagnosis.mcp",
+          "description": "Analyze trace files and suggest fixes"
+        },
+        {
+          "id": "explain-pom",
+          "name": "Explain Page Object Model",
+          "path": "prompts/explain-pom.mcp",
+          "description": "Guide in building reusable Page Objects"
+        },
+        {
+          "id": "visual-diff-review",
+          "name": "Visual Diff Review",
+          "path": "prompts/visual-diff-review.mcp",
+          "description": "Interpret screenshot differences"
+        }
+      ]
+    }
+  },
+  "integrations": {
+    "github": {
+      "workflows": "integrations/github/workflows/",
+      "actions": "integrations/github/actions/"
+    },
+    "percy": {
+      "config": "integrations/percy/percy.yml",
+      "scripts": "integrations/percy/scripts/"
+    },
+    "jenkins": {
+      "pipelines": "integrations/jenkins/pipelines/"
+    },
+    "msw": {
+      "handlers": "integrations/msw/handlers/",
+      "setup": "integrations/msw/setup.js"
+    }
+  }
+}

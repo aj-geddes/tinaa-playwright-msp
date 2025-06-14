@@ -1,0 +1,243 @@
+{
+  "id": "playwright-debug-assistant",
+  "name": "Playwright Debug Assistant Prompts",
+  "description": "MCP prompts for debugging and troubleshooting Playwright tests",
+  "prompts": {
+    "error_diagnosis": {
+      "name": "Diagnose Test Error",
+      "prompt": "Help me debug this Playwright test error:\n\nError message: {error_message}\nTest code: {test_code}\nStack trace: {stack_trace}\n\nDiagnose:\n1. Root cause of the error\n2. Why it's happening\n3. Potential fixes\n4. Prevention strategies\n5. Similar issues to watch for\n\nProvide step-by-step debugging approach and fixed code.",
+      "common_errors": {
+        "TimeoutError": "Element not found, page not loaded, network issues",
+        "ElementNotFound": "Selector issues, timing problems, dynamic content",
+        "NavigationError": "Invalid URL, network failure, CORS issues",
+        "ClickError": "Element not visible, overlapped, or not interactive"
+      }
+    },
+    "flaky_test_diagnosis": {
+      "name": "Debug Flaky Test",
+      "prompt": "This test passes sometimes and fails others:\n\nTest code: {test_code}\nFailure pattern: {failure_pattern}\nEnvironment: {environment}\n\nAnalyze:\n1. Identify sources of non-determinism\n2. Find race conditions\n3. Detect timing issues\n4. Check environmental dependencies\n5. Review test isolation\n\nProvide:\n- Root cause analysis\n- Reliability improvements\n- Monitoring suggestions\n- Fixed test code",
+      "investigation_steps": [
+        "Run test in isolation",
+        "Check for shared state",
+        "Add verbose logging",
+        "Record test execution",
+        "Analyze timing patterns"
+      ]
+    },
+    "performance_debugging": {
+      "name": "Debug Slow Tests",
+      "prompt": "Debug performance issues in these tests:\n\nTest suite: {test_suite}\nExecution time: {execution_time}\nExpected time: {expected_time}\n\nInvestigate:\n1. Identify bottlenecks\n2. Find unnecessary waits\n3. Detect inefficient selectors\n4. Check resource usage\n5. Analyze network calls\n\nProvide:\n- Performance profile\n- Optimization plan\n- Quick wins\n- Long-term improvements",
+      "profiling_areas": [
+        "Page load times",
+        "Element selection speed",
+        "Network request duration",
+        "JavaScript execution",
+        "Resource loading"
+      ]
+    },
+    "selector_debugging": {
+      "name": "Debug Selector Issues",
+      "prompt": "Help debug selector problems:\n\nFailing selector: {selector}\nPage URL: {page_url}\nHTML context: {html_snippet}\nError: {error_message}\n\nDebug:\n1. Why selector fails\n2. Alternative selectors\n3. Dynamic content handling\n4. Cross-browser compatibility\n5. Maintenance considerations\n\nProvide multiple selector strategies with trade-offs.",
+      "debugging_tools": [
+        "Playwright Inspector",
+        "Browser DevTools",
+        "Selector playground",
+        "Console evaluation"
+      ]
+    },
+    "network_debugging": {
+      "name": "Debug Network Issues",
+      "prompt": "Debug network-related test failures:\n\nTest scenario: {test_scenario}\nNetwork errors: {network_errors}\nAPI endpoints: {api_endpoints}\n\nInvestigate:\n1. Request/response issues\n2. Timeout problems\n3. CORS errors\n4. Authentication failures\n5. Response validation\n\nProvide:\n- Network analysis\n- Mock strategies\n- Error handling\n- Retry logic",
+      "network_aspects": [
+        "Request headers",
+        "Response status",
+        "Payload validation",
+        "Timing issues",
+        "Connection problems"
+      ]
+    },
+    "browser_debugging": {
+      "name": "Debug Browser-Specific Issues",
+      "prompt": "Debug browser-specific test failures:\n\nTest: {test_code}\nPassing browsers: {passing_browsers}\nFailing browsers: {failing_browsers}\nError details: {error_details}\n\nAnalyze:\n1. Browser differences\n2. Feature support\n3. Rendering issues\n4. JavaScript compatibility\n5. Driver problems\n\nProvide browser-specific fixes and workarounds.",
+      "browser_considerations": [
+        "CSS differences",
+        "JavaScript APIs",
+        "Event handling",
+        "Security policies",
+        "Performance characteristics"
+      ]
+    },
+    "ci_debugging": {
+      "name": "Debug CI-Only Failures",
+      "prompt": "Debug tests that fail in CI but pass locally:\n\nTest: {test_code}\nCI environment: {ci_environment}\nLocal environment: {local_environment}\nCI logs: {ci_logs}\n\nInvestigate:\n1. Environment differences\n2. Resource constraints\n3. Timing variations\n4. Dependencies issues\n5. Configuration problems\n\nProvide CI-specific fixes and configuration updates.",
+      "ci_factors": [
+        "Headless vs headed",
+        "Resource limits",
+        "Network restrictions",
+        "File system differences",
+        "Time zone issues"
+      ]
+    },
+    "memory_debugging": {
+      "name": "Debug Memory Issues",
+      "prompt": "Debug memory-related problems:\n\nSymptoms: {symptoms}\nTest duration: {test_duration}\nMemory usage: {memory_stats}\n\nAnalyze:\n1. Memory leaks\n2. Resource cleanup\n3. Browser lifecycle\n4. Large data handling\n5. Context management\n\nProvide memory optimization strategies.",
+      "memory_checks": [
+        "Page lifecycle",
+        "Event listeners",
+        "DOM references",
+        "Browser contexts",
+        "Test data size"
+      ]
+    },
+    "visual_debugging": {
+      "name": "Debug Visual Test Failures",
+      "prompt": "Debug visual regression test failures:\n\nTest: {test_code}\nExpected image: {expected_image}\nActual image: {actual_image}\nDiff details: {diff_details}\n\nAnalyze:\n1. Rendering differences\n2. Dynamic content\n3. Font issues\n4. Animation states\n5. Resolution problems\n\nProvide fixes for stable visual tests.",
+      "visual_factors": [
+        "Anti-aliasing",
+        "Font rendering",
+        "CSS animations",
+        "Image loading",
+        "Viewport settings"
+      ]
+    },
+    "trace_analysis": {
+      "name": "Analyze Test Trace",
+      "prompt": "Analyze Playwright trace file findings:\n\nTrace summary: {trace_summary}\nFailed step: {failed_step}\nPreceding actions: {preceding_actions}\n\nAnalyze:\n1. Failure point\n2. State before failure\n3. Action sequence\n4. Network activity\n5. Console errors\n\nProvide detailed failure analysis and fix.",
+      "trace_elements": [
+        "Screenshots",
+        "Network log",
+        "Console log",
+        "DOM snapshots",
+        "Action timeline"
+      ]
+    },
+    "parallel_debugging": {
+      "name": "Debug Parallel Execution Issues",
+      "prompt": "Debug issues with parallel test execution:\n\nTest suite: {test_suite}\nParallel config: {parallel_config}\nFailure pattern: {failure_pattern}\n\nInvestigate:\n1. Resource conflicts\n2. Port collisions\n3. Database conflicts\n4. File system issues\n5. Test dependencies\n\nProvide isolation strategies and fixes.",
+      "parallel_issues": [
+        "Shared resources",
+        "Race conditions",
+        "Test order dependencies",
+        "Resource exhaustion",
+        "Deadlocks"
+      ]
+    },
+    "auth_debugging": {
+      "name": "Debug Authentication Issues",
+      "prompt": "Debug authentication-related test failures:\n\nAuth method: {auth_method}\nTest scenario: {test_scenario}\nError details: {error_details}\n\nDebug:\n1. Login flow issues\n2. Session management\n3. Token handling\n4. Cookie problems\n5. Storage state\n\nProvide robust auth handling strategy.",
+      "auth_aspects": [
+        "Credential management",
+        "Session persistence",
+        "Token refresh",
+        "Multi-factor auth",
+        "Role switching"
+      ]
+    }
+  },
+  "debugging_workflows": {
+    "systematic_debugging": {
+      "name": "Systematic Debugging Workflow",
+      "steps": [
+        {
+          "step": 1,
+          "action": "Reproduce the issue",
+          "checks": ["Consistent reproduction", "Minimal test case", "Environment setup"]
+        },
+        {
+          "step": 2,
+          "action": "Gather information",
+          "checks": ["Error messages", "Stack traces", "Logs", "Screenshots"]
+        },
+        {
+          "step": 3,
+          "action": "Form hypothesis",
+          "checks": ["Root cause theory", "Test predictions", "Similar issues"]
+        },
+        {
+          "step": 4,
+          "action": "Test hypothesis",
+          "checks": ["Targeted changes", "Verification", "Side effects"]
+        },
+        {
+          "step": 5,
+          "action": "Implement fix",
+          "checks": ["Code changes", "Test updates", "Documentation"]
+        },
+        {
+          "step": 6,
+          "action": "Verify solution",
+          "checks": ["All tests pass", "No regression", "Performance impact"]
+        }
+      ]
+    },
+    "quick_debugging": {
+      "name": "Quick Debugging Checklist",
+      "checks": [
+        "Is the selector correct and unique?",
+        "Is the element visible and interactable?",
+        "Are we waiting for the right condition?",
+        "Is the page fully loaded?",
+        "Are there any console errors?",
+        "Is this a timing issue?",
+        "Does it work in headed mode?",
+        "Is it environment-specific?"
+      ]
+    }
+  },
+  "debugging_tools": {
+    "built_in_tools": [
+      {
+        "tool": "Playwright Inspector",
+        "usage": "PWDEBUG=1 npm test",
+        "features": ["Step through tests", "Inspect selectors", "View logs"]
+      },
+      {
+        "tool": "Trace Viewer",
+        "usage": "npx playwright show-trace trace.zip",
+        "features": ["Timeline view", "Network log", "Console log", "Snapshots"]
+      },
+      {
+        "tool": "VS Code Extension",
+        "features": ["Breakpoints", "Live debugging", "Test generation"]
+      }
+    ],
+    "debugging_helpers": {
+      "verbose_logging": "DEBUG=pw:api npm test",
+      "headed_mode": "--headed",
+      "slow_motion": "--slow-mo=1000",
+      "video_recording": "video: 'on'",
+      "screenshots": "screenshot: 'on'"
+    }
+  },
+  "common_solutions": {
+    "quick_fixes": [
+      {
+        "issue": "Element not found",
+        "fixes": [
+          "Wait for element explicitly",
+          "Check selector specificity",
+          "Verify element exists in DOM",
+          "Handle dynamic content"
+        ]
+      },
+      {
+        "issue": "Timeout errors",
+        "fixes": [
+          "Increase timeout",
+          "Wait for specific condition",
+          "Check network speed",
+          "Optimize page load"
+        ]
+      },
+      {
+        "issue": "Flaky tests",
+        "fixes": [
+          "Remove hard waits",
+          "Use proper assertions",
+          "Isolate test data",
+          "Mock external dependencies"
+        ]
+      }
+    ]
+  }
+}

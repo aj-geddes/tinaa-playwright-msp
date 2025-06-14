@@ -1,0 +1,158 @@
+{
+  "id": "pom-generator",
+  "name": "Page Object Model Generator",
+  "description": "Generate Page Object Model classes from URL or selectors",
+  "type": "scaffolding",
+  "approach": "page-object-model",
+  "benefits": [
+    "Reusable code across tests",
+    "Centralized element locators",
+    "Easier maintenance",
+    "Better test readability",
+    "Separation of concerns"
+  ],
+  "templates": {
+    "base_page": {
+      "name": "BasePage",
+      "description": "Abstract base class for all page objects",
+      "code": {
+        "typescript": [
+          "import { Page, Locator } from '@playwright/test';",
+          "",
+          "export abstract class BasePage {",
+          "  protected page: Page;",
+          "",
+          "  constructor(page: Page) {",
+          "    this.page = page;",
+          "  }",
+          "",
+          "  async navigate(url: string) {",
+          "    await this.page.goto(url);",
+          "  }",
+          "",
+          "  async waitForPageLoad() {",
+          "    await this.page.waitForLoadState('networkidle');",
+          "  }",
+          "",
+          "  async takeScreenshot(name: string) {",
+          "    await this.page.screenshot({ path: `screenshots/${name}.png` });",
+          "  }",
+          "}"
+        ]
+      }
+    },
+    "login_page": {
+      "name": "LoginPage",
+      "description": "Example login page object",
+      "code": {
+        "typescript": [
+          "import { Page, Locator } from '@playwright/test';",
+          "import { BasePage } from './BasePage';",
+          "",
+          "export class LoginPage extends BasePage {",
+          "  // Locators",
+          "  private readonly usernameInput: Locator;",
+          "  private readonly passwordInput: Locator;",
+          "  private readonly loginButton: Locator;",
+          "  private readonly errorMessage: Locator;",
+          "",
+          "  constructor(page: Page) {",
+          "    super(page);",
+          "    this.usernameInput = page.getByLabel('Username');",
+          "    this.passwordInput = page.getByLabel('Password');",
+          "    this.loginButton = page.getByRole('button', { name: 'Login' });",
+          "    this.errorMessage = page.getByRole('alert');",
+          "  }",
+          "",
+          "  async login(username: string, password: string) {",
+          "    await this.usernameInput.fill(username);",
+          "    await this.passwordInput.fill(password);",
+          "    await this.loginButton.click();",
+          "  }",
+          "",
+          "  async getErrorMessage(): Promise<string> {",
+          "    return await this.errorMessage.textContent() || '';",
+          "  }",
+          "",
+          "  async isLoginButtonEnabled(): Promise<boolean> {",
+          "    return await this.loginButton.isEnabled();",
+          "  }",
+          "}"
+        ]
+      }
+    },
+    "component": {
+      "name": "Component Page Object",
+      "description": "Reusable component page object",
+      "code": {
+        "typescript": [
+          "import { Page, Locator } from '@playwright/test';",
+          "",
+          "export class NavigationComponent {",
+          "  private page: Page;",
+          "  private readonly navMenu: Locator;",
+          "  private readonly menuItems: Locator;",
+          "",
+          "  constructor(page: Page) {",
+          "    this.page = page;",
+          "    this.navMenu = page.getByRole('navigation');",
+          "    this.menuItems = this.navMenu.getByRole('link');",
+          "  }",
+          "",
+          "  async clickMenuItem(itemName: string) {",
+          "    await this.menuItems.filter({ hasText: itemName }).click();",
+          "  }",
+          "",
+          "  async getMenuItems(): Promise<string[]> {",
+          "    return await this.menuItems.allTextContents();",
+          "  }",
+          "}"
+        ]
+      }
+    }
+  },
+  "generation_rules": {
+    "naming": {
+      "page_class": "[PageName]Page",
+      "component_class": "[ComponentName]Component",
+      "method_prefix": {
+        "action": "click, fill, select, check",
+        "getter": "get, is, has",
+        "waiter": "waitFor"
+      }
+    },
+    "locator_strategies": [
+      "Use getByRole() for accessibility",
+      "Use getByLabel() for form inputs",
+      "Use getByText() for visible text",
+      "Use data-testid as last resort",
+      "Avoid CSS/XPath selectors when possible"
+    ],
+    "best_practices": [
+      "Keep methods focused and single-purpose",
+      "Return page objects for method chaining",
+      "Use explicit waits over implicit",
+      "Encapsulate complex interactions",
+      "Add JSDoc comments for methods"
+    ]
+  },
+  "usage_examples": {
+    "test_with_pom": {
+      "description": "Using page objects in tests",
+      "code": [
+        "import { test, expect } from '@playwright/test';",
+        "import { LoginPage } from '../pages/LoginPage';",
+        "import { DashboardPage } from '../pages/DashboardPage';",
+        "",
+        "test('successful login', async ({ page }) => {",
+        "  const loginPage = new LoginPage(page);",
+        "  await loginPage.navigate('/login');",
+        "  await loginPage.login('user@example.com', 'password123');",
+        "",
+        "  const dashboard = new DashboardPage(page);",
+        "  await expect(dashboard.welcomeMessage).toBeVisible();",
+        "});"
+      ]
+    }
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "id": "playwright-test-generator",
+  "name": "Playwright Test Generator Prompts",
+  "description": "MCP prompts for generating Playwright tests based on requirements",
+  "prompts": {
+    "generate_e2e_tests": {
+      "name": "Generate E2E Tests from User Stories",
+      "prompt": "You are a Playwright test automation expert. Generate comprehensive end-to-end tests based on the following user story:\n\n{user_story}\n\nRequirements:\n1. Use Page Object Model pattern\n2. Include positive and negative test cases\n3. Add proper assertions and error handling\n4. Use semantic selectors (getByRole, getByLabel, etc.)\n5. Include test data setup and cleanup\n6. Add meaningful test descriptions\n\nGenerate:\n1. Page object classes for involved pages\n2. Test file with all scenarios\n3. Test data fixtures if needed\n4. Brief explanation of test coverage",
+      "example_input": {
+        "user_story": "As a user, I want to be able to search for products by name and category, so that I can find what I'm looking for quickly. The search should support filters for price range, brand, and availability. Results should be sortable by price, rating, and relevance."
+      },
+      "expected_output": {
+        "page_objects": ["SearchPage.ts", "ProductListPage.ts", "FilterComponent.ts"],
+        "test_file": "product-search.spec.ts",
+        "fixtures": "search-test-data.json",
+        "coverage": "Tests cover basic search, filtering, sorting, no results, and edge cases"
+      }
+    },
+    "convert_manual_tests": {
+      "name": "Convert Manual Test Cases to Playwright",
+      "prompt": "Convert the following manual test cases into automated Playwright tests:\n\n{manual_test_cases}\n\nRequirements:\n1. Maintain the same test coverage\n2. Add proper waits and synchronization\n3. Make tests independent and repeatable\n4. Use appropriate Playwright features (fixtures, hooks, etc.)\n5. Add comments explaining complex steps\n\nGenerate complete test code with all necessary imports and setup.",
+      "example_input": {
+        "manual_test_cases": "Test Case: User Registration\n1. Navigate to registration page\n2. Enter valid email\n3. Enter password (min 8 chars)\n4. Enter matching confirm password\n5. Check terms checkbox\n6. Click Register button\n7. Verify success message\n8. Verify email sent\n9. Click email link\n10. Verify account activated"
+      }
+    },
+    "optimize_existing_tests": {
+      "name": "Optimize Playwright Tests",
+      "prompt": "Analyze and optimize the following Playwright test code:\n\n{test_code}\n\nOptimization goals:\n1. Improve test execution speed\n2. Reduce flakiness\n3. Enhance maintainability\n4. Better error messages\n5. Proper use of Playwright features\n\nProvide:\n1. Optimized code\n2. Explanation of changes\n3. Performance impact estimate\n4. Additional recommendations",
+      "focus_areas": [
+        "Parallel execution opportunities",
+        "Reusable fixtures",
+        "Better selectors",
+        "Removing hard-coded waits",
+        "API usage for setup/teardown"
+      ]
+    },
+    "generate_api_tests": {
+      "name": "Generate API Tests with UI Validation",
+      "prompt": "Create Playwright tests that combine API and UI testing for the following scenario:\n\n{scenario}\n\nRequirements:\n1. Use API for data setup/teardown\n2. Validate UI reflects API changes\n3. Test error scenarios\n4. Include performance assertions\n5. Proper error handling\n\nGenerate test code that efficiently uses both API and UI testing capabilities.",
+      "example_scenario": "Test the shopping cart functionality where items can be added via API and should appear in the UI. The cart total should update in real-time, and inventory should be validated."
+    },
+    "accessibility_test_generator": {
+      "name": "Generate Accessibility Tests",
+      "prompt": "Generate Playwright accessibility tests for:\n\n{page_description}\n\nRequirements:\n1. WCAG 2.1 AA compliance\n2. Keyboard navigation testing\n3. Screen reader compatibility\n4. Color contrast validation\n5. ARIA attributes verification\n6. Focus management\n\nGenerate comprehensive accessibility test suite including automated checks and manual test guidance.",
+      "tools_to_use": [
+        "@axe-core/playwright",
+        "Playwright's built-in accessibility features",
+        "Custom keyboard navigation helpers"
+      ]
+    },
+    "visual_regression_setup": {
+      "name": "Setup Visual Regression Tests",
+      "prompt": "Create a visual regression test suite for:\n\n{components_list}\n\nRequirements:\n1. Baseline screenshot capture\n2. Cross-browser testing\n3. Responsive design validation\n4. Dynamic content handling\n5. CI/CD integration\n\nGenerate:\n1. Visual test configuration\n2. Test files for each component\n3. Helper utilities for masking\n4. CI workflow updates",
+      "considerations": [
+        "Font rendering differences",
+        "Animation handling",
+        "Dynamic timestamps",
+        "Third-party content"
+      ]
+    },
+    "performance_test_generator": {
+      "name": "Generate Performance Tests",
+      "prompt": "Create Playwright performance tests for:\n\n{user_journey}\n\nMetrics to capture:\n1. Page load time\n2. Time to interactive\n3. Largest Contentful Paint\n4. First Input Delay\n5. Cumulative Layout Shift\n6. Custom business metrics\n\nGenerate tests that capture performance metrics and establish baselines.",
+      "additional_requirements": [
+        "Network throttling scenarios",
+        "CPU throttling tests",
+        "Memory usage tracking",
+        "Performance budgets"
+      ]
+    },
+    "mobile_test_generator": {
+      "name": "Generate Mobile-Specific Tests",
+      "prompt": "Create Playwright tests for mobile devices covering:\n\n{mobile_features}\n\nRequirements:\n1. Device-specific viewports\n2. Touch gestures\n3. Orientation changes\n4. Mobile-specific UI elements\n5. Performance on mobile networks\n\nGenerate tests for both mobile web and responsive design.",
+      "devices_to_test": [
+        "iPhone 12",
+        "Pixel 5",
+        "iPad Pro",
+        "Galaxy S21"
+      ]
+    },
+    "data_driven_test_generator": {
+      "name": "Generate Data-Driven Tests",
+      "prompt": "Create data-driven Playwright tests for:\n\n{test_scenario}\n\nUsing data sets:\n{data_sets}\n\nRequirements:\n1. Parameterized test cases\n2. CSV/JSON data sources\n3. Dynamic test generation\n4. Proper test naming\n5. Parallel execution support\n\nGenerate complete test implementation with data management utilities.",
+      "best_practices": [
+        "Separate test logic from data",
+        "Validate data before use",
+        "Clear test identification",
+        "Efficient data loading"
+      ]
+    },
+    "security_test_generator": {
+      "name": "Generate Security Tests",
+      "prompt": "Create Playwright security tests for:\n\n{application_areas}\n\nSecurity aspects to test:\n1. Authentication vulnerabilities\n2. Authorization checks\n3. Input validation\n4. XSS prevention\n5. CSRF protection\n6. Secure headers\n\nGenerate security-focused test suite with common attack scenarios.",
+      "attack_vectors": [
+        "SQL injection attempts",
+        "XSS payloads",
+        "Authentication bypass",
+        "Session fixation",
+        "Insecure direct object references"
+      ]
+    },
+    "test_refactoring": {
+      "name": "Refactor Test Suite",
+      "prompt": "Refactor the following test suite to improve maintainability:\n\n{current_test_structure}\n\nRefactoring goals:\n1. Extract common patterns\n2. Implement Page Object Model\n3. Create reusable fixtures\n4. Improve test organization\n5. Add proper typing\n\nProvide refactored code with migration guide.",
+      "patterns_to_apply": [
+        "Page Object Model",
+        "Fixture pattern",
+        "Builder pattern for test data",
+        "Strategy pattern for auth"
+      ]
+    },
+    "ci_optimization": {
+      "name": "Optimize Tests for CI/CD",
+      "prompt": "Optimize Playwright test suite for CI/CD pipeline:\n\nCurrent setup:\n{current_ci_config}\n\nTest suite size: {test_count} tests\nAverage run time: {avg_duration}\n\nOptimize for:\n1. Faster execution\n2. Better parallelization\n3. Efficient resource usage\n4. Reliable results\n5. Useful reporting\n\nGenerate optimized configuration and test organization strategy.",
+      "techniques": [
+        "Test sharding",
+        "Strategic test grouping",
+        "Dependency caching",
+        "Conditional test execution",
+        "Artifact optimization"
+      ]
+    }
+  },
+  "meta_prompts": {
+    "custom_test_generator": {
+      "name": "Create Custom Test Generator",
+      "prompt": "I need to generate Playwright tests for {specific_requirement}. Create a detailed prompt template that I can reuse for similar test generation needs. Include all necessary context, requirements, and expected outputs.",
+      "output_format": {
+        "prompt_template": "string",
+        "variables": "array",
+        "example_usage": "object",
+        "validation_rules": "array"
+      }
+    }
+  },
+  "usage_guidelines": [
+    "Provide clear, specific requirements in prompts",
+    "Include examples of expected behavior",
+    "Specify any constraints or limitations",
+    "Mention existing code patterns to follow",
+    "Define success criteria for generated tests",
+    "Request explanations for complex logic",
+    "Ask for multiple test scenarios",
+    "Include error handling requirements"
+  ]
+}

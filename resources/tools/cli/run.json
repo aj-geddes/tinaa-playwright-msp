@@ -1,0 +1,89 @@
+{
+  "id": "test-runner",
+  "name": "Playwright Test Runner",
+  "description": "Run Playwright tests with various configurations",
+  "type": "cli",
+  "commands": {
+    "run": {
+      "description": "Execute Playwright tests",
+      "syntax": "playwright test [options] [test-files]",
+      "options": {
+        "--headed": "Run tests in headed mode",
+        "--debug": "Run tests in debug mode",
+        "--trace": "Record trace (on, off, on-first-retry, on-all-retries, retain-on-failure)",
+        "--project": "Run tests for specific project",
+        "--grep": "Run tests matching pattern",
+        "--grep-invert": "Run tests not matching pattern",
+        "--repeat-each": "Repeat each test N times",
+        "--retries": "Number of retries for failed tests",
+        "--workers": "Number of parallel workers",
+        "--reporter": "Test reporter (list, dot, line, json, junit, html)",
+        "--output": "Output directory for artifacts",
+        "--quiet": "Suppress stdio",
+        "--update-snapshots": "Update screenshots"
+      },
+      "examples": [
+        {
+          "command": "playwright test",
+          "description": "Run all tests"
+        },
+        {
+          "command": "playwright test --headed --debug",
+          "description": "Run tests in debug mode with visible browser"
+        },
+        {
+          "command": "playwright test --trace on --retries 2",
+          "description": "Run with trace recording and 2 retries"
+        },
+        {
+          "command": "playwright test --project=chromium --grep @smoke",
+          "description": "Run smoke tests on Chromium only"
+        },
+        {
+          "command": "playwright test --reporter=html --output=test-results",
+          "description": "Generate HTML report in test-results directory"
+        }
+      ]
+    },
+    "watch": {
+      "description": "Run tests in watch mode",
+      "syntax": "playwright test --ui",
+      "features": [
+        "Interactive test runner",
+        "Live test reload",
+        "Time travel debugging",
+        "Trace viewer integration"
+      ]
+    },
+    "show-report": {
+      "description": "Open HTML test report",
+      "syntax": "playwright show-report [report-folder]",
+      "default": "Opens report from playwright-report directory"
+    }
+  },
+  "config": {
+    "file": "playwright.config.ts",
+    "key_options": {
+      "testDir": "Directory containing test files",
+      "timeout": "Test timeout in milliseconds",
+      "expect": "Configure assertions",
+      "use": "Browser launch options",
+      "projects": "Multi-browser configurations",
+      "reporter": "Test reporting configuration",
+      "globalSetup": "Path to global setup file",
+      "globalTeardown": "Path to global teardown file"
+    }
+  },
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:ui": "playwright test --ui",
+    "test:chrome": "playwright test --project=chromium",
+    "test:firefox": "playwright test --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
+    "test:mobile": "playwright test --project='Mobile Chrome'",
+    "test:api": "playwright test api/",
+    "report": "playwright show-report"
+  }
+}

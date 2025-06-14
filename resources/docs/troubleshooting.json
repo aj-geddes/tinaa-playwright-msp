@@ -1,0 +1,539 @@
+{
+  "id": "playwright-troubleshooting",
+  "name": "Playwright Troubleshooting Guide",
+  "description": "Common issues and solutions when working with Playwright tests",
+  "sections": {
+    "installation_issues": {
+      "title": "Installation & Setup Issues",
+      "problems": [
+        {
+          "issue": "Playwright browsers fail to install",
+          "symptoms": [
+            "Error: Failed to install browsers",
+            "EACCES permission denied",
+            "Connection timeout during download"
+          ],
+          "solutions": [
+            {
+              "description": "Install browsers with sudo (Linux/Mac)",
+              "command": "sudo npx playwright install-deps"
+            },
+            {
+              "description": "Use custom browser path",
+              "code": [
+                "# Set custom download location",
+                "export PLAYWRIGHT_BROWSERS_PATH=/custom/path",
+                "npx playwright install"
+              ]
+            },
+            {
+              "description": "Install specific browser only",
+              "command": "npx playwright install chromium"
+            },
+            {
+              "description": "Skip browser download in CI",
+              "code": [
+                "# Use pre-installed browsers",
+                "export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Dependencies missing on Linux",
+          "symptoms": [
+            "error while loading shared libraries",
+            "libgbm.so.1: cannot open shared object file"
+          ],
+          "solutions": [
+            {
+              "description": "Install system dependencies",
+              "command": "npx playwright install-deps"
+            },
+            {
+              "description": "Manual dependency installation (Ubuntu)",
+              "command": "sudo apt-get install libwoff1 libopus0 libwebp6 libvpx6"
+            },
+            {
+              "description": "Use Docker image",
+              "code": [
+                "FROM mcr.microsoft.com/playwright:v1.40.0-jammy",
+                "# Your app setup"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "selector_issues": {
+      "title": "Selector & Element Issues",
+      "problems": [
+        {
+          "issue": "Element not found / Timeout waiting for selector",
+          "symptoms": [
+            "TimeoutError: Timeout 30000ms exceeded",
+            "waiting for locator('...')"
+          ],
+          "debugging": [
+            {
+              "description": "Debug selector in headed mode",
+              "code": [
+                "// Run with UI to see what's happening",
+                "npx playwright test --headed --debug",
+                "",
+                "// Or pause at the problematic point",
+                "await page.pause();"
+              ]
+            },
+            {
+              "description": "Check if element exists",
+              "code": [
+                "// Log element count",
+                "const count = await page.locator('.my-element').count();",
+                "console.log('Elements found:', count);",
+                "",
+                "// Wait for element explicitly",
+                "await page.waitForSelector('.my-element', {",
+                "  state: 'visible',",
+                "  timeout: 60000",
+                "});"
+              ]
+            },
+            {
+              "description": "Use Playwright Inspector",
+              "code": [
+                "// Set environment variable",
+                "PWDEBUG=1 npx playwright test",
+                "",
+                "// Or in code",
+                "await page.pause(); // Opens inspector"
+              ]
+            }
+          ],
+          "solutions": [
+            {
+              "description": "Make selector more specific",
+              "code": [
+                "// Instead of:",
+                "page.locator('button')",
+                "",
+                "// Use:",
+                "page.locator('button').filter({ hasText: 'Submit' })",
+                "// Or:",
+                "page.getByRole('button', { name: 'Submit' })"
+              ]
+            },
+            {
+              "description": "Wait for page to be ready",
+              "code": [
+                "// Wait for specific element that indicates page is loaded",
+                "await page.waitForSelector('.main-content', { state: 'visible' });",
+                "",
+                "// Or wait for network to be idle",
+                "await page.waitForLoadState('networkidle');"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Element is not visible/clickable",
+          "symptoms": [
+            "Element is outside of the viewport",
+            "Element is covered by another element",
+            "Element is not yet interactive"
+          ],
+          "solutions": [
+            {
+              "description": "Scroll element into view",
+              "code": [
+                "await page.locator('.my-element').scrollIntoViewIfNeeded();",
+                "await page.locator('.my-element').click();"
+              ]
+            },
+            {
+              "description": "Force click (use sparingly)",
+              "code": [
+                "// Only when you're sure the element should be clickable",
+                "await page.locator('.my-element').click({ force: true });"
+              ]
+            },
+            {
+              "description": "Wait for element to be stable",
+              "code": [
+                "// Wait for animations to complete",
+                "await page.locator('.my-element').waitFor({ state: 'stable' });",
+                "await page.locator('.my-element').click();"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "timing_issues": {
+      "title": "Timing & Synchronization Issues",
+      "problems": [
+        {
+          "issue": "Race conditions in tests",
+          "symptoms": [
+            "Tests pass locally but fail in CI",
+            "Intermittent failures",
+            "Different results on each run"
+          ],
+          "solutions": [
+            {
+              "description": "Wait for specific conditions",
+              "code": [
+                "// Wait for API response",
+                "const responsePromise = page.waitForResponse('/api/data');",
+                "await page.click('button#load-data');",
+                "await responsePromise;",
+                "",
+                "// Wait for multiple conditions",
+                "await Promise.all([",
+                "  page.waitForSelector('.loading', { state: 'hidden' }),",
+                "  page.waitForResponse('/api/data')",
+                "]);"
+              ]
+            },
+            {
+              "description": "Use expect with timeout",
+              "code": [
+                "// Playwright will retry until condition is met",
+                "await expect(page.locator('.status')).toHaveText('Complete', {",
+                "  timeout: 10000",
+                "});"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Animations causing flaky tests",
+          "symptoms": [
+            "Visual tests fail due to animation states",
+            "Click events miss due to moving elements"
+          ],
+          "solutions": [
+            {
+              "description": "Disable animations globally",
+              "code": [
+                "// In playwright.config.ts",
+                "export default defineConfig({",
+                "  use: {",
+                "    // Disable animations",
+                "    launchOptions: {",
+                "      args: ['--force-prefers-reduced-motion']",
+                "    }",
+                "  }",
+                "});"
+              ]
+            },
+            {
+              "description": "Disable animations per test",
+              "code": [
+                "await page.addStyleTag({",
+                "  content: `",
+                "    *, *::before, *::after {",
+                "      animation-duration: 0s !important;",
+                "      animation-delay: 0s !important;",
+                "      transition-duration: 0s !important;",
+                "      transition-delay: 0s !important;",
+                "    }",
+                "  `",
+                "});"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "browser_issues": {
+      "title": "Browser-Specific Issues",
+      "problems": [
+        {
+          "issue": "Tests fail in specific browser",
+          "symptoms": [
+            "Works in Chromium but fails in Firefox",
+            "WebKit-specific failures"
+          ],
+          "solutions": [
+            {
+              "description": "Skip browser-specific tests",
+              "code": [
+                "test('feature requiring Chrome', async ({ page, browserName }) => {",
+                "  test.skip(browserName !== 'chromium', 'Chrome only feature');",
+                "  // Test implementation",
+                "});"
+              ]
+            },
+            {
+              "description": "Use browser-specific logic",
+              "code": [
+                "test('cross-browser test', async ({ page, browserName }) => {",
+                "  if (browserName === 'webkit') {",
+                "    // Safari-specific workaround",
+                "    await page.waitForTimeout(100);",
+                "  }",
+                "  await page.click('button');",
+                "});"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Browser crashes or hangs",
+          "symptoms": [
+            "Browser has been closed",
+            "Page closed or crashed",
+            "Timeout waiting for browser"
+          ],
+          "solutions": [
+            {
+              "description": "Increase browser timeout",
+              "code": [
+                "const browser = await chromium.launch({",
+                "  timeout: 60000 // 60 seconds",
+                "});"
+              ]
+            },
+            {
+              "description": "Add browser args for stability",
+              "code": [
+                "export default defineConfig({",
+                "  use: {",
+                "    launchOptions: {",
+                "      args: [",
+                "        '--disable-dev-shm-usage',",
+                "        '--no-sandbox',",
+                "        '--disable-setuid-sandbox'",
+                "      ]",
+                "    }",
+                "  }",
+                "});"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "ci_issues": {
+      "title": "CI/CD Specific Issues",
+      "problems": [
+        {
+          "issue": "Tests timeout in CI but pass locally",
+          "symptoms": [
+            "Exceeded timeout of 30000ms",
+            "CI runners are slower"
+          ],
+          "solutions": [
+            {
+              "description": "Increase timeouts for CI",
+              "code": [
+                "export default defineConfig({",
+                "  timeout: process.env.CI ? 60000 : 30000,",
+                "  expect: {",
+                "    timeout: process.env.CI ? 10000 : 5000",
+                "  }",
+                "});"
+              ]
+            },
+            {
+              "description": "Use CI-specific configuration",
+              "code": [
+                "export default defineConfig({",
+                "  workers: process.env.CI ? 1 : undefined,",
+                "  retries: process.env.CI ? 2 : 0,",
+                "});"
+              ]
+            }
+          ]
+        },
+        {
+          "issue": "Screenshots/videos not captured in CI",
+          "symptoms": [
+            "No artifacts on failure",
+            "Missing test evidence"
+          ],
+          "solutions": [
+            {
+              "description": "Configure artifact collection",
+              "code": [
+                "// playwright.config.ts",
+                "export default defineConfig({",
+                "  use: {",
+                "    screenshot: 'only-on-failure',",
+                "    video: 'retain-on-failure',",
+                "    trace: 'on-first-retry'",
+                "  }",
+                "});",
+                "",
+                "// GitHub Actions",
+                "- uses: actions/upload-artifact@v3",
+                "  if: always()",
+                "  with:",
+                "    name: playwright-report",
+                "    path: playwright-report/"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "network_issues": {
+      "title": "Network & API Issues",
+      "problems": [
+        {
+          "issue": "API requests fail or timeout",
+          "symptoms": [
+            "net::ERR_CONNECTION_REFUSED",
+            "Request timed out",
+            "CORS errors in tests"
+          ],
+          "solutions": [
+            {
+              "description": "Mock API responses",
+              "code": [
+                "await page.route('**/api/users', route => {",
+                "  route.fulfill({",
+                "    status: 200,",
+                "    contentType: 'application/json',",
+                "    body: JSON.stringify([{ id: 1, name: 'Test User' }])",
+                "  });",
+                "});",
+                "",
+                "// Or abort requests",
+                "await page.route('**/analytics/**', route => route.abort());"
+              ]
+            },
+            {
+              "description": "Handle network errors gracefully",
+              "code": [
+                "// Retry on network failure",
+                "let retries = 3;",
+                "while (retries > 0) {",
+                "  try {",
+                "    await page.goto('https://example.com');",
+                "    break;",
+                "  } catch (error) {",
+                "    retries--;",
+                "    if (retries === 0) throw error;",
+                "    await page.waitForTimeout(1000);",
+                "  }",
+                "}"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "debugging_tools": {
+      "title": "Debugging Tools & Techniques",
+      "tools": [
+        {
+          "name": "Playwright Inspector",
+          "usage": [
+            "# Run with inspector",
+            "PWDEBUG=1 npx playwright test",
+            "",
+            "# Or in code",
+            "await page.pause();"
+          ]
+        },
+        {
+          "name": "Trace Viewer",
+          "usage": [
+            "# Record trace on failure",
+            "npx playwright test --trace on-first-retry",
+            "",
+            "# View trace",
+            "npx playwright show-trace trace.zip"
+          ]
+        },
+        {
+          "name": "Debug Console Logs",
+          "code": [
+            "page.on('console', msg => console.log('PAGE LOG:', msg.text()));",
+            "page.on('pageerror', err => console.log('PAGE ERROR:', err));"
+          ]
+        },
+        {
+          "name": "VS Code Extension",
+          "features": [
+            "Run tests from editor",
+            "Set breakpoints in tests",
+            "Live test debugging"
+          ]
+        }
+      ]
+    },
+    "performance_issues": {
+      "title": "Performance Issues",
+      "problems": [
+        {
+          "issue": "Tests run slowly",
+          "solutions": [
+            {
+              "description": "Run tests in parallel",
+              "code": [
+                "export default defineConfig({",
+                "  fullyParallel: true,",
+                "  workers: process.env.CI ? 2 : '50%'",
+                "});"
+              ]
+            },
+            {
+              "description": "Reuse context and pages",
+              "code": [
+                "test.describe('Suite', () => {",
+                "  let page;",
+                "  ",
+                "  test.beforeAll(async ({ browser }) => {",
+                "    page = await browser.newPage();",
+                "  });",
+                "  ",
+                "  test.afterAll(async () => {",
+                "    await page.close();",
+                "  });",
+                "  ",
+                "  test('test 1', async () => {",
+                "    // Use shared page",
+                "  });",
+                "});"
+              ]
+            },
+            {
+              "description": "Optimize selectors",
+              "code": [
+                "// Slow: searching entire DOM",
+                "await page.locator('div div div button').click();",
+                "",
+                "// Fast: specific selector",
+                "await page.locator('[data-testid=\"submit\"]').click();"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "common_errors": {
+    "title": "Common Error Messages",
+    "errors": [
+      {
+        "error": "net::ERR_CERT_AUTHORITY_INVALID",
+        "solution": "Use ignoreHTTPSErrors: true in config"
+      },
+      {
+        "error": "Protocol error (Page.navigate): Cannot navigate to invalid URL",
+        "solution": "Ensure URL includes protocol (http:// or https://)"
+      },
+      {
+        "error": "browser.newContext: Cookies should have a URL or a domain",
+        "solution": "Include domain when setting cookies"
+      },
+      {
+        "error": "locator.click: Execution context was destroyed",
+        "solution": "Page navigated during action, wait for navigation to complete"
+      }
+    ]
+  }
+}

@@ -1,0 +1,237 @@
+{
+  "name": "playwright-mcp-resources",
+  "version": "1.0.0",
+  "description": "Comprehensive Playwright testing resources for TINAA MCP server",
+  "framework": "gofastmcp.com v2.8.0",
+  "created": "2024-01-14",
+  "categories": {
+    "tools": {
+      "name": "Playwright Tools",
+      "description": "CLI tools, scaffolding, and automation utilities",
+      "resources": [
+        {
+          "id": "playwright-installer",
+          "path": "tools/cli/install.json",
+          "type": "cli-tool",
+          "description": "Playwright installation and setup tool"
+        },
+        {
+          "id": "test-runner",
+          "path": "tools/cli/test-runner.json",
+          "type": "cli-tool",
+          "description": "Advanced test runner with custom options"
+        },
+        {
+          "id": "pom-generator",
+          "path": "tools/scaffolding/pom-generator.json",
+          "type": "scaffolding",
+          "description": "Page Object Model generator with templates"
+        },
+        {
+          "id": "project-init",
+          "path": "tools/scaffolding/project-init.json",
+          "type": "scaffolding",
+          "description": "Initialize new Playwright projects"
+        },
+        {
+          "id": "ci-setup",
+          "path": "tools/ci/setup.json",
+          "type": "ci-tool",
+          "description": "CI/CD integration configurations"
+        },
+        {
+          "id": "percy-integration",
+          "path": "tools/visual-testing/percy.json",
+          "type": "visual-testing",
+          "description": "Percy visual testing integration"
+        },
+        {
+          "id": "screenshot-diff",
+          "path": "tools/visual-testing/screenshot-diff.json",
+          "type": "visual-testing",
+          "description": "Visual regression testing tool"
+        },
+        {
+          "id": "trace-viewer",
+          "path": "tools/trace/viewer.json",
+          "type": "debugging",
+          "description": "Trace recording and viewing utilities"
+        },
+        {
+          "id": "storage-state",
+          "path": "tools/state-management/storage-state.json",
+          "type": "state-management",
+          "description": "Authentication and storage state manager"
+        }
+      ]
+    },
+    "quickstarts": {
+      "name": "Quickstart Guides",
+      "description": "Get started quickly with different testing scenarios",
+      "resources": [
+        {
+          "id": "web-basic",
+          "path": "quickstarts/web/basic.json",
+          "type": "quickstart",
+          "description": "Basic web testing quickstart"
+        },
+        {
+          "id": "mobile-web",
+          "path": "quickstarts/mobile/mobile-web.json",
+          "type": "quickstart",
+          "description": "Mobile web testing with device emulation"
+        },
+        {
+          "id": "api-testing",
+          "path": "quickstarts/api/api-testing.json",
+          "type": "quickstart",
+          "description": "API testing with Playwright"
+        },
+        {
+          "id": "e2e-api-hybrid",
+          "path": "quickstarts/hybrid/e2e-api.json",
+          "type": "quickstart",
+          "description": "Hybrid E2E and API testing"
+        }
+      ]
+    },
+    "examples": {
+      "name": "Example Test Patterns",
+      "description": "Real-world test examples for common scenarios",
+      "resources": [
+        {
+          "id": "standard-login",
+          "path": "examples/login/standard-login.json",
+          "type": "example",
+          "description": "Login flow test patterns"
+        },
+        {
+          "id": "crud-forms",
+          "path": "examples/crud/form-testing.json",
+          "type": "example",
+          "description": "CRUD operations and form testing"
+        },
+        {
+          "id": "shopping-cart",
+          "path": "examples/shopping/cart-checkout.json",
+          "type": "example",
+          "description": "E-commerce cart and checkout testing"
+        },
+        {
+          "id": "analytics-dashboard",
+          "path": "examples/dashboard/analytics-dashboard.json",
+          "type": "example",
+          "description": "Dashboard and analytics testing"
+        }
+      ]
+    },
+    "documentation": {
+      "name": "Documentation",
+      "description": "Comprehensive guides and references",
+      "resources": [
+        {
+          "id": "best-practices",
+          "path": "docs/best-practices.json",
+          "type": "documentation",
+          "description": "Playwright testing best practices"
+        },
+        {
+          "id": "troubleshooting",
+          "path": "docs/troubleshooting.json",
+          "type": "documentation",
+          "description": "Common issues and solutions"
+        },
+        {
+          "id": "design-patterns",
+          "path": "docs/patterns.json",
+          "type": "documentation",
+          "description": "Test automation design patterns"
+        }
+      ]
+    },
+    "prompts": {
+      "name": "MCP Prompts",
+      "description": "AI prompts for test generation and optimization",
+      "resources": [
+        {
+          "id": "test-generator",
+          "path": "prompts/test-generator.json",
+          "type": "mcp-prompt",
+          "description": "Generate Playwright tests from requirements"
+        },
+        {
+          "id": "code-reviewer",
+          "path": "prompts/code-reviewer.json",
+          "type": "mcp-prompt",
+          "description": "Review and improve test code quality"
+        },
+        {
+          "id": "debug-assistant",
+          "path": "prompts/debug-assistant.json",
+          "type": "mcp-prompt",
+          "description": "Debug and troubleshoot test failures"
+        }
+      ]
+    }
+  },
+  "features": {
+    "core": [
+      "Cross-browser testing (Chromium, Firefox, WebKit)",
+      "Mobile device emulation",
+      "API testing capabilities",
+      "Visual regression testing",
+      "Parallel test execution",
+      "CI/CD integration"
+    ],
+    "advanced": [
+      "Page Object Model scaffolding",
+      "Authentication state management",
+      "Trace recording and analysis",
+      "Performance testing",
+      "Accessibility testing",
+      "Security testing patterns"
+    ],
+    "mcp_integration": [
+      "AI-powered test generation",
+      "Automated code review",
+      "Intelligent debugging assistance",
+      "Test optimization suggestions",
+      "Pattern recognition and enforcement"
+    ]
+  },
+  "requirements": {
+    "node": ">=14.0.0",
+    "playwright": ">=1.40.0",
+    "optional": {
+      "@axe-core/playwright": "Accessibility testing",
+      "@percy/playwright": "Visual testing",
+      "playwright-msw": "API mocking"
+    }
+  },
+  "usage": {
+    "installation": "npm install playwright @playwright/test",
+    "quick_start": "npx playwright init",
+    "run_tests": "npx playwright test",
+    "debug": "npx playwright test --debug",
+    "ui_mode": "npx playwright test --ui"
+  },
+  "support": {
+    "documentation": "https://playwright.dev",
+    "github": "https://github.com/microsoft/playwright",
+    "discord": "https://aka.ms/playwright-discord",
+    "stack_overflow": "https://stackoverflow.com/questions/tagged/playwright"
+  },
+  "metadata": {
+    "tags": [
+      "playwright",
+      "test-automation",
+      "e2e-testing",
+      "cross-browser",
+      "mcp-server",
+      "tinaa"
+    ],
+    "license": "MIT",
+    "maintainers": ["TINAA MCP Development Team"],
+    "last_updated": "2024-01-14"
+  }
+}

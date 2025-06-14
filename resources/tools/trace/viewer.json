@@ -1,0 +1,154 @@
+{
+  "id": "trace-viewer",
+  "name": "Playwright Trace Viewer Helper",
+  "description": "Tools for recording, viewing, and analyzing Playwright traces",
+  "type": "debugging",
+  "trace_recording": {
+    "options": {
+      "on": "Record trace for all tests",
+      "off": "Disable trace recording",
+      "on-first-retry": "Record trace only on first retry",
+      "on-all-retries": "Record trace on all retries",
+      "retain-on-failure": "Keep trace only for failed tests"
+    },
+    "configuration": {
+      "in_config": [
+        "export default defineConfig({",
+        "  use: {",
+        "    trace: 'on-first-retry',",
+        "  },",
+        "});"
+      ],
+      "in_test": [
+        "test('example', async ({ page, context }) => {",
+        "  await context.tracing.start({",
+        "    screenshots: true,",
+        "    snapshots: true,",
+        "    sources: true",
+        "  });",
+        "  ",
+        "  // Your test code here",
+        "  ",
+        "  await context.tracing.stop({",
+        "    path: 'trace.zip'",
+        "  });",
+        "});"
+      ],
+      "programmatic": [
+        "const browser = await chromium.launch();",
+        "const context = await browser.newContext();",
+        "",
+        "// Start tracing before creating a page",
+        "await context.tracing.start({",
+        "  screenshots: true,",
+        "  snapshots: true",
+        "});",
+        "",
+        "const page = await context.newPage();",
+        "// ... test actions ...",
+        "",
+        "// Stop tracing and save to a file",
+        "await context.tracing.stop({ path: 'trace.zip' });"
+      ]
+    }
+  },
+  "viewing_traces": {
+    "local": {
+      "command": "npx playwright show-trace trace.zip",
+      "description": "Opens trace in local viewer"
+    },
+    "online": {
+      "url": "https://trace.playwright.dev",
+      "description": "Drop trace.zip file to view online"
+    },
+    "ci_artifacts": {
+      "description": "View traces from CI artifacts",
+      "github_actions": [
+        "- uses: actions/upload-artifact@v3",
+        "  if: always()",
+        "  with:",
+        "    name: playwright-traces",
+        "    path: test-results/**/*.zip",
+        "    retention-days: 30"
+      ]
+    }
+  },
+  "trace_analysis": {
+    "features": [
+      "Timeline view with screenshots",
+      "Network activity inspection",
+      "Console logs and errors",
+      "DOM snapshots at each action",
+      "Source code location",
+      "Selector playground",
+      "Action duration metrics"
+    ],
+    "debugging_workflow": [
+      "Open failing test trace",
+      "Navigate to the failed action",
+      "Inspect DOM snapshot before failure",
+      "Check network requests",
+      "Review console errors",
+      "Verify selector accuracy",
+      "Examine action timing"
+    ]
+  },
+  "advanced_usage": {
+    "custom_annotations": {
+      "description": "Add custom information to traces",
+      "code": [
+        "test('annotated test', async ({ page }) => {",
+        "  // Add custom annotation",
+        "  await page.evaluate(() => {",
+        "    window.__playwright_annotation = {",
+        "      type: 'issue',",
+        "      description: 'Testing login flow'",
+        "    };",
+        "  });",
+        "  ",
+        "  // Your test code",
+        "});"
+      ]
+    },
+    "trace_segments": {
+      "description": "Record specific parts of a test",
+      "code": [
+        "test('segmented trace', async ({ context, page }) => {",
+        "  // Record only critical section",
+        "  await context.tracing.startChunk();",
+        "  ",
+        "  // Critical test actions",
+        "  await page.goto('/checkout');",
+        "  await page.fill('#card-number', '4242424242424242');",
+        "  ",
+        "  await context.tracing.stopChunk({ path: 'checkout-trace.zip' });",
+        "});"
+      ]
+    }
+  },
+  "cli_commands": {
+    "show": "playwright show-trace [trace.zip]",
+    "merge": "playwright merge-traces [dir] -o output.zip",
+    "screenshots": "playwright screenshot --wait-for-timeout=1000 [url]"
+  },
+  "troubleshooting": {
+    "large_traces": {
+      "issue": "Trace files are too large",
+      "solutions": [
+        "Disable screenshots in trace",
+        "Use 'retain-on-failure' mode",
+        "Record only specific test sections",
+        "Compress traces before uploading"
+      ]
+    },
+    "missing_traces": {
+      "issue": "Traces not generated",
+      "solutions": [
+        "Check trace configuration in playwright.config.ts",
+        "Ensure test-results directory exists",
+        "Verify artifact upload in CI",
+        "Check for test timeout issues"
+      ]
+    }
+  }
+}

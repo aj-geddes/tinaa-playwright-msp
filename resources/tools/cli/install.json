@@ -1,0 +1,41 @@
+{
+  "id": "playwright-installer",
+  "name": "Playwright Installer Tool",
+  "description": "Install and configure Playwright with specified browsers",
+  "type": "cli",
+  "commands": {
+    "install": {
+      "description": "Install Playwright with browsers",
+      "syntax": "playwright install [options]",
+      "options": {
+        "--with-deps": "Install system dependencies",
+        "--browsers": "Specify browsers (chromium, firefox, webkit)",
+        "--force": "Force reinstall even if already installed"
+      },
+      "examples": [
+        {
+          "command": "playwright install --with-deps",
+          "description": "Install all browsers with system dependencies"
+        },
+        {
+          "command": "playwright install chromium firefox",
+          "description": "Install only Chromium and Firefox"
+        }
+      ]
+    },
+    "check": {
+      "description": "Check Playwright installation status",
+      "syntax": "playwright --version",
+      "output": "Displays installed Playwright and browser versions"
+    }
+  },
+  "scripts": {
+    "setup": "npx playwright install --with-deps",
+    "verify": "npx playwright --version && npx playwright show-browsers"
+  },
+  "requirements": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0",
+    "disk_space": "2GB minimum for all browsers"
+  }
+}

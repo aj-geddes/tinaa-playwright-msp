@@ -1,0 +1,150 @@
+{
+  "id": "web-basic",
+  "name": "Basic Web Testing Quickstart",
+  "description": "Get started with Playwright web testing in 5 minutes",
+  "prerequisites": [
+    "Node.js 14+ installed",
+    "Basic JavaScript/TypeScript knowledge",
+    "Text editor or IDE"
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "title": "Create a new project",
+      "commands": [
+        "mkdir my-playwright-tests",
+        "cd my-playwright-tests",
+        "npm init -y"
+      ]
+    },
+    {
+      "step": 2,
+      "title": "Install Playwright",
+      "commands": [
+        "npm init playwright@latest"
+      ],
+      "notes": "Follow the prompts to set up TypeScript, test folder, GitHub Actions, and install browsers"
+    },
+    {
+      "step": 3,
+      "title": "Create your first test",
+      "file": "tests/example.spec.ts",
+      "code": [
+        "import { test, expect } from '@playwright/test';",
+        "",
+        "test('has title', async ({ page }) => {",
+        "  await page.goto('https://playwright.dev/');",
+        "  await expect(page).toHaveTitle(/Playwright/);",
+        "});",
+        "",
+        "test('get started link', async ({ page }) => {",
+        "  await page.goto('https://playwright.dev/');",
+        "  ",
+        "  // Click the get started link",
+        "  await page.getByRole('link', { name: 'Get started' }).click();",
+        "  ",
+        "  // Expects page to have a heading with the name of Installation",
+        "  await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();",
+        "});"
+      ]
+    },
+    {
+      "step": 4,
+      "title": "Run your tests",
+      "commands": [
+        "npx playwright test"
+      ],
+      "expected_output": "Running 2 tests using 2 workers..."
+    },
+    {
+      "step": 5,
+      "title": "View the test report",
+      "commands": [
+        "npx playwright show-report"
+      ],
+      "notes": "Opens an HTML report showing test results with screenshots and traces"
+    }
+  ],
+  "next_steps": {
+    "debug_mode": {
+      "title": "Debug your tests",
+      "command": "npx playwright test --debug",
+      "description": "Run tests with Playwright Inspector"
+    },
+    "ui_mode": {
+      "title": "Use UI Mode",
+      "command": "npx playwright test --ui",
+      "description": "Interactive test runner with time travel debugging"
+    },
+    "specific_test": {
+      "title": "Run a specific test",
+      "command": "npx playwright test example.spec.ts:5",
+      "description": "Run test at specific line number"
+    }
+  },
+  "common_patterns": {
+    "page_navigation": [
+      "// Navigate to a URL",
+      "await page.goto('https://example.com');",
+      "",
+      "// Wait for navigation",
+      "await page.waitForURL('**/success');",
+      "",
+      "// Go back/forward",
+      "await page.goBack();",
+      "await page.goForward();"
+    ],
+    "element_interaction": [
+      "// Click elements",
+      "await page.click('button');",
+      "await page.getByRole('button', { name: 'Submit' }).click();",
+      "",
+      "// Type text",
+      "await page.fill('#username', 'john.doe');",
+      "await page.getByLabel('Email').fill('john@example.com');",
+      "",
+      "// Select options",
+      "await page.selectOption('select#colors', 'blue');",
+      "",
+      "// Check/uncheck",
+      "await page.check('#agree');",
+      "await page.uncheck('#subscribe');"
+    ],
+    "assertions": [
+      "// Text content",
+      "await expect(page.locator('.message')).toHaveText('Success');",
+      "await expect(page.locator('.message')).toContainText('Success');",
+      "",
+      "// Visibility",
+      "await expect(page.locator('.spinner')).toBeVisible();",
+      "await expect(page.locator('.spinner')).toBeHidden();",
+      "",
+      "// Element state",
+      "await expect(page.locator('button')).toBeEnabled();",
+      "await expect(page.locator('input')).toBeDisabled();",
+      "",
+      "// Element count",
+      "await expect(page.locator('li')).toHaveCount(5);"
+    ],
+    "waiting": [
+      "// Wait for element",
+      "await page.waitForSelector('.loaded');",
+      "",
+      "// Wait for load state",
+      "await page.waitForLoadState('networkidle');",
+      "",
+      "// Wait for function",
+      "await page.waitForFunction(() => document.querySelector('.counter').textContent === '10');",
+      "",
+      "// Wait with timeout",
+      "await page.waitForSelector('.slow-element', { timeout: 30000 });"
+    ]
+  },
+  "tips": [
+    "Use getByRole() for better accessibility and maintainability",
+    "Avoid hard-coded waits, use Playwright's auto-waiting",
+    "Use page.pause() to debug specific points in your test",
+    "Enable trace on first retry for easier debugging",
+    "Use test.describe() to group related tests"
+  ]
+}

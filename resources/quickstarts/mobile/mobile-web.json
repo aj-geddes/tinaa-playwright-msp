@@ -1,0 +1,210 @@
+{
+  "id": "mobile-web",
+  "name": "Mobile Web Testing Quickstart",
+  "description": "Test mobile web applications with device emulation",
+  "prerequisites": [
+    "Playwright installed",
+    "Basic understanding of responsive design",
+    "Mobile device specifications knowledge"
+  ],
+  "concepts": {
+    "device_emulation": "Simulate mobile devices including viewport, user agent, and touch",
+    "responsive_testing": "Test across different screen sizes and orientations",
+    "mobile_gestures": "Touch, swipe, and pinch interactions"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "title": "Configure mobile devices",
+      "file": "playwright.config.ts",
+      "code": [
+        "import { defineConfig, devices } from '@playwright/test';",
+        "",
+        "export default defineConfig({",
+        "  projects: [",
+        "    {",
+        "      name: 'Mobile Chrome',",
+        "      use: { ...devices['Pixel 5'] },",
+        "    },",
+        "    {",
+        "      name: 'Mobile Safari',",
+        "      use: { ...devices['iPhone 12'] },",
+        "    },",
+        "    {",
+        "      name: 'Tablet',",
+        "      use: { ...devices['iPad Pro'] },",
+        "    },",
+        "  ],",
+        "});"
+      ]
+    },
+    {
+      "step": 2,
+      "title": "Write mobile-specific tests",
+      "file": "tests/mobile.spec.ts",
+      "code": [
+        "import { test, expect } from '@playwright/test';",
+        "",
+        "test.describe('Mobile Menu', () => {",
+        "  test('hamburger menu works', async ({ page, isMobile }) => {",
+        "    await page.goto('https://example.com');",
+        "    ",
+        "    if (isMobile) {",
+        "      // Mobile-specific interactions",
+        "      await page.getByLabel('Menu').tap();",
+        "      await expect(page.getByRole('navigation')).toBeVisible();",
+        "    } else {",
+        "      // Desktop navigation should be visible",
+        "      await expect(page.getByRole('navigation')).toBeVisible();",
+        "    }",
+        "  });",
+        "});"
+      ]
+    },
+    {
+      "step": 3,
+      "title": "Test touch gestures",
+      "file": "tests/gestures.spec.ts",
+      "code": [
+        "test('swipe gallery', async ({ page }) => {",
+        "  await page.goto('/gallery');",
+        "  ",
+        "  const gallery = page.locator('.image-gallery');",
+        "  ",
+        "  // Swipe left",
+        "  await gallery.dragTo(gallery, {",
+        "    sourcePosition: { x: 300, y: 150 },",
+        "    targetPosition: { x: 50, y: 150 }",
+        "  });",
+        "  ",
+        "  // Verify next image is shown",
+        "  await expect(page.locator('.current-image')).toHaveAttribute('data-index', '2');",
+        "});",
+        "",
+        "test('pinch to zoom', async ({ page, context }) => {",
+        "  // Enable touch events",
+        "  await context.addInitScript(() => {",
+        "    document.addEventListener('touchstart', () => {}, { passive: false });",
+        "  });",
+        "  ",
+        "  await page.goto('/map');",
+        "  // Pinch zoom simulation requires custom implementation",
+        "});"
+      ]
+    },
+    {
+      "step": 4,
+      "title": "Test viewport changes",
+      "file": "tests/responsive.spec.ts",
+      "code": [
+        "test('responsive layout', async ({ page }) => {",
+        "  // Test portrait mode",
+        "  await page.setViewportSize({ width: 375, height: 667 });",
+        "  await page.goto('/');",
+        "  await expect(page.locator('.mobile-layout')).toBeVisible();",
+        "  ",
+        "  // Test landscape mode",
+        "  await page.setViewportSize({ width: 667, height: 375 });",
+        "  await expect(page.locator('.tablet-layout')).toBeVisible();",
+        "  ",
+        "  // Test desktop",
+        "  await page.setViewportSize({ width: 1920, height: 1080 });",
+        "  await expect(page.locator('.desktop-layout')).toBeVisible();",
+        "});"
+      ]
+    },
+    {
+      "step": 5,
+      "title": "Run mobile tests",
+      "commands": [
+        "# Run all mobile tests",
+        "npx playwright test --project='Mobile Chrome'",
+        "",
+        "# Run specific device tests",
+        "npx playwright test --project='iPhone 12'",
+        "",
+        "# Run all projects",
+        "npx playwright test"
+      ]
+    }
+  ],
+  "device_emulation": {
+    "custom_device": {
+      "description": "Define custom device properties",
+      "code": [
+        "const customDevice = {",
+        "  viewport: { width: 390, height: 844 },",
+        "  userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X)',",
+        "  deviceScaleFactor: 3,",
+        "  isMobile: true,",
+        "  hasTouch: true,",
+        "};",
+        "",
+        "test.use(customDevice);"
+      ]
+    },
+    "geolocation": {
+      "description": "Test with location services",
+      "code": [
+        "test.use({",
+        "  geolocation: { longitude: 12.492507, latitude: 41.889938 },",
+        "  permissions: ['geolocation'],",
+        "});",
+        "",
+        "test('location-based features', async ({ page }) => {",
+        "  await page.goto('/store-locator');",
+        "  await page.getByRole('button', { name: 'Use my location' }).click();",
+        "  await expect(page.locator('.nearest-store')).toContainText('Rome');",
+        "});"
+      ]
+    }
+  },
+  "mobile_specific_features": {
+    "network_conditions": [
+      "// Simulate slow 3G",
+      "await page.route('**/*', route => {",
+      "  setTimeout(() => route.continue(), 3000);",
+      "});",
+      "",
+      "// Test offline mode",
+      "await context.setOffline(true);",
+      "await page.goto('/offline-page');",
+      "await expect(page.locator('.offline-message')).toBeVisible();"
+    ],
+    "device_orientation": [
+      "// Test orientation change",
+      "await page.evaluate(() => {",
+      "  window.dispatchEvent(new Event('orientationchange'));",
+      "});",
+      "",
+      "// Or use viewport",
+      "await page.setViewportSize({ width: 844, height: 390 }); // Landscape"
+    ],
+    "touch_events": [
+      "// Long press",
+      "await page.locator('.item').tap({ modifiers: ['Shift'] });",
+      "",
+      "// Double tap",
+      "await page.locator('.zoomable').dblclick();",
+      "",
+      "// Tap at specific position",
+      "await page.locator('.canvas').tap({ position: { x: 100, y: 200 } });"
+    ]
+  },
+  "best_practices": [
+    "Test on real device sizes from analytics data",
+    "Include both portrait and landscape orientations",
+    "Test touch interactions and gestures",
+    "Verify responsive images and lazy loading",
+    "Test with various network speeds",
+    "Check font sizes and touch target sizes",
+    "Validate mobile-specific features (GPS, camera)",
+    "Test with and without JavaScript enabled"
+  ],
+  "common_issues": {
+    "viewport_vs_device": "Use devices for complete mobile emulation",
+    "hover_states": "Mobile devices don't have hover - test alternatives",
+    "fixed_positioning": "Test fixed headers/footers on scroll",
+    "input_types": "Verify correct keyboard types for inputs"
+  }
+}

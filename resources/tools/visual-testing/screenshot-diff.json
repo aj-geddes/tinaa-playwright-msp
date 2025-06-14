@@ -1,0 +1,163 @@
+{
+  "id": "visual-diff-tool",
+  "name": "Visual Regression Testing Tool",
+  "description": "Capture and compare screenshots for visual regression testing",
+  "type": "visual-testing",
+  "approaches": {
+    "native_playwright": {
+      "name": "Native Playwright Screenshots",
+      "description": "Built-in screenshot comparison",
+      "usage": {
+        "capture": "await expect(page).toHaveScreenshot('name.png');",
+        "options": {
+          "fullPage": "Capture entire page",
+          "clip": "Capture specific region",
+          "mask": "Mask dynamic elements",
+          "maxDiffPixels": "Allowed pixel difference",
+          "maxDiffPixelRatio": "Allowed percentage difference",
+          "threshold": "Pixel comparison threshold (0-1)",
+          "animations": "disabled|allow",
+          "caret": "hide|initial"
+        }
+      },
+      "configuration": {
+        "playwright.config.ts": [
+          "export default defineConfig({",
+          "  use: {",
+          "    // Screenshot options",
+          "    screenshot: {",
+          "      mode: 'only-on-failure',",
+          "      fullPage: true",
+          "    },",
+          "    // Visual comparison options",
+          "    ignoreHTTPSErrors: true,",
+          "    video: 'retain-on-failure',",
+          "  },",
+          "  expect: {",
+          "    // Threshold for image comparison",
+          "    toHaveScreenshot: {",
+          "      threshold: 0.2,",
+          "      maxDiffPixels: 100,",
+          "      animations: 'disabled',",
+          "    },",
+          "  },",
+          "});"
+        ]
+      },
+      "update_snapshots": "npx playwright test --update-snapshots"
+    },
+    "percy_integration": {
+      "name": "Percy Visual Testing",
+      "description": "Advanced visual testing with Percy",
+      "setup": {
+        "install": "npm install --save-dev @percy/cli @percy/playwright",
+        "token": "export PERCY_TOKEN=your_token_here"
+      },
+      "usage": {
+        "basic": [
+          "import { percySnapshot } from '@percy/playwright';",
+          "",
+          "test('visual test', async ({ page }) => {",
+          "  await page.goto('/');",
+          "  await percySnapshot(page, 'Homepage');",
+          "});"
+        ],
+        "advanced": [
+          "await percySnapshot(page, 'Dashboard', {",
+          "  widths: [375, 768, 1280],",
+          "  minHeight: 1024,",
+          "  percyCSS: '.dynamic-content { visibility: hidden; }',",
+          "  enableJavaScript: true,",
+          "});"
+        ]
+      },
+      "cli_commands": {
+        "run": "percy exec -- npx playwright test",
+        "review": "Visit Percy dashboard for visual review"
+      }
+    }
+  },
+  "masking_strategies": {
+    "dynamic_content": {
+      "description": "Hide dynamic content that changes between runs",
+      "examples": [
+        {
+          "name": "Mask timestamps",
+          "code": "await page.locator('.timestamp').evaluate(el => el.textContent = 'TIMESTAMP');"
+        },
+        {
+          "name": "Mask using screenshot option",
+          "code": [
+            "await expect(page).toHaveScreenshot('page.png', {",
+            "  mask: [page.locator('.dynamic-ad')],",
+            "});"
+          ]
+        },
+        {
+          "name": "Hide animations",
+          "code": [
+            "await page.addStyleTag({",
+            "  content: `",
+            "    *, *::before, *::after {",
+            "      animation-duration: 0s !important;",
+            "      animation-delay: 0s !important;",
+            "      transition-duration: 0s !important;",
+            "      transition-delay: 0s !important;",
+            "    }",
+            "  `",
+            "});"
+          ]
+        }
+      ]
+    }
+  },
+  "comparison_helpers": {
+    "custom_comparator": {
+      "description": "Custom image comparison logic",
+      "code": [
+        "import { PNG } from 'pngjs';",
+        "import pixelmatch from 'pixelmatch';",
+        "",
+        "async function compareScreenshots(actual: Buffer, expected: Buffer) {",
+        "  const actualPNG = PNG.sync.read(actual);",
+        "  const expectedPNG = PNG.sync.read(expected);",
+        "  ",
+        "  const { width, height } = actualPNG;",
+        "  const diff = new PNG({ width, height });",
+        "  ",
+        "  const numDiffPixels = pixelmatch(",
+        "    actualPNG.data,",
+        "    expectedPNG.data,",
+        "    diff.data,",
+        "    width,",
+        "    height,",
+        "    { threshold: 0.1 }",
+        "  );",
+        "  ",
+        "  return {",
+        "    diffPixels: numDiffPixels,",
+        "    diffRatio: numDiffPixels / (width * height),",
+        "    diffImage: PNG.sync.write(diff)",
+        "  };",
+        "}"
+      ]
+    }
+  },
+  "best_practices": [
+    "Use consistent viewport sizes across tests",
+    "Disable animations and transitions",
+    "Mask or hide dynamic content",
+    "Use appropriate thresholds for comparison",
+    "Store baseline images in version control",
+    "Review visual changes in pull requests",
+    "Use Percy or similar service for team collaboration",
+    "Test across multiple browsers and devices",
+    "Implement retry logic for flaky visual tests"
+  ],
+  "troubleshooting": {
+    "font_differences": "Ensure consistent fonts across environments",
+    "antialiasing": "Use higher threshold for text-heavy pages",
+    "dynamic_content": "Mask or wait for content to stabilize",
+    "ci_differences": "Use Docker for consistent rendering"
+  }
+}
