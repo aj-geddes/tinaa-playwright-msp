@@ -1,0 +1,312 @@
+# Release Automation Workflow
+#
+# This workflow automates the release process including:
+# - Building and testing
+# - Creating GitHub releases
+# - Publishing Docker images
+# - Generating changelogs
+# - Publishing to PyPI (if configured)
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.2.3)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Mark as pre-release'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Job 1: Validate and prepare release
+  prepare:
+    name: Prepare Release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      version_without_v: ${{ steps.version.outputs.version_without_v }}
+      is_prerelease: ${{ steps.check.outputs.is_prerelease }}
+      changelog: ${{ steps.changelog.outputs.changelog }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION="${{ github.ref_name }}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version_without_v=${VERSION#v}" >> $GITHUB_OUTPUT
+          
+      - name: Check if pre-release
+        id: check
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if [[ "$VERSION" =~ -(alpha|beta|rc|pre) ]] || [ "${{ inputs.prerelease }}" = "true" ]; then
+            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_prerelease=false" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get the previous tag
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          
+          if [ -z "$PREVIOUS_TAG" ]; then
+            echo "No previous tag found, including all commits"
+            PREVIOUS_TAG=$(git rev-list --max-parents=0 HEAD)
+          fi
+          
+          # Generate changelog
+          CHANGELOG=$(cat << 'EOF'
+          ## What's Changed
+          
+          ### Features
+          $(git log $PREVIOUS_TAG..HEAD --pretty=format:"* %s (%h)" --grep="^feat:" | sed 's/^feat: //')
+          
+          ### Bug Fixes
+          $(git log $PREVIOUS_TAG..HEAD --pretty=format:"* %s (%h)" --grep="^fix:" | sed 's/^fix: //')
+          
+          ### Documentation
+          $(git log $PREVIOUS_TAG..HEAD --pretty=format:"* %s (%h)" --grep="^docs:" | sed 's/^docs: //')
+          
+          ### Other Changes
+          $(git log $PREVIOUS_TAG..HEAD --pretty=format:"* %s (%h)" --grep -v "^feat:\|^fix:\|^docs:" | head -20)
+          
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREVIOUS_TAG...${{ steps.version.outputs.version }}
+          EOF
+          )
+          
+          # Escape for JSON
+          CHANGELOG="${CHANGELOG//'%'/'%25'}"
+          CHANGELOG="${CHANGELOG//$'\n'/'%0A'}"
+          CHANGELOG="${CHANGELOG//$'\r'/'%0D'}"
+          
+          echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
+
+  # Job 2: Run tests
+  test:
+    name: Test Release
+    needs: prepare
+    uses: ./.github/workflows/ci.yml
+    with:
+      skip_tests: false
+    secrets: inherit
+
+  # Job 3: Build and publish Docker images
+  docker:
+    name: Build and Push Docker Images
+    needs: [prepare, test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ secrets.DOCKER_USERNAME }}/tinaa-playwright-msp
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}},value=${{ needs.prepare.outputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ needs.prepare.outputs.version }}
+            type=semver,pattern={{major}},value=${{ needs.prepare.outputs.version }}
+            type=raw,value=latest,enable=${{ needs.prepare.outputs.is_prerelease == 'false' }}
+            
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            VERSION=${{ needs.prepare.outputs.version }}
+            BUILD_DATE=${{ github.event.repository.updated_at }}
+            VCS_REF=${{ github.sha }}
+
+  # Job 4: Build Python package
+  python-package:
+    name: Build Python Package
+    needs: [prepare, test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+          
+      - name: Update version in setup.py
+        run: |
+          sed -i "s/version=\".*\"/version=\"${{ needs.prepare.outputs.version_without_v }}\"/" setup.py
+          
+      - name: Build package
+        run: |
+          python -m build
+          
+      - name: Check package
+        run: |
+          twine check dist/*
+          
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package
+          path: dist/
+          
+  # Job 5: Create GitHub Release
+  github-release:
+    name: Create GitHub Release
+    needs: [prepare, test, docker, python-package]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Download Python package
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package
+          path: dist/
+          
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.prepare.outputs.version }}
+          name: TINAA ${{ needs.prepare.outputs.version }}
+          body: |
+            # TINAA ${{ needs.prepare.outputs.version }}
+            
+            ${{ needs.prepare.outputs.changelog }}
+            
+            ## Installation
+            
+            ### Docker
+            ```bash
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.prepare.outputs.version }}
+            ```
+            
+            ### PyPI
+            ```bash
+            pip install tinaa-playwright-msp==${{ needs.prepare.outputs.version_without_v }}
+            ```
+            
+            ## Docker Images
+            
+            - `${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.prepare.outputs.version }}`
+            - `${{ secrets.DOCKER_USERNAME }}/tinaa-playwright-msp:${{ needs.prepare.outputs.version }}`
+            
+          draft: false
+          prerelease: ${{ needs.prepare.outputs.is_prerelease == 'true' }}
+          files: |
+            dist/*
+            
+  # Job 6: Publish to PyPI (optional)
+  pypi-publish:
+    name: Publish to PyPI
+    needs: [prepare, github-release]
+    runs-on: ubuntu-latest
+    if: needs.prepare.outputs.is_prerelease == 'false'
+    environment:
+      name: pypi
+      url: https://pypi.org/p/tinaa-playwright-msp
+    permissions:
+      id-token: write
+    steps:
+      - name: Download Python package
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package
+          path: dist/
+          
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true
+          
+  # Job 7: Update documentation
+  update-docs:
+    name: Update Documentation
+    needs: [prepare, github-release]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          
+      - name: Update version in docs
+        run: |
+          # Update version references in documentation
+          find . -name "*.md" -type f -exec sed -i "s/tinaa-playwright-msp:[0-9]\+\.[0-9]\+\.[0-9]\+/tinaa-playwright-msp:${{ needs.prepare.outputs.version_without_v }}/g" {} +
+          find . -name "*.md" -type f -exec sed -i "s/version [0-9]\+\.[0-9]\+\.[0-9]\+/version ${{ needs.prepare.outputs.version_without_v }}/g" {} +
+          
+      - name: Create PR for documentation updates
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "docs: update version to ${{ needs.prepare.outputs.version }}"
+          title: "docs: update documentation for ${{ needs.prepare.outputs.version }}"
+          body: |
+            This PR updates the documentation to reference version ${{ needs.prepare.outputs.version }}.
+            
+            Auto-generated by the release workflow.
+          branch: docs/update-version-${{ needs.prepare.outputs.version }}
+          delete-branch: true
