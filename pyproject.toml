@@ -2,7 +2,7 @@
 name = "tinaa-playwright-msp"
 version = "0.1.0"
 description = "Test Intelligence and Automation Advanced - MSP Integration with Playwright LSP"
-authors = ["Your Name <you@example.com>"]
+authors = ["TINAA Team"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
