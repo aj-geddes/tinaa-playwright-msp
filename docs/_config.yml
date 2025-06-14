@@ -1,0 +1,24 @@
+# GitHub Pages configuration for MkDocs site
+# This file helps GitHub Pages understand the site structure
+
+# Theme configuration (for GitHub Pages fallback)
+theme: jekyll-theme-minimal
+
+# Exclude files from GitHub Pages processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - requirements*.txt
+  - mkdocs.yml
+  - "*.py"
+  - "*.sh"
+
+# Plugins (GitHub Pages safe)
+plugins:
+  - jekyll-redirect-from
+  - jekyll-sitemap
