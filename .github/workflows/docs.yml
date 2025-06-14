@@ -1,0 +1,281 @@
+# Documentation Generation and Publishing
+#
+# This workflow automatically generates and publishes documentation
+# using Sphinx and deploys to GitHub Pages
+
+name: Documentation
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - '**.py'
+      - '**.rst'
+      - '**.md'
+      - '.github/workflows/docs.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - '**.py'
+      - '**.rst'
+      - '**.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Job 1: Build documentation
+  build-docs:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for git info
+          
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r docs/requirements-docs.txt || pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints myst-parser sphinx-copybutton
+          
+      - name: Create docs structure
+        run: |
+          mkdir -p docs/source/{_static,_templates,api,guides,examples}
+          
+          # Create conf.py if it doesn't exist
+          if [ ! -f docs/source/conf.py ]; then
+            cat > docs/source/conf.py << 'EOF'
+          # Configuration file for the Sphinx documentation builder.
+          import os
+          import sys
+          sys.path.insert(0, os.path.abspath('../..'))
+          
+          project = 'TINAA'
+          copyright = '2024, TINAA Contributors'
+          author = 'TINAA Contributors'
+          release = '1.0.0'
+          
+          extensions = [
+              'sphinx.ext.autodoc',
+              'sphinx.ext.napoleon',
+              'sphinx.ext.viewcode',
+              'sphinx.ext.intersphinx',
+              'sphinx_autodoc_typehints',
+              'myst_parser',
+              'sphinx_copybutton',
+          ]
+          
+          templates_path = ['_templates']
+          exclude_patterns = []
+          
+          html_theme = 'sphinx_rtd_theme'
+          html_static_path = ['_static']
+          html_theme_options = {
+              'navigation_depth': 4,
+              'collapse_navigation': False,
+              'sticky_navigation': True,
+              'includehidden': True,
+              'titles_only': False
+          }
+          
+          # Napoleon settings
+          napoleon_google_docstring = True
+          napoleon_numpy_docstring = True
+          napoleon_include_init_with_doc = True
+          
+          # MyST settings
+          myst_enable_extensions = [
+              "deflist",
+              "tasklist",
+              "html_image",
+          ]
+          
+          # Intersphinx
+          intersphinx_mapping = {
+              'python': ('https://docs.python.org/3', None),
+              'playwright': ('https://playwright.dev/python/', None),
+          }
+          EOF
+          fi
+          
+          # Create index.rst if it doesn't exist
+          if [ ! -f docs/source/index.rst ]; then
+            cat > docs/source/index.rst << 'EOF'
+          Welcome to TINAA Documentation
+          ==============================
+          
+          .. toctree::
+             :maxdepth: 2
+             :caption: Contents:
+          
+             installation
+             quickstart
+             api/index
+             guides/index
+             examples/index
+          
+          Indices and tables
+          ==================
+          
+          * :ref:`genindex`
+          * :ref:`modindex`
+          * :ref:`search`
+          EOF
+          fi
+          
+      - name: Generate API documentation
+        run: |
+          cd docs
+          sphinx-apidoc -o source/api -f -e -M ../app ../app/tests
+          sphinx-apidoc -o source/api -f -e -M ../playwright_controller
+          sphinx-apidoc -o source/api -f -e -M ../tools
+          
+      - name: Create additional documentation
+        run: |
+          # Convert README to RST for inclusion
+          pip install pypandoc
+          python -c "
+          try:
+              import pypandoc
+              output = pypandoc.convert_file('../README.md', 'rst')
+              with open('source/readme.rst', 'w') as f:
+                  f.write(output)
+          except:
+              pass
+          " || true
+          
+      - name: Build HTML documentation
+        run: |
+          cd docs
+          make clean
+          make html
+          
+      - name: Check for build warnings
+        run: |
+          cd docs
+          if grep -q "WARNING" _build/html/build.log 2>/dev/null; then
+            echo "Documentation build completed with warnings:"
+            grep "WARNING" _build/html/build.log || true
+          fi
+          
+      - name: Upload documentation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation-html
+          path: docs/_build/html/
+          retention-days: 30
+          
+      - name: Setup Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/configure-pages@v4
+        
+      - name: Upload to GitHub Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/_build/html/
+
+  # Job 2: Deploy to GitHub Pages
+  deploy-docs:
+    name: Deploy Documentation
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build-docs
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # Job 3: Build PDF documentation (optional)
+  build-pdf:
+    name: Build PDF Documentation
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    continue-on-error: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          
+      - name: Install LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            texlive-latex-recommended \
+            texlive-fonts-recommended \
+            texlive-latex-extra \
+            latexmk
+            
+      - name: Install Python dependencies
+        run: |
+          pip install sphinx sphinx-rtd-theme
+          
+      - name: Build PDF
+        run: |
+          cd docs
+          make latexpdf || echo "PDF build failed"
+          
+      - name: Upload PDF
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation-pdf
+          path: docs/_build/latex/*.pdf
+          retention-days: 30
+
+  # Job 4: Check documentation links
+  check-links:
+    name: Check Documentation Links
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Link Checker
+        uses: lycheeverse/lychee-action@v1
+        with:
+          fail: false
+          args: >-
+            --verbose
+            --no-progress
+            --accept 200,204,206
+            --timeout 20
+            --max-retries 3
+            --exclude-all-private
+            --exclude "^https://github.com/.*/pull/"
+            --exclude "^https://github.com/.*/issues/"
+            docs/
+            *.md
+            
+      - name: Upload link check results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: link-check-results
+          path: lychee-out.md
+          retention-days: 7
