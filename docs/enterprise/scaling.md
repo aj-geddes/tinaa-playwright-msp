@@ -28,7 +28,7 @@ spec:
 
 Recommended specifications by workload:
 - **Small** (< 100 tests/day): 2 CPU, 4GB RAM
-- **Medium** (100-1000 tests/day): 4 CPU, 8GB RAM  
+- **Medium** (100-1000 tests/day): 4 CPU, 8GB RAM
 - **Large** (> 1000 tests/day): 8+ CPU, 16GB+ RAM
 
 ## Performance Optimization

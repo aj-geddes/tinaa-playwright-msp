@@ -22,36 +22,36 @@ flowchart TD
         IDE[IDE/Editor]
         API[REST Client]
     end
-    
+
     subgraph Server["Server Layer"]
         MCP[MCP Server<br/>app/main.py]
         HTTP[HTTP Server<br/>app/http_server.py]
         LSP[LSP Server<br/>playwright_lsp/server.py]
     end
-    
+
     subgraph Core["Core Components"]
         PC[Playwright Controller<br/>playwright_controller/controller.py]
         PT[Progress Tracker<br/>app/progress_tracker.py]
         RL[Resource Loader<br/>app/resource_loader.py]
     end
-    
+
     subgraph Browser["Browser Layer"]
         PW[Playwright Engine]
         Chrome[Chromium Browser]
     end
-    
+
     Claude -.->|stdio| MCP
     IDE -.->|TCP/stdio| LSP
     API -.->|HTTP/WS| HTTP
-    
+
     MCP -.-> PC
     HTTP -.-> PC
     LSP -.-> PC
-    
+
     PC -.-> PT
     PC -.-> RL
     PC -.-> PW
-    
+
     PW -.-> Chrome
 ```
 
@@ -59,7 +59,7 @@ flowchart TD
 
 ### Core Capabilities
 - **Full Playwright Automation**: Complete browser control through MCP protocol (`app/main.py`)
-- **Multi-Mode Operation**: 
+- **Multi-Mode Operation**:
   - MCP mode (stdio) for Claude integration
   - HTTP mode with WebSocket support for IDE integration (`app/http_server.py`)
 - **Real-Time Progress Tracking**: Live updates during test execution (`app/progress_tracker.py`)
@@ -220,7 +220,7 @@ import requests
 response = requests.post("http://localhost:8765/test/connectivity")
 
 # Navigate to URL
-response = requests.post("http://localhost:8765/navigate", 
+response = requests.post("http://localhost:8765/navigate",
     json={"url": "https://example.com"})
 
 # Run accessibility test
@@ -232,13 +232,13 @@ playbook = {
     "name": "Login and Screenshot Test",
     "steps": [
         {
-            "id": "nav", 
+            "id": "nav",
             "action": "navigate",
             "parameters": {"url": "https://example.com"}
         },
         {
             "id": "shot",
-            "action": "screenshot", 
+            "action": "screenshot",
             "parameters": {"full_page": True}
         }
     ]

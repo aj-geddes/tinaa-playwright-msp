@@ -122,7 +122,7 @@ const ws = new WebSocket('ws://localhost:8765/ws/my-client-id');
 
 ws.onmessage = (event) => {
   const data = JSON.parse(event.data);
-  
+
   if (data.type === 'progress') {
     console.log('Progress:', data.data);
   }

@@ -29,41 +29,41 @@ graph TB
         LB[Load Balancer<br/>NGINX/HAProxy]
         CDN[CDN/WAF<br/>CloudFlare/AWS CloudFront]
     end
-    
+
     subgraph "API Gateway Layer"
         AG[API Gateway<br/>Kong/AWS API Gateway]
         AUTH[Authentication<br/>OAuth2/SAML]
     end
-    
+
     subgraph "Application Layer"
         TINAA1[TINAA Instance 1]
         TINAA2[TINAA Instance 2]
         TINAA3[TINAA Instance 3]
     end
-    
+
     subgraph "Data Layer"
         REDIS[Redis Cache<br/>Session/Results]
         POSTGRES[PostgreSQL<br/>Metadata/Audit]
         S3[Object Storage<br/>Screenshots/Reports]
     end
-    
+
     subgraph "Monitoring Layer"
         PROM[Prometheus<br/>Metrics]
         GRAF[Grafana<br/>Dashboards]
         ELK[ELK Stack<br/>Logging]
     end
-    
+
     CDN --> LB
     LB --> AG
     AG --> AUTH
     AUTH --> TINAA1
     AUTH --> TINAA2
     AUTH --> TINAA3
-    
+
     TINAA1 --> REDIS
     TINAA1 --> POSTGRES
     TINAA1 --> S3
-    
+
     TINAA1 --> PROM
     PROM --> GRAF
     TINAA1 --> ELK
@@ -406,23 +406,23 @@ class EnterpriseAuth:
     def __init__(self, config):
         self.config = config
         self.oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-        
+
     async def authenticate_user(self, token: str = Depends(oauth2_scheme)):
         """Authenticate user with OAuth2 token."""
         try:
             payload = jwt.decode(
-                token, 
-                self.config.JWT_SECRET, 
+                token,
+                self.config.JWT_SECRET,
                 algorithms=[self.config.JWT_ALGORITHM]
             )
-            
+
             username = payload.get("sub")
             if username is None:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Invalid authentication credentials"
                 )
-            
+
             # Verify user exists and has required permissions
             user = await self.get_user(username)
             if not user or not user.is_active:
@@ -430,25 +430,25 @@ class EnterpriseAuth:
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="User not found or inactive"
                 )
-            
+
             return user
-            
+
         except jwt.PyJWTError:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Could not validate credentials"
             )
-    
+
     async def check_permissions(self, user, required_permissions: list):
         """Check if user has required permissions."""
         user_permissions = await self.get_user_permissions(user.id)
-        
+
         if not all(perm in user_permissions for perm in required_permissions):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Insufficient permissions"
             )
-        
+
         return True
 
 # Role-based access control
@@ -504,35 +504,35 @@ class SAMLAuth:
                 ],
             },
         })
-        
+
         self.saml_client = Saml2Client(config=self.saml_config)
-    
+
     async def initiate_login(self):
         """Initiate SAML login process."""
         reqid, info = self.saml_client.prepare_for_authenticate()
-        
+
         redirect_url = None
         for key, value in info['headers']:
             if key == 'Location':
                 redirect_url = value
                 break
-        
+
         return redirect_url, reqid
-    
+
     async def process_response(self, saml_response, request_id):
         """Process SAML response and create user session."""
         authn_response = self.saml_client.parse_authn_request_response(
-            saml_response, 
+            saml_response,
             BINDING_HTTP_POST,
             outstanding_queries={request_id: "/"}
         )
-        
+
         if authn_response is None:
             raise ValueError("Invalid SAML response")
-        
+
         # Extract user attributes
         user_info = authn_response.get_identity()
-        
+
         return {
             "username": user_info.get("username", [None])[0],
             "email": user_info.get("email", [None])[0],
@@ -558,7 +558,7 @@ class DataEncryption:
         else:
             self.key = Fernet.generate_key()
         self.cipher_suite = Fernet(self.key)
-    
+
     def _derive_key(self, password: str) -> bytes:
         """Derive encryption key from password."""
         salt = os.environ.get('ENCRYPTION_SALT', 'default_salt').encode()
@@ -570,12 +570,12 @@ class DataEncryption:
         )
         key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
         return key
-    
+
     def encrypt(self, data: str) -> str:
         """Encrypt sensitive data."""
         encrypted_data = self.cipher_suite.encrypt(data.encode())
         return base64.urlsafe_b64encode(encrypted_data).decode()
-    
+
     def decrypt(self, encrypted_data: str) -> str:
         """Decrypt sensitive data."""
         decoded_data = base64.urlsafe_b64decode(encrypted_data.encode())
@@ -589,14 +589,14 @@ async def store_test_credentials(username: str, password: str):
     """Store test credentials securely."""
     encrypted_username = encryption.encrypt(username)
     encrypted_password = encryption.encrypt(password)
-    
+
     # Store in database
     await db.store_credentials(encrypted_username, encrypted_password)
 
 async def get_test_credentials(credential_id: str):
     """Retrieve and decrypt test credentials."""
     encrypted_creds = await db.get_credentials(credential_id)
-    
+
     return {
         "username": encryption.decrypt(encrypted_creds.username),
         "password": encryption.decrypt(encrypted_creds.password)
@@ -616,7 +616,7 @@ class AuditLogger:
     def __init__(self, config):
         self.config = config
         self.logger = structlog.get_logger("audit")
-    
+
     async def log_action(
         self,
         user_id: str,
@@ -637,16 +637,16 @@ class AuditLogger:
             "ip_address": getattr(self, 'current_ip', None),
             "user_agent": getattr(self, 'current_user_agent', None)
         }
-        
+
         # Log to structured logging
         self.logger.info(
             "audit_event",
             **audit_record
         )
-        
+
         # Store in audit database
         await self._store_audit_record(audit_record)
-    
+
     async def _store_audit_record(self, record: Dict[str, Any]):
         """Store audit record in database."""
         # Implementation depends on your database choice
@@ -656,14 +656,14 @@ class AuditLogger:
 async def audit_middleware(request: Request, call_next):
     """Middleware to capture audit information."""
     start_time = time.time()
-    
+
     # Extract request information
     user_id = getattr(request.state, 'user_id', 'anonymous')
     action = f"{request.method} {request.url.path}"
-    
+
     try:
         response = await call_next(request)
-        
+
         # Log successful action
         await audit_logger.log_action(
             user_id=user_id,
@@ -675,9 +675,9 @@ async def audit_middleware(request: Request, call_next):
                 "duration_ms": round((time.time() - start_time) * 1000, 2)
             }
         )
-        
+
         return response
-        
+
     except Exception as e:
         # Log failed action
         await audit_logger.log_action(
@@ -707,7 +707,7 @@ class GDPRCompliance:
     def __init__(self, config):
         self.config = config
         self.data_retention_days = config.DATA_RETENTION_DAYS
-    
+
     async def anonymize_user_data(self, user_id: str):
         """Anonymize user data for GDPR compliance."""
         # Replace personally identifiable information
@@ -716,13 +716,13 @@ class GDPRCompliance:
             "anonymized_at": datetime.utcnow(),
             "original_user_id": None  # Remove reference
         }
-        
+
         # Update all related records
         await self._anonymize_test_results(user_id, anonymized_data["user_id"])
         await self._anonymize_audit_logs(user_id, anonymized_data["user_id"])
-        
+
         return anonymized_data
-    
+
     async def export_user_data(self, user_id: str) -> Dict:
         """Export all user data for GDPR data portability."""
         user_data = {
@@ -731,16 +731,16 @@ class GDPRCompliance:
             "audit_logs": await self._get_user_audit_logs(user_id),
             "exported_at": datetime.utcnow().isoformat()
         }
-        
+
         return user_data
-    
+
     async def delete_expired_data(self):
         """Delete data older than retention period."""
         cutoff_date = datetime.utcnow() - timedelta(days=self.data_retention_days)
-        
+
         # Delete old test results
         deleted_count = await self._delete_old_test_results(cutoff_date)
-        
+
         return {
             "deleted_records": deleted_count,
             "cutoff_date": cutoff_date.isoformat()
@@ -761,7 +761,7 @@ upstream tinaa_backend {
     server tinaa-1:8765 max_fails=3 fail_timeout=30s;
     server tinaa-2:8765 max_fails=3 fail_timeout=30s;
     server tinaa-3:8765 max_fails=3 fail_timeout=30s;
-    
+
     # Health check
     keepalive 32;
 }
@@ -770,39 +770,39 @@ server {
     listen 80;
     listen 443 ssl http2;
     server_name tinaa.yourcompany.com;
-    
+
     # SSL configuration
     ssl_certificate /etc/ssl/certs/tinaa.crt;
     ssl_certificate_key /etc/ssl/private/tinaa.key;
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers ECDHE+AESGCM:ECDHE+CHACHA20:DHE+AESGCM:DHE+CHACHA20:!aNULL:!MD5:!DSS;
-    
+
     # Rate limiting
     limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
     limit_req zone=api burst=20 nodelay;
-    
+
     # Compression
     gzip on;
     gzip_types application/json text/plain text/css application/javascript;
-    
+
     location / {
         proxy_pass http://tinaa_backend;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        
+
         # Timeouts
         proxy_connect_timeout 60s;
         proxy_send_timeout 60s;
         proxy_read_timeout 300s;
-        
+
         # Buffer settings
         proxy_buffering on;
         proxy_buffer_size 8k;
         proxy_buffers 16 8k;
     }
-    
+
     # WebSocket support
     location /ws/ {
         proxy_pass http://tinaa_backend;
@@ -814,7 +814,7 @@ server {
         proxy_read_timeout 300s;
         proxy_send_timeout 300s;
     }
-    
+
     # Health check endpoint
     location /health {
         access_log off;
@@ -890,7 +890,7 @@ class DistributedCache:
     def __init__(self, redis_url: str):
         self.redis_url = redis_url
         self.redis = None
-    
+
     async def connect(self):
         self.redis = aioredis.from_url(
             self.redis_url,
@@ -898,7 +898,7 @@ class DistributedCache:
             decode_responses=False,
             max_connections=20
         )
-    
+
     async def get(self, key: str) -> Optional[Any]:
         """Get cached value."""
         try:
@@ -908,7 +908,7 @@ class DistributedCache:
         except Exception as e:
             logger.error(f"Cache get error: {e}")
         return None
-    
+
     async def set(self, key: str, value: Any, ttl: int = 300):
         """Set cached value with TTL."""
         try:
@@ -916,7 +916,7 @@ class DistributedCache:
             await self.redis.setex(key, ttl, serialized_data)
         except Exception as e:
             logger.error(f"Cache set error: {e}")
-    
+
     async def invalidate_pattern(self, pattern: str):
         """Invalidate all keys matching pattern."""
         try:
@@ -936,16 +936,16 @@ async def cached_test_execution(test_config: dict):
         json.dumps(test_config, sort_keys=True).encode()
     ).hexdigest()
     cache_key = f"test_result:{config_hash}"
-    
+
     # Try to get from cache first
     cached_result = await cache.get(cache_key)
     if cached_result:
         return cached_result
-    
+
     # Execute test and cache result
     result = await execute_test(test_config)
     await cache.set(cache_key, result, ttl=3600)  # Cache for 1 hour
-    
+
     return result
 ```
 
@@ -962,7 +962,7 @@ class DatabasePool:
         self.config = config
         self.postgres_engine = None
         self.redis_pool = None
-        
+
     async def initialize(self):
         """Initialize database connections."""
         # PostgreSQL connection pool
@@ -973,14 +973,14 @@ class DatabasePool:
             pool_pre_ping=True,
             pool_recycle=3600
         )
-        
+
         # Redis connection pool
         self.redis_pool = aioredis.ConnectionPool.from_url(
             self.config.REDIS_URL,
             max_connections=50,
             retry_on_timeout=True
         )
-    
+
     async def get_postgres_session(self) -> AsyncSession:
         """Get PostgreSQL session."""
         async_session = sessionmaker(
@@ -989,11 +989,11 @@ class DatabasePool:
             expire_on_commit=False
         )
         return async_session()
-    
+
     async def get_redis_connection(self):
         """Get Redis connection."""
         return aioredis.Redis(connection_pool=self.redis_pool)
-    
+
     async def close(self):
         """Close all connections."""
         if self.postgres_engine:
@@ -1027,7 +1027,7 @@ def track_metrics(func):
     async def wrapper(*args, **kwargs):
         start_time = time.time()
         ACTIVE_TESTS.inc()
-        
+
         try:
             result = await func(*args, **kwargs)
             TEST_RESULTS.labels(test_type=func.__name__, result='success').inc()
@@ -1038,7 +1038,7 @@ def track_metrics(func):
         finally:
             ACTIVE_TESTS.dec()
             REQUEST_DURATION.observe(time.time() - start_time)
-    
+
     return wrapper
 
 # Metrics endpoint
@@ -1116,7 +1116,7 @@ from pythonjsonlogger import jsonlogger
 
 def configure_logging(config):
     """Configure structured logging."""
-    
+
     LOGGING_CONFIG = {
         "version": 1,
         "disable_existing_loggers": False,
@@ -1147,9 +1147,9 @@ def configure_logging(config):
             }
         }
     }
-    
+
     logging.config.dictConfig(LOGGING_CONFIG)
-    
+
     # Configure structlog
     structlog.configure(
         processors=[
@@ -1178,7 +1178,7 @@ async def process_test_request(request):
         test_type=request.test_type,
         user_id=request.user_id
     )
-    
+
     try:
         result = await execute_test(request)
         logger.info(
@@ -1212,7 +1212,7 @@ roles:
   admin:
     permissions: ['*']
     description: 'Full system access'
-  
+
   test_engineer:
     permissions:
       - 'tests:create'
@@ -1220,7 +1220,7 @@ roles:
       - 'tests:execute'
       - 'reports:read'
     description: 'Create and run tests'
-  
+
   viewer:
     permissions:
       - 'tests:read'

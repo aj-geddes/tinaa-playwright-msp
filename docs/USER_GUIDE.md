@@ -53,7 +53,7 @@ curl -X POST http://localhost:8765/test/exploratory \
 
 Traditional Playwright testing requires you to:
 - ❌ Write selectors manually
-- ❌ Create test scenarios from scratch  
+- ❌ Create test scenarios from scratch
 - ❌ Debug flaky tests alone
 - ❌ Maintain complex test suites
 
@@ -196,7 +196,7 @@ curl -X POST http://localhost:8765/navigate \
 curl -X POST http://localhost:8765/test/exploratory \
   -H "Content-Type: application/json" \
   -d '{
-    "action": "exploratory", 
+    "action": "exploratory",
     "parameters": {
       "url": "https://your-app.com",
       "focus_area": "login"
@@ -265,14 +265,14 @@ import { test, expect } from '@playwright/test';
 test('Login Flow Test', async ({ page }) => {
   // Navigate to login page
   await page.goto('https://your-app.com/login');
-  
+
   // Fill login credentials
   await page.locator('[data-testid=username]').fill('testuser');
   await page.locator('[data-testid=password]').fill('password123');
-  
+
   // Submit form
   await page.locator('button[type=submit]').click();
-  
+
   // Verify successful login
   await expect(page).toHaveURL(/.*dashboard/);
   await expect(page.locator('[data-testid=welcome]')).toBeVisible();
@@ -394,15 +394,15 @@ TINAA includes 25+ pre-built test scenarios:
 // Generated shopping cart test
 test('Shopping Cart Workflow', async ({ page }) => {
   await page.goto('/products');
-  
+
   // Add items to cart
   await page.locator('[data-testid="product-1"] .add-to-cart').click();
   await expect(page.locator('[data-testid="cart-count"]')).toHaveText('1');
-  
+
   // View cart
   await page.locator('[data-testid="cart-link"]').click();
   await expect(page.locator('[data-testid="cart-items"]')).toBeVisible();
-  
+
   // Proceed to checkout
   await page.locator('[data-testid="checkout-button"]').click();
   await expect(page).toHaveURL(/.*checkout/);
@@ -414,16 +414,16 @@ test('Shopping Cart Workflow', async ({ page }) => {
 // Generated login test with error handling
 test('Login with Invalid Credentials', async ({ page }) => {
   await page.goto('/login');
-  
+
   // Attempt login with invalid credentials
   await page.locator('[data-testid="username"]').fill('invalid@email.com');
   await page.locator('[data-testid="password"]').fill('wrongpassword');
   await page.locator('[data-testid="submit"]').click();
-  
+
   // Verify error message
   await expect(page.locator('[data-testid="error-message"]'))
     .toHaveText('Invalid username or password');
-  
+
   // Verify user stays on login page
   await expect(page).toHaveURL(/.*login/);
 });
@@ -491,12 +491,12 @@ const ws = new WebSocket('ws://localhost:8765/ws/client-123');
 
 ws.onmessage = (event) => {
   const update = JSON.parse(event.data);
-  
+
   if (update.type === 'progress') {
     console.log(`Step ${update.data.step}: ${update.data.status}`);
     updateProgressBar(update.data.progress);
   }
-  
+
   if (update.type === 'result') {
     displayResults(update.result);
   }
@@ -569,7 +569,7 @@ curl -X POST http://localhost:8765/test/security \
       "url": "https://your-app.com",
       "checks": [
         "csrf_protection",
-        "xss_vulnerability", 
+        "xss_vulnerability",
         "sql_injection",
         "sensitive_data_exposure"
       ]
@@ -598,21 +598,21 @@ on:
 jobs:
   tinaa-tests:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v3
-    
+
     - name: Start TINAA
       run: |
         docker run -d --name tinaa \
           -p 8765:8765 \
           -e TINAA_MODE=http \
           tinaa-playwright-msp:latest
-    
+
     - name: Wait for TINAA
       run: |
         timeout 60s bash -c 'until curl -s http://localhost:8765/health; do sleep 1; done'
-    
+
     - name: Run Exploratory Tests
       run: |
         curl -X POST http://localhost:8765/test/exploratory \
@@ -624,14 +624,14 @@ jobs:
               "focus_area": "critical_paths"
             }
           }' > exploratory-results.json
-    
+
     - name: Run Accessibility Tests
       run: |
         curl -X POST http://localhost:8765/test/accessibility \
           -H "Content-Type: application/json" \
           -d '{"action": "accessibility", "parameters": {}}' \
           > accessibility-results.json
-    
+
     - name: Upload Test Results
       uses: actions/upload-artifact@v3
       with:
@@ -646,11 +646,11 @@ jobs:
 ```groovy
 pipeline {
     agent any
-    
+
     environment {
         TINAA_URL = 'http://localhost:8765'
     }
-    
+
     stages {
         stage('Start TINAA') {
             steps {
@@ -661,7 +661,7 @@ pipeline {
                 '''
             }
         }
-        
+
         stage('Health Check') {
             steps {
                 sh '''
@@ -669,7 +669,7 @@ pipeline {
                 '''
             }
         }
-        
+
         stage('Generate Tests') {
             parallel {
                 stage('Exploratory Testing') {
@@ -682,7 +682,7 @@ pipeline {
                         '''
                     }
                 }
-                
+
                 stage('Accessibility Testing') {
                     steps {
                         sh '''
@@ -695,7 +695,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Process Results') {
             steps {
                 publishHTML([
@@ -709,7 +709,7 @@ pipeline {
             }
         }
     }
-    
+
     post {
         always {
             sh 'docker stop tinaa-${BUILD_NUMBER} && docker rm tinaa-${BUILD_NUMBER}'
@@ -809,11 +809,11 @@ Create a simple dashboard for team visibility:
 </head>
 <body>
     <h1>TINAA Test Results Dashboard</h1>
-    
+
     <div id="test-status">
         <canvas id="statusChart"></canvas>
     </div>
-    
+
     <script>
         // Fetch latest test results
         fetch('http://localhost:8765/api/test-results/latest')
@@ -850,7 +850,7 @@ your-project/
 │   │   ├── exploratory/
 │   │   ├── accessibility/
 │   │   └── security/
-│   ├── custom/              # Hand-written tests  
+│   ├── custom/              # Hand-written tests
 │   └── shared/              # Shared utilities
 ├── tinaa-configs/           # TINAA configurations
 │   ├── playbooks/
@@ -869,9 +869,9 @@ test.describe('TINAA Generated - Login Flow', () => {
   test('should login with valid credentials', async ({ page }) => {
     // Test implementation
   });
-  
+
   test('should show error for invalid credentials', async ({ page }) => {
-    // Test implementation  
+    // Test implementation
   });
 });
 
@@ -927,13 +927,13 @@ test.describe('TINAA Generated Tests', () => {
   test('homepage accessibility', async ({ page }) => {
     // Fast accessibility check
   });
-  
+
   test('login flow validation', async ({ page }) => {
     // Independent login test
   });
-  
+
   test('search functionality', async ({ page }) => {
-    // Isolated search test  
+    // Isolated search test
   });
 });
 ```
@@ -944,7 +944,7 @@ test.describe('TINAA Generated Tests', () => {
 test.beforeEach(async ({ page }) => {
   // Set default timeout
   page.setDefaultTimeout(30000);
-  
+
   // Configure performance monitoring
   await page.route('**/*', route => {
     if (route.request().resourceType() === 'image') {
@@ -1153,7 +1153,7 @@ TINAA includes 25+ specialized resources:
 
 #### Tools (9 resources)
 - CLI installation and runners
-- Project scaffolding generators  
+- Project scaffolding generators
 - CI/CD integration templates
 - Visual testing configurations
 - Debugging utilities

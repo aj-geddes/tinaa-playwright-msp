@@ -20,57 +20,57 @@ flowchart TD
         Browser[Web Browser<br/>HTTP Client]
         Editor[Code Editor<br/>LSP Client]
     end
-    
+
     subgraph Interface["Interface Layer"]
         MCP[MCP Server<br/>FastMCP Framework]
         HTTP[HTTP Server<br/>FastAPI + WebSocket]
         LSP[LSP Server<br/>pygls Framework]
     end
-    
+
     subgraph Logic["Business Logic Layer"]
         Handler[MCP Handler<br/>mcp_handler.py]
         Routes[API Routes<br/>http_server.py]
         Handlers[LSP Handlers<br/>handlers/]
     end
-    
+
     subgraph Core["Core Services"]
         PC[Playwright Controller<br/>controller.py]
         PT[Progress Tracker<br/>progress_tracker.py]
         RL[Resource Loader<br/>resource_loader.py]
         Tools[Tool System<br/>tools/]
     end
-    
+
     subgraph Resources["Resource Layer"]
         JSON[JSON Resources<br/>resources/]
         Prompts[Prompt Templates<br/>prompts/]
         Static[Static Assets<br/>static/]
     end
-    
+
     subgraph Browser["Browser Engine"]
         PW[Playwright API]
         Chrome[Chromium Instance]
     end
-    
+
     Claude -.->|stdio| MCP
     Browser -.->|HTTP/WS| HTTP
     Editor -.->|TCP/stdio| LSP
-    
+
     MCP -.-> Handler
     HTTP -.-> Routes
     LSP -.-> Handlers
-    
+
     Handler -.-> PC
     Routes -.-> PC
     Handlers -.-> PC
-    
+
     PC -.-> PT
     PC -.-> RL
     PC -.-> Tools
-    
+
     RL -.-> JSON
     Tools -.-> Prompts
     Routes -.-> Static
-    
+
     PC -.-> PW
     PW -.-> Chrome
 ```
@@ -103,7 +103,7 @@ classDiagram
         +run_accessibility_test(url, standard) Dict
         +cleanup() None
     }
-    
+
     class ProgressTracker {
         #progress_data: Dict
         #lock: asyncio.Lock
@@ -111,20 +111,20 @@ classDiagram
         +get_progress() Dict
         +reset() None
     }
-    
+
     class ExploratoryTestProgress {
         +update_navigation(url, depth)
         +add_interaction(element, action, result)
         +add_finding(type, severity, details)
         +get_summary() Dict
     }
-    
+
     class AccessibilityTestProgress {
         +update_rule_check(rule, status, details)
         +add_violation(rule, severity, element, message)
         +get_wcag_summary() Dict
     }
-    
+
     class ResourceLoader {
         -_instance: ResourceLoader
         -resources_dir: Path
@@ -134,7 +134,7 @@ classDiagram
         +get_accessibility_rules() Dict
         +get_security_patterns() Dict
     }
-    
+
     class ConnectionManager {
         -active_connections: Dict[str, WebSocket]
         +connect(client_id, websocket)
@@ -142,7 +142,7 @@ classDiagram
         +send_message(client_id, message)
         +broadcast(message)
     }
-    
+
     class ProgressContext {
         -tracker: ProgressTracker
         -category: str
@@ -150,7 +150,7 @@ classDiagram
         +__aexit__()
         +update(phase, message, data)
     }
-    
+
     ProgressTracker <|-- ExploratoryTestProgress : extends
     ProgressTracker <|-- AccessibilityTestProgress : extends
     PlaywrightController *-- ProgressTracker : uses
@@ -180,21 +180,21 @@ sequenceDiagram
     participant Controller as Playwright Controller
     participant Tracker as Progress Tracker
     participant Browser
-    
+
     Client->>Server: Request (navigate/test)
     activate Server
     Server->>Handler: Process request
     activate Handler
-    
+
     Handler->>Controller: Initialize if needed
     activate Controller
     Controller->>Browser: Launch browser
     activate Browser
     Browser-->>Controller: Browser ready
-    
+
     Handler->>Tracker: Create progress tracker
     activate Tracker
-    
+
     loop For each operation
         Handler->>Controller: Execute operation
         Controller->>Browser: Browser action
@@ -202,14 +202,14 @@ sequenceDiagram
         Controller->>Tracker: Update progress
         Tracker-->>Client: Progress update (if streaming)
     end
-    
+
     Controller-->>Handler: Final result
     deactivate Controller
     Handler-->>Server: Response
     deactivate Handler
     Server-->>Client: Final response
     deactivate Server
-    
+
     deactivate Browser
     deactivate Tracker
 ```
@@ -233,29 +233,29 @@ stateDiagram-v2
     Uninitialized --> Initializing: initialize()
     Initializing --> Ready: success
     Initializing --> Error: failure
-    
+
     Ready --> Navigating: navigate()
     Navigating --> PageLoaded: success
     Navigating --> Error: failure
-    
+
     PageLoaded --> Testing: run_test()
     Testing --> TestComplete: success
     Testing --> Error: failure
-    
+
     TestComplete --> Ready: reset
     Error --> Ready: retry
-    
+
     Ready --> Cleanup: cleanup()
     PageLoaded --> Cleanup: cleanup()
     TestComplete --> Cleanup: cleanup()
     Cleanup --> [*]
-    
+
     state Testing {
         [*] --> StartPhase
         StartPhase --> InProgress
         InProgress --> CompletePhase
         CompletePhase --> [*]
-        
+
         InProgress --> Warning: non-critical issue
         Warning --> InProgress: continue
         InProgress --> TestError: critical issue
@@ -282,36 +282,36 @@ flowchart LR
         Config[Configuration]
         Resources[Resource Files]
     end
-    
+
     subgraph Processing["Processing Layer"]
         Validation[Request Validation]
         Controller[Controller Logic]
         Engine[Test Engine]
     end
-    
+
     subgraph Storage["Data Storage"]
         Memory[In-Memory Cache]
         Screenshots[Screenshot Buffer]
         Findings[Findings Collection]
     end
-    
+
     subgraph Output["Output Formats"]
         JSON[JSON Response]
         Stream[Streaming Updates]
         Report[Test Report]
     end
-    
+
     User -.-> Validation
     Config -.-> Validation
     Resources -.-> Controller
-    
+
     Validation -.-> Controller
     Controller -.-> Engine
-    
+
     Engine -.-> Memory
     Engine -.-> Screenshots
     Engine -.-> Findings
-    
+
     Memory -.-> JSON
     Screenshots -.-> Report
     Findings -.-> Report
@@ -339,15 +339,15 @@ flowchart TD
     Root -.-> Forms[form_test_strategies.json]
     Root -.-> Responsive[responsive_test_config.json]
     Root -.-> Credentials[test_credentials.json]
-    
+
     Accessibility -.-> WCAG[WCAG 2.1 Rules]
     Exploratory -.-> Heuristics[Test Heuristics]
     Security -.-> Patterns[Security Patterns]
-    
+
     WCAG -.-> A[Level A]
     WCAG -.-> AA[Level AA]
     WCAG -.-> AAA[Level AAA]
-    
+
     Heuristics -.-> Nav[Navigation]
     Heuristics -.-> Forms_H[Form Testing]
     Heuristics -.-> Int[Interactions]
@@ -372,35 +372,35 @@ flowchart TD
         Docker[Docker Engine]
         Volumes[Volume Mounts]
     end
-    
+
     subgraph Container["TINAA Container"]
         Base[Base Image<br/>playwright:v1.46.1-jammy]
         Python[Python 3.11]
         App[Application Code]
         Browsers[Chromium Browser]
     end
-    
+
     subgraph Network["Network"]
         Port8765[Port 8765<br/>MCP/HTTP]
         Stdio[STDIO<br/>MCP Mode]
     end
-    
+
     subgraph Storage["Persistent Storage"]
         Logs[logs/]
         Workspace[/mnt/workspace]
     end
-    
+
     Docker -.-> Container
     Container -.-> Network
     Volumes -.-> Storage
-    
+
     App -.-> Python
     Python -.-> Browsers
     Base -.-> Browsers
-    
+
     App -.-> Port8765
     App -.-> Stdio
-    
+
     App -.-> Logs
     App -.-> Workspace
 ```
@@ -421,21 +421,21 @@ flowchart TD
 }}%%
 flowchart TD
     Operation[Operation] -.-> Try{Try Block}
-    
+
     Try -.->|Success| Result[Return Result]
     Try -.->|Exception| Catch{Exception Type}
-    
+
     Catch -.->|Playwright Error| BrowserError[Log Browser Error]
     Catch -.->|Timeout| TimeoutError[Handle Timeout]
     Catch -.->|Network| NetworkError[Retry Logic]
     Catch -.->|Other| GeneralError[General Handler]
-    
+
     BrowserError -.-> Cleanup[Cleanup Resources]
     TimeoutError -.-> Cleanup
     NetworkError -.->|Retry| Operation
     NetworkError -.->|Max Retries| Cleanup
     GeneralError -.-> Cleanup
-    
+
     Cleanup -.-> LogError[Log to File]
     LogError -.-> ReturnError[Return Error Response]
 ```
@@ -460,30 +460,30 @@ flowchart TD
         Integration[Integration Tests<br/>tests/integration/]
         E2E[E2E Tests<br/>tests/e2e/]
     end
-    
+
     subgraph Coverage["Test Coverage"]
         MCP_T[MCP Protocol]
         HTTP_T[HTTP API]
         Controller_T[Controller Logic]
         Resources_T[Resource Loading]
     end
-    
+
     subgraph Tools["Testing Tools"]
         Pytest[pytest]
         Coverage_Tool[pytest-cov]
         Playwright_Test[pytest-playwright]
     end
-    
+
     Unit -.-> MCP_T
     Unit -.-> Controller_T
     Unit -.-> Resources_T
-    
+
     Integration -.-> HTTP_T
     Integration -.-> Controller_T
-    
+
     E2E -.-> MCP_T
     E2E -.-> HTTP_T
-    
+
     TestTypes -.-> Tools
 ```
 

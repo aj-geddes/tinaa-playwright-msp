@@ -557,7 +557,7 @@ class MemoryMonitor:
     def __init__(self):
         self.process = psutil.Process()
         self.snapshots = []
-    
+
     async def take_snapshot(self, label: str):
         """Take memory snapshot."""
         memory_info = self.process.memory_info()
@@ -570,15 +570,15 @@ class MemoryMonitor:
         }
         self.snapshots.append(snapshot)
         return snapshot
-    
+
     def analyze_leaks(self):
         """Analyze potential memory leaks."""
         if len(self.snapshots) < 2:
             return None
-        
+
         initial = self.snapshots[0]
         final = self.snapshots[-1]
-        
+
         return {
             "memory_growth": final["rss"] - initial["rss"],
             "growth_percent": ((final["rss"] - initial["rss"]) / initial["rss"]) * 100,
@@ -679,7 +679,7 @@ from typing import Dict, Any
 class RequestTracer:
     def __init__(self):
         self.traces = {}
-    
+
     async def start_trace(self, request_id: str, context: Dict[str, Any]):
         """Start tracing a request."""
         self.traces[request_id] = {
@@ -687,7 +687,7 @@ class RequestTracer:
             "context": context,
             "events": []
         }
-    
+
     async def add_event(self, request_id: str, event: str, data: Any = None):
         """Add event to trace."""
         if request_id in self.traces:
@@ -696,16 +696,16 @@ class RequestTracer:
                 "event": event,
                 "data": data
             })
-    
+
     async def end_trace(self, request_id: str) -> Dict:
         """End tracing and return results."""
         if request_id not in self.traces:
             return None
-        
+
         trace = self.traces[request_id]
         trace["end_time"] = datetime.now()
         trace["duration"] = (trace["end_time"] - trace["start_time"]).total_seconds()
-        
+
         return trace
 
 # Usage in request handling
@@ -714,20 +714,20 @@ tracer = RequestTracer()
 @app.post("/test/exploratory")
 async def traced_exploratory_test(request: TestRequest):
     request_id = generate_request_id()
-    
+
     await tracer.start_trace(request_id, {
         "url": request.parameters.get("url"),
         "focus_area": request.parameters.get("focus_area")
     })
-    
+
     try:
         await tracer.add_event(request_id, "browser_launch")
         # ... test execution
         await tracer.add_event(request_id, "test_complete", {"success": True})
-        
+
         result = await execute_test(request)
         return result
-        
+
     except Exception as e:
         await tracer.add_event(request_id, "error", {"error": str(e)})
         raise
@@ -752,11 +752,11 @@ class AutoRecovery:
     def __init__(self, max_retries: int = 3):
         self.max_retries = max_retries
         self.logger = logging.getLogger(__name__)
-    
+
     async def with_retry(self, func: Callable, *args, **kwargs) -> Any:
         """Execute function with automatic retry."""
         last_exception = None
-        
+
         for attempt in range(self.max_retries + 1):
             try:
                 return await func(*args, **kwargs)
@@ -766,42 +766,42 @@ class AutoRecovery:
                     f"Attempt {attempt + 1} failed: {e}",
                     exc_info=True
                 )
-                
+
                 if attempt < self.max_retries:
                     # Exponential backoff
                     wait_time = 2 ** attempt
                     await asyncio.sleep(wait_time)
-                    
+
                     # Attempt recovery
                     await self.attempt_recovery(e)
-        
+
         # All retries exhausted
         raise last_exception
-    
+
     async def attempt_recovery(self, error: Exception):
         """Attempt to recover from specific errors."""
         error_type = type(error).__name__
-        
+
         if "Browser" in str(error):
             await self.recover_browser()
         elif "Network" in str(error):
             await self.recover_network()
         elif "Memory" in str(error):
             await self.recover_memory()
-    
+
     async def recover_browser(self):
         """Recover browser instances."""
         self.logger.info("Attempting browser recovery")
         # Restart browser instances
         controller = await get_controller()
         await controller.restart_browser()
-    
+
     async def recover_network(self):
         """Recover network connectivity."""
         self.logger.info("Attempting network recovery")
         # Clear connection pools, reset DNS cache, etc.
         pass
-    
+
     async def recover_memory(self):
         """Recover from memory issues."""
         self.logger.info("Attempting memory recovery")
@@ -836,14 +836,14 @@ while true; do
     else
         failure_count=$((failure_count + 1))
         echo "$(date): TINAA unhealthy (attempt $failure_count)" >> $LOG_FILE
-        
+
         if [ $failure_count -ge $MAX_FAILURES ]; then
             echo "$(date): Restarting TINAA service" >> $LOG_FILE
             docker-compose restart tinaa
             failure_count=0
         fi
     fi
-    
+
     sleep 30
 done
 ```
@@ -903,10 +903,10 @@ echo ""
 ## Bug Report Template
 
 **Environment:**
-- TINAA Version: 
-- Operating System: 
-- Docker Version: 
-- Browser: 
+- TINAA Version:
+- Operating System:
+- Docker Version:
+- Browser:
 
 **Issue Description:**
 Brief description of the problem

@@ -25,23 +25,23 @@ Exploratory testing uses AI-driven heuristics to automatically explore and test 
 flowchart TD
     Start[Start URL] -.-> Analyze[Analyze Page]
     Analyze -.-> Elements[Find Interactive Elements]
-    
+
     Elements -.-> Forms[Form Fields]
     Elements -.-> Links[Navigation Links]
     Elements -.-> Buttons[Buttons/Actions]
-    
+
     Forms -.-> FillForm[Fill & Submit]
     Links -.-> Navigate[Follow Link]
     Buttons -.-> Click[Trigger Action]
-    
+
     FillForm -.-> Check[Check Results]
     Navigate -.-> Check
     Click -.-> Check
-    
+
     Check -.-> Errors{Errors Found?}
     Errors -.->|Yes| Report[Report Finding]
     Errors -.->|No| NextPage{More Pages?}
-    
+
     Report -.-> NextPage
     NextPage -.->|Yes| Analyze
     NextPage -.->|No| Summary[Generate Summary]
@@ -92,38 +92,38 @@ Tests websites against WCAG (Web Content Accessibility Guidelines) standards.
 }}%%
 flowchart TD
     Page[Load Page] -.-> Rules[Load WCAG Rules]
-    
+
     Rules -.-> Perceivable[Perceivable]
     Rules -.-> Operable[Operable]
     Rules -.-> Understandable[Understandable]
     Rules -.-> Robust[Robust]
-    
+
     Perceivable -.-> Images[Image Alt Text]
     Perceivable -.-> Color[Color Contrast]
     Perceivable -.-> Media[Media Alternatives]
-    
+
     Operable -.-> Keyboard[Keyboard Access]
     Operable -.-> Focus[Focus Order]
     Operable -.-> Time[Time Limits]
-    
+
     Understandable -.-> Labels[Form Labels]
     Understandable -.-> Errors[Error Messages]
     Understandable -.-> Language[Page Language]
-    
+
     Robust -.-> Markup[Valid HTML]
     Robust -.-> ARIA[ARIA Usage]
-    
+
     subgraph Checks["For Each Check"]
         Test[Run Test] -.-> Pass{Pass?}
         Pass -.->|No| Violation[Record Violation]
         Pass -.->|Yes| NextCheck[Next Check]
     end
-    
+
     Images -.-> Checks
     Color -.-> Checks
     Keyboard -.-> Checks
     Labels -.-> Checks
-    
+
     Violation -.-> Report[Generate Report]
     NextCheck -.-> Report
 ```
@@ -159,26 +159,26 @@ Tests how websites adapt to different screen sizes and devices.
 }}%%
 flowchart TD
     URL[Target URL] -.-> Viewports[Define Viewports]
-    
+
     Viewports -.-> Mobile[Mobile<br/>360x640]
     Viewports -.-> Tablet[Tablet<br/>768x1024]
     Viewports -.-> Desktop[Desktop<br/>1920x1080]
-    
+
     Mobile -.-> Test1[Test Layout]
     Tablet -.-> Test2[Test Layout]
     Desktop -.-> Test3[Test Layout]
-    
+
     Test1 -.-> Check1[Check Elements]
     Test2 -.-> Check2[Check Elements]
     Test3 -.-> Check3[Check Elements]
-    
+
     Check1 -.-> Issues{Layout Issues?}
     Check2 -.-> Issues
     Check3 -.-> Issues
-    
+
     Issues -.->|Yes| Document[Document Issue]
     Issues -.->|No| Next[Next Viewport]
-    
+
     Document -.-> Screenshot[Take Screenshot]
     Screenshot -.-> Compare[Compare Layouts]
     Compare -.-> Report[Generate Report]
@@ -217,32 +217,32 @@ flowchart TD
     Start -.-> Forms[Analyze Forms]
     Start -.-> Cookies[Inspect Cookies]
     Start -.-> Resources[Check Resources]
-    
+
     Headers -.-> CSP[Content Security Policy]
     Headers -.-> XFO[X-Frame-Options]
     Headers -.-> HSTS[HSTS Header]
-    
+
     Forms -.-> HTTPS[HTTPS Usage]
     Forms -.-> Autocomplete[Autocomplete Settings]
     Forms -.-> Validation[Input Validation]
-    
+
     Cookies -.-> Secure[Secure Flag]
     Cookies -.-> HttpOnly[HttpOnly Flag]
     Cookies -.-> SameSite[SameSite Attribute]
-    
+
     Resources -.-> Mixed[Mixed Content]
     Resources -.-> External[External Resources]
-    
+
     CSP -.-> Findings[Security Findings]
     HTTPS -.-> Findings
     Secure -.-> Findings
     Mixed -.-> Findings
-    
+
     Findings -.-> Severity{Severity Level}
     Severity -.-> High[High Risk]
     Severity -.-> Medium[Medium Risk]
     Severity -.-> Low[Low Risk]
-    
+
     High -.-> Report[Security Report]
     Medium -.-> Report
     Low -.-> Report
@@ -289,27 +289,27 @@ sequenceDiagram
     participant Browser
     participant Page
     participant Tracker as Progress Tracker
-    
+
     User->>TINAA: Start Test
     TINAA->>Browser: Initialize Browser
     Browser-->>TINAA: Ready
-    
+
     TINAA->>Tracker: Create Progress Tracker
     TINAA->>Page: Navigate to URL
     Page-->>TINAA: Page Loaded
-    
+
     loop For Each Test Step
         TINAA->>Page: Execute Test Action
         Page-->>TINAA: Action Result
         TINAA->>Tracker: Update Progress
         Tracker-->>User: Progress Update
-        
+
         alt Error Detected
             TINAA->>TINAA: Log Finding
             TINAA->>Page: Take Screenshot
         end
     end
-    
+
     TINAA->>TINAA: Generate Report
     TINAA->>Browser: Cleanup
     TINAA-->>User: Final Report
@@ -452,7 +452,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Run TINAA Tests
         run: |
           docker run --rm \
@@ -461,14 +461,14 @@ jobs:
             python -c "
             import asyncio
             from app.main import run_accessibility_test
-            
+
             async def test():
                 result = await run_accessibility_test(
                     'https://staging.example.com',
                     'WCAG2.1-AA'
                 )
                 print(result)
-            
+
             asyncio.run(test())
             "
 ```

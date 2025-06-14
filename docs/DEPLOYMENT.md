@@ -23,30 +23,30 @@ flowchart TD
         LocalDocker[Local Docker]
         Claude[Claude Desktop]
     end
-    
+
     subgraph Staging["Staging Environment"]
         DockerCompose[Docker Compose]
         TestData[Test Data]
     end
-    
+
     subgraph Production["Production Environment"]
         K8s[Kubernetes]
         LoadBalancer[Load Balancer]
         Monitoring[Monitoring]
     end
-    
+
     subgraph Storage["Persistent Storage"]
         Logs[Log Storage]
         Screenshots[Screenshot Storage]
         Config[Configuration]
     end
-    
+
     LocalDocker -.-> DockerCompose
     DockerCompose -.-> K8s
-    
+
     K8s -.-> LoadBalancer
     K8s -.-> Monitoring
-    
+
     Development -.-> Storage
     Staging -.-> Storage
     Production -.-> Storage
@@ -145,24 +145,24 @@ For scalable production deployments.
 flowchart TD
     subgraph Cluster["Kubernetes Cluster"]
         Ingress[Ingress Controller]
-        
+
         subgraph Services["Services"]
             HTTPService[HTTP Service]
             MCPService[MCP Service]
         end
-        
+
         subgraph Deployments["Deployments"]
             HTTPPods[HTTP Pods<br/>Replicas: 3]
             MCPPods[MCP Pods<br/>Replicas: 2]
         end
-        
+
         subgraph Storage["Storage"]
             PVC[Persistent Volume]
             ConfigMap[ConfigMap]
             Secrets[Secrets]
         end
     end
-    
+
     Users[Users] -.-> Ingress
     Ingress -.-> Services
     Services -.-> Deployments
@@ -432,17 +432,17 @@ properties:
 flowchart TD
     Internet[Internet] -.-> WAF[Web Application Firewall]
     WAF -.-> LB[Load Balancer<br/>TLS Termination]
-    
+
     LB -.-> SG[Security Group<br/>Port 8765 only]
-    
+
     SG -.-> Container1[TINAA Container 1]
     SG -.-> Container2[TINAA Container 2]
     SG -.-> Container3[TINAA Container 3]
-    
+
     Container1 -.-> Private[Private Network]
     Container2 -.-> Private
     Container3 -.-> Private
-    
+
     Private -.-> NAT[NAT Gateway]
     NAT -.-> Internet2[Internet<br/>Outbound Only]
 ```
@@ -511,12 +511,12 @@ data:
 flowchart LR
     App[TINAA Application] -.-> LocalLogs[Local Log Files]
     LocalLogs -.-> LogShipper[Log Shipper<br/>Fluentd/Filebeat]
-    
+
     LogShipper -.-> LogAggregator[Log Aggregator<br/>ELK/Splunk]
-    
+
     LogAggregator -.-> Dashboard[Dashboard]
     LogAggregator -.-> Alerts[Alert System]
-    
+
     Alerts -.-> Slack[Slack]
     Alerts -.-> Email[Email]
     Alerts -.-> PagerDuty[PagerDuty]
@@ -615,16 +615,16 @@ spec:
 }}%%
 flowchart TD
     Primary[Primary Region] -.-> Backup[Backup Region]
-    
+
     Primary -.-> Replication[Data Replication]
     Replication -.-> Backup
-    
+
     Primary -.-> Monitor[Health Monitor]
     Monitor -.-> FailoverTrigger{Failure Detected?}
-    
+
     FailoverTrigger -.->|Yes| DNSUpdate[Update DNS]
     DNSUpdate -.-> Backup
-    
+
     FailoverTrigger -.->|No| Continue[Continue Monitoring]
     Continue -.-> Monitor
 ```
@@ -637,7 +637,7 @@ flowchart TD
    ```bash
    # Kubernetes
    kubectl set image deployment/tinaa-http tinaa=tinaa-playwright-msp:v2.0
-   
+
    # Docker Swarm
    docker service update --image tinaa-playwright-msp:v2.0 tinaa
    ```

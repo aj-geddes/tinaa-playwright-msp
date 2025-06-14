@@ -19,7 +19,7 @@ Custom resources in TINAA allow you to:
 module.exports = {
   name: 'ecommerce-checkout',
   description: 'E-commerce checkout flow testing pattern',
-  
+
   generate: async (context) => {
     return {
       steps: [
@@ -33,12 +33,12 @@ module.exports = {
       ]
     };
   },
-  
+
   validators: {
     cartTotal: (expected, actual) => {
       return Math.abs(expected - actual) < 0.01;
     },
-    
+
     orderNumber: (orderNum) => {
       return /^[A-Z0-9]{8,12}$/.test(orderNum);
     }
@@ -69,7 +69,7 @@ class FormValidationGenerator {
   constructor(ai) {
     this.ai = ai;
   }
-  
+
   async generate(options) {
     const prompt = `
       Generate comprehensive form validation tests for ${options.url}.
@@ -81,12 +81,12 @@ class FormValidationGenerator {
       - XSS prevention
       - Boundary values
     `;
-    
+
     const response = await this.ai.complete(prompt, {
       model: 'gpt-4',
       temperature: 0.3
     });
-    
+
     return this.parseResponse(response);
   }
 }
@@ -100,7 +100,7 @@ class BankingDSL {
   constructor(page) {
     this.page = page;
   }
-  
+
   async transferFunds(from, to, amount) {
     await this.page.click('[data-test="transfer-button"]');
     await this.page.selectOption('#from-account', from);
@@ -108,7 +108,7 @@ class BankingDSL {
     await this.page.fill('#amount', amount.toString());
     await this.page.click('[data-test="confirm-transfer"]');
   }
-  
+
   async verifyBalance(account, expectedBalance) {
     const balance = await this.page.textContent(
       `[data-account="${account}"] .balance`
@@ -127,7 +127,7 @@ class BankingDSL {
 expect.extend({
   toBeAccessible: async (page, options = {}) => {
     const violations = await checkAccessibility(page, options);
-    
+
     return {
       pass: violations.length === 0,
       message: () => violations.length > 0
@@ -135,10 +135,10 @@ expect.extend({
         : 'Page is accessible'
     };
   },
-  
+
   toHaveAriaLabel: async (element, expectedLabel) => {
     const actualLabel = await element.getAttribute('aria-label');
-    
+
     return {
       pass: actualLabel === expectedLabel,
       message: () => `Expected aria-label to be "${expectedLabel}", but got "${actualLabel}"`
@@ -203,21 +203,21 @@ tinaa-resources-finance/
 // actions/file-upload.js
 module.exports = {
   name: 'uploadFile',
-  
+
   async execute(page, options) {
     const { selector, filePath, waitForUpload = true } = options;
-    
+
     // Handle file input
     const fileInput = await page.$(selector);
     await fileInput.setInputFiles(filePath);
-    
+
     // Wait for upload completion
     if (waitForUpload) {
       await page.waitForSelector('.upload-complete', {
         timeout: 30000
       });
     }
-    
+
     return {
       success: true,
       uploadedFile: filePath
@@ -249,19 +249,19 @@ class ConfluenceReporter {
   constructor(options) {
     this.client = new ConfluenceClient(options);
   }
-  
+
   async onTestComplete(test, result) {
     const page = await this.client.createPage({
       title: `Test Results: ${test.name}`,
       parent: this.options.parentPageId,
       content: this.formatResults(result)
     });
-    
+
     if (result.screenshots) {
       await this.uploadScreenshots(page.id, result.screenshots);
     }
   }
-  
+
   formatResults(result) {
     return `
       <h2>Test: ${result.name}</h2>
@@ -312,7 +312,7 @@ describe('Custom Banking Patterns', () => {
     const tests = await pattern.generate({
       accounts: ['checking', 'savings']
     });
-    
+
     expect(tests).toContainTestStep('transferFunds');
   });
 });

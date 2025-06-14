@@ -128,14 +128,14 @@ import { test, expect } from '@playwright/test';
 test('Login functionality test', async ({ page }) => {
   // Navigate to login page
   await page.goto('https://your-app.com/login');
-  
+
   // Fill login form
   await page.locator('[data-testid="username"]').fill('testuser');
   await page.locator('[data-testid="password"]').fill('password123');
-  
+
   // Submit form
   await page.locator('[data-testid="login-button"]').click();
-  
+
   // Verify successful login
   await expect(page).toHaveURL(/dashboard/);
   await expect(page.locator('[data-testid="welcome"]')).toBeVisible();

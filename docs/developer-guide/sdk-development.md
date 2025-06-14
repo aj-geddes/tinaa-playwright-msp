@@ -10,13 +10,13 @@ Learn how to develop SDKs and extensions for TINAA to support additional languag
 interface TinaaSDK {
   // Test generation
   generate(options: GenerateOptions): Promise<TestSuite>;
-  
+
   // Test execution
   run(tests: Test[]): Promise<TestResults>;
-  
+
   // AI integration
   ai: AIService;
-  
+
   // Plugin system
   plugins: PluginManager;
 }
@@ -45,7 +45,7 @@ export class TinaaPythonSDK implements PythonSDK {
     const aiResponse = await this.ai.generateTests(options);
     return this.convertToPython(aiResponse);
   }
-  
+
   private convertToPython(tests: AIGeneratedTests): TestSuite {
     // Transform to Python syntax
     return new PythonTestSuite(tests);
@@ -79,17 +79,17 @@ class TestLoginFlow:
 module.exports = {
   name: 'visual-testing',
   version: '1.0.0',
-  
+
   hooks: {
     beforeTest: async (test, context) => {
       // Setup visual testing
     },
-    
+
     afterTest: async (test, result, context) => {
       // Compare screenshots
     }
   },
-  
+
   commands: {
     'visual:approve': async (args) => {
       // Approve visual changes

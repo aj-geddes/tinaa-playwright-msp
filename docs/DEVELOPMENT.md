@@ -60,19 +60,19 @@ flowchart TD
     Root -.-> Tools[tools/<br/>Modular tools]
     Root -.-> Tests[tests/<br/>Test suite]
     Root -.-> Scripts[scripts/<br/>Build scripts]
-    
+
     App -.-> Main[main.py<br/>MCP server]
     App -.-> HTTP[http_server.py<br/>HTTP API]
     App -.-> Progress[progress_tracker.py<br/>Progress system]
     App -.-> Loader[resource_loader.py<br/>Resource management]
-    
+
     Controller -.-> ControllerPy[controller.py<br/>Playwright wrapper]
-    
+
     LSP -.-> Server[server.py<br/>LSP implementation]
     LSP -.-> Handlers[handlers/<br/>Request handlers]
-    
+
     Resources -.-> JSON[*.json<br/>Configuration files]
-    
+
     Tests -.-> Unit[unit/<br/>Unit tests]
     Tests -.-> Integration[integration/<br/>Integration tests]
     Tests -.-> E2E[e2e/<br/>End-to-end tests]
@@ -158,18 +158,18 @@ sequenceDiagram
     participant Tests as Test Suite
     participant CI as CI/CD
     participant Main as Main Branch
-    
+
     Dev->>Local: Create feature branch
     Dev->>Local: Write code
     Dev->>Tests: Run tests locally
     Tests-->>Dev: Test results
-    
+
     Dev->>Local: Commit changes
     Dev->>CI: Push to remote
     CI->>CI: Run automated tests
     CI->>CI: Run linting
     CI->>CI: Check coverage
-    
+
     CI-->>Dev: CI results
     Dev->>Main: Create pull request
     Main->>Main: Code review
@@ -191,25 +191,25 @@ async def new_tool_name(
 ) -> str:
     """
     Tool description for MCP catalog.
-    
+
     Args:
         param1: Description of param1
         param2: Description of param2
         ctx: Execution context
-    
+
     Returns:
         Result description
     """
     try:
         # Initialize controller if needed
         controller = await get_or_create_controller()
-        
+
         # Implement tool logic
         result = await controller.some_method(param1, param2)
-        
+
         # Return formatted result
         return format_tool_response(result)
-        
+
     except Exception as e:
         logger.error(f"Error in new_tool: {e}")
         return f"Error: {str(e)}"
@@ -242,7 +242,7 @@ from .controller import PlaywrightController
 class NewTestType:
     def __init__(self, controller: PlaywrightController):
         self.controller = controller
-    
+
     async def run_test(self, url: str, options: dict):
         # Test implementation
         pass
@@ -304,15 +304,15 @@ flowchart TD
     Tests[Test Suite] -.-> Unit[Unit Tests]
     Tests -.-> Integration[Integration Tests]
     Tests -.-> E2E[E2E Tests]
-    
+
     Unit -.-> Mocks[Mock Objects]
     Unit -.-> Fixtures[Pytest Fixtures]
     Unit -.-> Assertions[Assertions]
-    
+
     Integration -.-> RealBrowser[Real Browser]
     Integration -.-> TestServer[Test Server]
     Integration -.-> Database[Test Data]
-    
+
     E2E -.-> FullStack[Full Stack]
     E2E -.-> UserFlows[User Flows]
     E2E -.-> Performance[Performance]
@@ -337,9 +337,9 @@ def mock_controller():
 async def test_new_tool(mock_controller):
     with patch('app.main.get_or_create_controller', return_value=mock_controller):
         from app.main import new_tool_name
-        
+
         result = await new_tool_name("param1", param2=20)
-        
+
         assert result == "Expected result"
         mock_controller.some_method.assert_called_once_with("param1", 20)
 ```
@@ -442,9 +442,9 @@ import pstats
 def profile_function():
     profiler = cProfile.Profile()
     profiler.enable()
-    
+
     # Code to profile
-    
+
     profiler.disable()
     stats = pstats.Stats(profiler)
     stats.sort_stats('cumulative')
@@ -543,15 +543,15 @@ flowchart TD
     Dev[Development] -.-> Test[Testing]
     Test -.-> Review[Code Review]
     Review -.-> Merge[Merge to Main]
-    
+
     Merge -.-> Tag[Create Tag]
     Tag -.-> Build[Build Docker Image]
     Build -.-> Push[Push to Registry]
-    
+
     Push -.-> Deploy[Deploy to Staging]
     Deploy -.-> Verify[Verify Deployment]
     Verify -.-> Release[Release to Production]
-    
+
     Release -.-> Announce[Announce Release]
 ```
 
