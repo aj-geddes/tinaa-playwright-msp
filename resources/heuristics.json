@@ -1,0 +1,68 @@
+{
+  "I18N": {
+    "name": "Internationalization Testing",
+    "description": "Testing heuristics for internationalization and localization",
+    "heuristics": [
+      "Check for hardcoded text that should be in resource files",
+      "Verify text expansion/contraction doesn't break layouts",
+      "Test with different character sets and languages",
+      "Check date, time, currency, and number formats",
+      "Test right-to-left language support",
+      "Verify sorting and collation rules",
+      "Check for cultural appropriateness of icons and colors"
+    ]
+  },
+  "CRUDS": {
+    "name": "CRUDS Testing",
+    "description": "Testing heuristics for Create, Read, Update, Delete, and Search operations",
+    "heuristics": [
+      "Test creating items with minimum valid data",
+      "Test creating items with maximum allowed data",
+      "Test reading/viewing items in different states",
+      "Test updating items partially and completely",
+      "Test deleting items and verify cascading effects",
+      "Test searching with various criteria and combinations",
+      "Test for proper validation and error handling in all operations"
+    ]
+  },
+  "SLAP": {
+    "name": "Security, Legal, Accessibility, and Performance",
+    "description": "Testing heuristic focusing on non-functional requirements",
+    "heuristics": [
+      "Check for security vulnerabilities and data protection",
+      "Verify compliance with legal requirements and regulations",
+      "Test accessibility for users with disabilities",
+      "Measure and analyze performance under various conditions"
+    ]
+  },
+  "FEW HICCUPPS": {
+    "name": "FEW HICCUPPS",
+    "description": "Heuristic for testing software against multiple consistency models",
+    "heuristics": [
+      "Familiarity: Does the software behave in a way users would expect?",
+      "Explainability: Can the behavior be explained and understood?",
+      "World: Is the software consistent with how the world works?",
+      "History: Is the current behavior consistent with past behavior?",
+      "Image: Is the software consistent with its brand and marketing?",
+      "Comparable Products: How does it compare to similar products?",
+      "Claims: Does the software match what is claimed about it?",
+      "User Expectations: Does it meet user expectations?",
+      "Product: Is the software consistent within itself?",
+      "Purpose: Does the software serve its intended purpose?",
+      "Standards: Does it comply with applicable standards?"
+    ]
+  },
+  "SFDIPOT": {
+    "name": "SFDIPOT (San Francisco Depot)",
+    "description": "Heuristic for identifying different dimensions of a product to test",
+    "heuristics": [
+      "Structure: Test how the components fit together",
+      "Function: Test what the product does",
+      "Data: Test how the product handles data",
+      "Interfaces: Test how users interact with the product",
+      "Platform: Test how the product works with its environment",
+      "Operations: Test how the product is used",
+      "Time: Test how the product behaves over time"
+    ]
+  }
+}

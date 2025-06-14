@@ -1,0 +1,1 @@
+# Playwright LSP package initialization

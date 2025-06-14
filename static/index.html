@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TINAA MSP Server Status</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        h1 {
+            color: #333;
+        }
+        .status {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .status.running {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .status.error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TINAA MSP Server Status</h1>
+        
+        <div class="status running">
+            <h2>Server is running</h2>
+            <p>The TINAA MSP Server is up and running. It is ready to be used with Claude Desktop.</p>
+        </div>
+        
+        <h2>Server Information</h2>
+        <ul>
+            <li><strong>Name:</strong> TINAA - Test Intelligence and Automation Advanced</li>
+            <li><strong>Version:</strong> 0.1.0</li>
+            <li><strong>Transport:</strong> stdio</li>
+        </ul>
+        
+        <h2>Available Tools</h2>
+        <ul>
+            <li><strong>analyze_script</strong> - Analyze a Playwright test script for missing awaits</li>
+        </ul>
+        
+        <h2>Available Resources</h2>
+        <ul>
+            <li><strong>playwright://docs/{method}</strong> - Get documentation for a Playwright method</li>
+        </ul>
+        
+        <h2>Example Usage</h2>
+        <pre>
+# In Claude Desktop:
+"Analyze this Playwright script for missing awaits:
+
+test('example', async ({ page }) => {
+  await page.goto('https://example.com');
+  page.click('.button');  // Missing await
+  await page.fill('input', 'text');
+});"
+        </pre>
+    </div>
+</body>
+</html>

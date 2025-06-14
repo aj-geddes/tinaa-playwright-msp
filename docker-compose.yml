@@ -1,0 +1,21 @@
+services:
+  tinaa-playwright-msp:
+    build: .
+    image: tinaa-playwright-msp:latest
+    container_name: tinaa-playwright-msp  # Set explicit container name
+    volumes:
+      - ./logs:/app/logs
+      - ${PWD}:/mnt/workspace
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONPATH=/app
+      - PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+    ports:
+      - "8765:8765"
+    working_dir: /mnt/workspace
+    stdin_open: true
+    tty: true
+    cap_add:
+      - SYS_ADMIN
+    stop_signal: SIGTERM
+    restart: "no"

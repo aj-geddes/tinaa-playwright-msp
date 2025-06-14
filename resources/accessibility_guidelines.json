@@ -1,0 +1,139 @@
+{
+  "WCAG": {
+    "name": "Web Content Accessibility Guidelines",
+    "version": "2.1",
+    "principles": [
+      {
+        "name": "Perceivable",
+        "guidelines": [
+          {
+            "id": "1.1",
+            "name": "Text Alternatives",
+            "description": "Provide text alternatives for non-text content"
+          },
+          {
+            "id": "1.2",
+            "name": "Time-based Media",
+            "description": "Provide alternatives for time-based media"
+          },
+          {
+            "id": "1.3",
+            "name": "Adaptable",
+            "description": "Create content that can be presented in different ways"
+          },
+          {
+            "id": "1.4",
+            "name": "Distinguishable",
+            "description": "Make it easier for users to see and hear content"
+          }
+        ]
+      },
+      {
+        "name": "Operable",
+        "guidelines": [
+          {
+            "id": "2.1",
+            "name": "Keyboard Accessible",
+            "description": "Make all functionality available from a keyboard"
+          },
+          {
+            "id": "2.2",
+            "name": "Enough Time",
+            "description": "Provide users enough time to read and use content"
+          },
+          {
+            "id": "2.3",
+            "name": "Seizures and Physical Reactions",
+            "description": "Do not design content in a way that is known to cause seizures"
+          },
+          {
+            "id": "2.4",
+            "name": "Navigable",
+            "description": "Provide ways to help users navigate, find content, and determine where they are"
+          },
+          {
+            "id": "2.5",
+            "name": "Input Modalities",
+            "description": "Make it easier for users to operate functionality through various inputs beyond keyboard"
+          }
+        ]
+      },
+      {
+        "name": "Understandable",
+        "guidelines": [
+          {
+            "id": "3.1",
+            "name": "Readable",
+            "description": "Make text content readable and understandable"
+          },
+          {
+            "id": "3.2",
+            "name": "Predictable",
+            "description": "Make Web pages appear and operate in predictable ways"
+          },
+          {
+            "id": "3.3",
+            "name": "Input Assistance",
+            "description": "Help users avoid and correct mistakes"
+          }
+        ]
+      },
+      {
+        "name": "Robust",
+        "guidelines": [
+          {
+            "id": "4.1",
+            "name": "Compatible",
+            "description": "Maximize compatibility with current and future user agents, including assistive technologies"
+          }
+        ]
+      }
+    ],
+    "conformance_levels": [
+      {
+        "level": "A",
+        "description": "Minimum level of conformance"
+      },
+      {
+        "level": "AA",
+        "description": "Addresses the most common barriers for disabled users"
+      },
+      {
+        "level": "AAA",
+        "description": "Highest level of conformance"
+      }
+    ]
+  },
+  "common_checks": [
+    {
+      "name": "Image Alt Text",
+      "description": "All images must have appropriate alt text",
+      "test": "Check if all <img> elements have non-empty alt attributes"
+    },
+    {
+      "name": "Keyboard Navigation",
+      "description": "All interactive elements must be accessible via keyboard",
+      "test": "Navigate through the page using only the Tab key and check if all interactive elements can be accessed and activated"
+    },
+    {
+      "name": "Color Contrast",
+      "description": "Text must have sufficient contrast with its background",
+      "test": "Check text elements for a contrast ratio of at least 4.5:1 for normal text and 3:1 for large text"
+    },
+    {
+      "name": "Form Labels",
+      "description": "All form controls must have associated labels",
+      "test": "Check if all form controls have explicit labels or aria-label attributes"
+    },
+    {
+      "name": "Heading Structure",
+      "description": "Pages should have a logical heading structure",
+      "test": "Check if headings are used in a hierarchical order (h1, then h2, etc.)"
+    },
+    {
+      "name": "Focus Indicators",
+      "description": "Keyboard focus must be visible",
+      "test": "Navigate with the keyboard and check if the focused element is clearly visible"
+    }
+  ]
+}

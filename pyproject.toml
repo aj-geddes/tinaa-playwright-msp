@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "tinaa-playwright-msp"
+version = "0.1.0"
+description = "Test Intelligence and Automation Advanced - MSP Integration with Playwright LSP"
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pygls = "^1.0.0"
+fastmcp = "^2.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

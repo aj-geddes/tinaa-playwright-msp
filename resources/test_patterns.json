@@ -1,0 +1,186 @@
+{
+  "login": {
+    "name": "Login Flow Testing",
+    "description": "Test patterns for login functionality",
+    "patterns": [
+      {
+        "name": "Valid Login",
+        "steps": [
+          "Navigate to login page",
+          "Enter valid username and password",
+          "Submit the form",
+          "Verify successful login"
+        ]
+      },
+      {
+        "name": "Invalid Password",
+        "steps": [
+          "Navigate to login page",
+          "Enter valid username and invalid password",
+          "Submit the form",
+          "Verify error message"
+        ]
+      },
+      {
+        "name": "Non-existent User",
+        "steps": [
+          "Navigate to login page",
+          "Enter non-existent username and any password",
+          "Submit the form",
+          "Verify error message"
+        ]
+      },
+      {
+        "name": "Empty Fields",
+        "steps": [
+          "Navigate to login page",
+          "Leave username and password empty",
+          "Submit the form",
+          "Verify validation errors"
+        ]
+      },
+      {
+        "name": "Remember Me",
+        "steps": [
+          "Navigate to login page",
+          "Enter valid credentials",
+          "Check 'Remember Me' option",
+          "Submit the form",
+          "Close browser and reopen",
+          "Navigate to login page",
+          "Verify username is remembered"
+        ]
+      }
+    ]
+  },
+  "registration": {
+    "name": "Registration Flow Testing",
+    "description": "Test patterns for user registration",
+    "patterns": [
+      {
+        "name": "Valid Registration",
+        "steps": [
+          "Navigate to registration page",
+          "Fill all required fields with valid data",
+          "Submit the form",
+          "Verify successful registration"
+        ]
+      },
+      {
+        "name": "Existing Username",
+        "steps": [
+          "Navigate to registration page",
+          "Use an existing username with new details",
+          "Submit the form",
+          "Verify error message"
+        ]
+      },
+      {
+        "name": "Password Validation",
+        "steps": [
+          "Navigate to registration page",
+          "Enter a password that doesn't meet requirements",
+          "Submit the form",
+          "Verify validation error"
+        ]
+      },
+      {
+        "name": "Email Verification",
+        "steps": [
+          "Complete registration with a valid email",
+          "Check for verification email",
+          "Click verification link",
+          "Verify account activation"
+        ]
+      }
+    ]
+  },
+  "checkout": {
+    "name": "E-commerce Checkout Testing",
+    "description": "Test patterns for checkout process",
+    "patterns": [
+      {
+        "name": "Guest Checkout",
+        "steps": [
+          "Add items to cart",
+          "Proceed to checkout as guest",
+          "Fill shipping information",
+          "Select shipping method",
+          "Fill payment information",
+          "Review order",
+          "Complete purchase",
+          "Verify order confirmation"
+        ]
+      },
+      {
+        "name": "Registered User Checkout",
+        "steps": [
+          "Login as registered user",
+          "Add items to cart",
+          "Proceed to checkout",
+          "Verify pre-filled information",
+          "Complete purchase",
+          "Verify order history update"
+        ]
+      },
+      {
+        "name": "Promo Code",
+        "steps": [
+          "Add items to cart",
+          "Proceed to checkout",
+          "Apply valid promo code",
+          "Verify discount applied",
+          "Complete purchase"
+        ]
+      },
+      {
+        "name": "Out of Stock During Checkout",
+        "steps": [
+          "Add items to cart",
+          "Simulate item becoming out of stock",
+          "Proceed through checkout",
+          "Verify appropriate error handling"
+        ]
+      }
+    ]
+  },
+  "search": {
+    "name": "Search Functionality Testing",
+    "description": "Test patterns for search functionality",
+    "patterns": [
+      {
+        "name": "Basic Search",
+        "steps": [
+          "Enter a common search term",
+          "Submit search",
+          "Verify relevant results"
+        ]
+      },
+      {
+        "name": "No Results",
+        "steps": [
+          "Enter a search term with no matches",
+          "Submit search",
+          "Verify 'no results' message"
+        ]
+      },
+      {
+        "name": "Advanced Search",
+        "steps": [
+          "Use advanced search options",
+          "Combine multiple search criteria",
+          "Verify filtered results"
+        ]
+      },
+      {
+        "name": "Search Suggestions",
+        "steps": [
+          "Start typing in search box",
+          "Verify search suggestions appear",
+          "Select a suggestion",
+          "Verify search execution"
+        ]
+      }
+    ]
+  }
+}

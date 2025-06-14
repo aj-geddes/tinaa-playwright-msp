@@ -1,0 +1,28 @@
+services:
+  tinaa-http:
+    build: .
+    image: tinaa-playwright-msp:latest
+    container_name: tinaa-http
+    volumes:
+      - ./logs:/app/logs
+      - ${PWD}:/mnt/workspace
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONPATH=/app
+      - PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+      - TINAA_MODE=http
+    ports:
+      - "8765:8765"
+    working_dir: /mnt/workspace
+    stdin_open: true
+    tty: true
+    cap_add:
+      - SYS_ADMIN
+    stop_signal: SIGTERM
+    restart: "no"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8765/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

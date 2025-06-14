@@ -1,0 +1,98 @@
+{
+  "exploratory": {
+    "name": "Exploratory Testing",
+    "description": "A testing approach that emphasizes the tester's freedom and creativity to explore the application",
+    "steps": [
+      "Define the scope and objectives",
+      "Plan the testing session (time, areas to test)",
+      "Execute tests while taking notes",
+      "Analyze findings and report issues",
+      "Review and improve the process"
+    ],
+    "techniques": [
+      "Boundary value analysis",
+      "Error guessing",
+      "User-centered testing",
+      "Feature combination testing",
+      "State transition testing"
+    ]
+  },
+  "accessibility": {
+    "name": "Accessibility Testing",
+    "description": "Testing to ensure the application is usable by people with disabilities",
+    "steps": [
+      "Review WCAG guidelines relevant to the application",
+      "Test with keyboard-only navigation",
+      "Test with screen readers",
+      "Check color contrast and text size",
+      "Verify form labels and ARIA attributes",
+      "Test with different zoom levels"
+    ],
+    "focus_areas": [
+      "Keyboard accessibility",
+      "Screen reader compatibility",
+      "Color contrast",
+      "Text alternatives for non-text content",
+      "Form accessibility",
+      "Navigation and orientation"
+    ]
+  },
+  "responsive": {
+    "name": "Responsive Design Testing",
+    "description": "Testing to ensure the application works well on different screen sizes and devices",
+    "steps": [
+      "Identify target devices and screen sizes",
+      "Test layout and content visibility on each screen size",
+      "Test user interactions on touch devices",
+      "Check loading performance on different networks",
+      "Verify media adaptations (images, videos)"
+    ],
+    "breakpoints": [
+      {"name": "Mobile Small", "width": 320, "height": 568},
+      {"name": "Mobile Medium", "width": 375, "height": 667},
+      {"name": "Mobile Large", "width": 414, "height": 736},
+      {"name": "Tablet", "width": 768, "height": 1024},
+      {"name": "Laptop", "width": 1366, "height": 768},
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ]
+  },
+  "security": {
+    "name": "Security Testing",
+    "description": "Testing to identify vulnerabilities in the application",
+    "steps": [
+      "Identify security requirements and threat models",
+      "Test authentication and authorization",
+      "Check for common vulnerabilities (XSS, CSRF, SQL injection)",
+      "Test data validation and sanitization",
+      "Verify secure communication (HTTPS, certificates)"
+    ],
+    "focus_areas": [
+      "Authentication",
+      "Authorization",
+      "Data validation",
+      "Session management",
+      "Error handling",
+      "Secure communication"
+    ]
+  },
+  "performance": {
+    "name": "Performance Testing",
+    "description": "Testing to evaluate the system's responsiveness and stability under various conditions",
+    "steps": [
+      "Identify performance requirements and metrics",
+      "Design performance test scenarios",
+      "Execute tests and collect metrics",
+      "Analyze results and identify bottlenecks",
+      "Recommend optimizations"
+    ],
+    "metrics": [
+      "Page load time",
+      "Time to first byte",
+      "Time to interactive",
+      "First contentful paint",
+      "Largest contentful paint",
+      "Cumulative layout shift",
+      "Total blocking time"
+    ]
+  }
+}

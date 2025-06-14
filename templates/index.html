@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tinaa Playwright MSP</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+        }
+        .feature {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .feature h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        code {
+            background-color: #f1f1f1;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: Consolas, Monaco, 'Andale Mono', monospace;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tinaa Playwright MSP</h1>
+    <p>Welcome to Tinaa Playwright MSP, a Playwright-based web testing server using Model Service Protocol.</p>
+    
+    <h2>About Tinaa Playwright</h2>
+    <p>Tinaa is an expert web testing assistant that can help you test websites for functionality, accessibility, performance, and security issues. Powered by Playwright, Tinaa can navigate websites, interact with elements, take screenshots, and analyze page content.</p>
+    
+    <div class="feature">
+        <h3>Key Features</h3>
+        <ul>
+            <li>Navigate to web pages and interact with UI elements</li>
+            <li>Fill in forms and submit data</li>
+            <li>Take screenshots of pages and elements</li>
+            <li>Run accessibility checks and suggest improvements</li>
+            <li>Test responsive design across different screen sizes</li>
+            <li>Execute predefined test patterns for common website features</li>
+            <li>Apply testing heuristics to find potential issues</li>
+            <li>Securely handle credentials for authenticated testing</li>
+        </ul>
+    </div>
+    
+    <h2>Getting Started</h2>
+    <p>To interact with Tinaa, you can use the Model Service Protocol API. Here's an example:</p>
+    
+    <pre><code>
+    curl -X POST http://localhost:8000/api/mcp \
+    -H "Content-Type: application/json" \
+    -d '{
+        "function": "navigate_to_url",
+        "parameters": {
+            "url": "https://example.com"
+        }
+    }'
+    </code></pre>
+    
+    <h2>API Documentation</h2>
+    <p>The full API documentation is available at <a href="/docs">/docs</a>.</p>
+    
+    <div class="footer">
+        <p>Tinaa Playwright MSP - Version 0.1.0</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TINAA IDE Integration Example</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .panel {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            margin-top: 0;
+        }
+        .playbook-builder {
+            min-height: 400px;
+        }
+        .step {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .step button {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .add-step {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .add-step select, .add-step input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+        .add-step button {
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 20px;
+            cursor: pointer;
+        }
+        .progress {
+            margin-top: 20px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #007bff;
+            transition: width 0.3s ease;
+        }
+        .log {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+        }
+        .log-entry.info { color: #0056b3; }
+        .log-entry.success { color: #155724; }
+        .log-entry.warning { color: #856404; }
+        .log-entry.error { color: #721c24; }
+        .suggestions {
+            margin-top: 10px;
+        }
+        .suggestion {
+            display: inline-block;
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 4px;
+            padding: 5px 10px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .suggestion:hover {
+            background: #cce5ff;
+        }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .controls button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>TINAA IDE Integration Example <span id="connectionStatus" class="status disconnected">Disconnected</span></h1>
+    
+    <div class="container">
+        <div class="panel">
+            <h2>Playbook Builder</h2>
+            <div id="playbookSteps" class="playbook-builder"></div>
+            
+            <div class="add-step">
+                <select id="actionSelect">
+                    <option value="">Select action...</option>
+                    <option value="navigate">Navigate to URL</option>
+                    <option value="screenshot">Take Screenshot</option>
+                    <option value="detect_forms">Detect Form Fields</option>
+                    <option value="fill_form">Fill Form Fields</option>
+                    <option value="test_exploratory">Run Exploratory Test</option>
+                    <option value="test_accessibility">Run Accessibility Test</option>
+                    <option value="test_responsive">Run Responsive Test</option>
+                    <option value="test_security">Run Security Test</option>
+                    <option value="generate_report">Generate Test Report</option>
+                </select>
+                <input type="text" id="parameterInput" placeholder="Parameters (JSON or URL)">
+                <button onclick="addStep()">Add Step</button>
+            </div>
+            
+            <div class="suggestions" id="suggestions"></div>
+            
+            <div class="controls">
+                <button class="btn-primary" onclick="executePlaybook()">Execute Playbook</button>
+                <button class="btn-secondary" onclick="clearPlaybook()">Clear</button>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h2>Progress & Logs</h2>
+            
+            <div class="progress">
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                </div>
+                <p id="progressText">Ready</p>
+            </div>
+            
+            <h3>Activity Log</h3>
+            <div id="log" class="log"></div>
+        </div>
+    </div>
+
+    <script>
+        let ws = null;
+        let clientId = generateClientId();
+        let playbook = [];
+        
+        function generateClientId() {
+            return 'ide-' + Math.random().toString(36).substr(2, 9);
+        }
+        
+        // WebSocket connection
+        function connectWebSocket() {
+            ws = new WebSocket(`ws://localhost:8765/ws/${clientId}`);
+            
+            ws.onopen = () => {
+                document.getElementById('connectionStatus').textContent = 'Connected';
+                document.getElementById('connectionStatus').className = 'status connected';
+                log('Connected to TINAA server', 'success');
+                requestSuggestions();
+            };
+            
+            ws.onclose = () => {
+                document.getElementById('connectionStatus').textContent = 'Disconnected';
+                document.getElementById('connectionStatus').className = 'status disconnected';
+                log('Disconnected from server', 'error');
+                setTimeout(connectWebSocket, 3000); // Reconnect after 3 seconds
+            };
+            
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                handleMessage(data);
+            };
+            
+            ws.onerror = (error) => {
+                log('WebSocket error: ' + error, 'error');
+            };
+        }
+        
+        function handleMessage(data) {
+            switch(data.type) {
+                case 'progress':
+                    updateProgress(data.data);
+                    break;
+                case 'suggestions':
+                    displaySuggestions(data.suggestions);
+                    break;
+                case 'playbook_updated':
+                    updatePlaybookDisplay();
+                    break;
+                case 'result':
+                    log(`Action completed: ${data.action}`, 'success');
+                    break;
+            }
+        }
+        
+        function updateProgress(progressData) {
+            const { message, level, progress, metadata } = progressData;
+            
+            log(message, level);
+            
+            if (progress !== undefined) {
+                document.getElementById('progressFill').style.width = progress + '%';
+                document.getElementById('progressText').textContent = message;
+            }
+        }
+        
+        function log(message, level = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${level}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function addStep() {
+            const action = document.getElementById('actionSelect').value;
+            const paramInput = document.getElementById('parameterInput').value;
+            
+            if (!action) {
+                alert('Please select an action');
+                return;
+            }
+            
+            let parameters = {};
+            
+            // Parse parameters based on action
+            if (action === 'navigate' && paramInput) {
+                parameters = { url: paramInput };
+            } else if (action === 'screenshot') {
+                parameters = { full_page: true };
+            } else if (action === 'fill_form' && paramInput) {
+                try {
+                    parameters = { fields: JSON.parse(paramInput) };
+                } catch {
+                    parameters = { fields: {} };
+                }
+            }
+            
+            const step = {
+                id: 'step-' + Date.now(),
+                action: action,
+                parameters: parameters,
+                description: getActionDescription(action, parameters)
+            };
+            
+            playbook.push(step);
+            updatePlaybookDisplay();
+            
+            // Clear inputs
+            document.getElementById('actionSelect').value = '';
+            document.getElementById('parameterInput').value = '';
+            
+            // Request new suggestions
+            requestSuggestions();
+        }
+        
+        function getActionDescription(action, parameters) {
+            const descriptions = {
+                navigate: `Navigate to ${parameters.url || 'URL'}`,
+                screenshot: 'Take a screenshot',
+                detect_forms: 'Detect form fields',
+                fill_form: 'Fill form fields',
+                test_exploratory: 'Run exploratory test',
+                test_accessibility: 'Run accessibility test',
+                test_responsive: 'Run responsive test',
+                test_security: 'Run security test',
+                generate_report: 'Generate test report'
+            };
+            return descriptions[action] || action;
+        }
+        
+        function updatePlaybookDisplay() {
+            const container = document.getElementById('playbookSteps');
+            container.innerHTML = '';
+            
+            playbook.forEach((step, index) => {
+                const stepDiv = document.createElement('div');
+                stepDiv.className = 'step';
+                stepDiv.innerHTML = `
+                    <strong>Step ${index + 1}:</strong> ${step.description}
+                    <button onclick="removeStep('${step.id}')">Remove</button>
+                `;
+                container.appendChild(stepDiv);
+            });
+            
+            if (playbook.length === 0) {
+                container.innerHTML = '<p style="color: #6c757d;">No steps added yet. Add steps to build your test playbook.</p>';
+            }
+        }
+        
+        function removeStep(stepId) {
+            playbook = playbook.filter(step => step.id !== stepId);
+            updatePlaybookDisplay();
+            requestSuggestions();
+        }
+        
+        function clearPlaybook() {
+            playbook = [];
+            updatePlaybookDisplay();
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressText').textContent = 'Ready';
+            requestSuggestions();
+        }
+        
+        function requestSuggestions() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    type: 'playbook_builder',
+                    command: 'get_suggestions'
+                }));
+            }
+        }
+        
+        function displaySuggestions(suggestions) {
+            const container = document.getElementById('suggestions');
+            container.innerHTML = '<strong>Suggestions:</strong> ';
+            
+            suggestions.forEach(suggestion => {
+                const span = document.createElement('span');
+                span.className = 'suggestion';
+                span.textContent = suggestion.description;
+                span.onclick = () => {
+                    document.getElementById('actionSelect').value = suggestion.action;
+                };
+                container.appendChild(span);
+            });
+        }
+        
+        async function executePlaybook() {
+            if (playbook.length === 0) {
+                alert('Please add at least one step to the playbook');
+                return;
+            }
+            
+            log('Starting playbook execution...', 'info');
+            
+            const response = await fetch('http://localhost:8765/playbook/execute', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: 'IDE Test Playbook',
+                    steps: playbook,
+                    client_id: clientId
+                })
+            });
+            
+            if (response.ok) {
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const text = decoder.decode(value);
+                    try {
+                        const result = JSON.parse(text);
+                        log('Playbook execution completed', 'success');
+                        console.log('Results:', result);
+                    } catch (e) {
+                        // Partial data, continue reading
+                    }
+                }
+            } else {
+                log('Failed to execute playbook', 'error');
+            }
+        }
+        
+        // Initialize
+        connectWebSocket();
+        updatePlaybookDisplay();
+    </script>
+</body>
+</html>
