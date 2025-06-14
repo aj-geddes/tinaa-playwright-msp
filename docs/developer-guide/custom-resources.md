@@ -163,7 +163,7 @@ test('checkout page accessibility', async ({ page }) => {
 
 ### Package Structure
 
-```
+```javascript
 tinaa-resources-finance/
 ├── package.json
 ├── index.js

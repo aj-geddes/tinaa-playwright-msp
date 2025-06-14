@@ -19,7 +19,7 @@ tinaa generate --prompt "Test login"
 ### 2. Organize Tests by Feature
 
 Structure your tests logically:
-```
+```javascript
 tests/
 ├── authentication/
 ├── user-management/

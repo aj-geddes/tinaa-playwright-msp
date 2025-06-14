@@ -25,7 +25,7 @@ docker-compose -f docker-compose.http.yml up
 docker-compose -f docker-compose.http.yml up -d
 ```
 
-### Using Docker directly
+## Using Docker directly
 
 ```bash
 # Build the image
@@ -44,12 +44,12 @@ docker run -d \
 ## API Endpoints
 
 ### Health Check
-```
+```text
 GET http://localhost:8765/health
 ```
 
 ### Test Connectivity
-```
+```javascript
 POST http://localhost:8765/test/connectivity
 {
   "action": "test_connectivity",
@@ -59,7 +59,7 @@ POST http://localhost:8765/test/connectivity
 ```
 
 ### Navigate to URL
-```
+```text
 POST http://localhost:8765/navigate
 {
   "action": "navigate",
@@ -71,7 +71,7 @@ POST http://localhost:8765/navigate
 ```
 
 ### Take Screenshot
-```
+```text
 POST http://localhost:8765/screenshot
 {
   "action": "screenshot",
@@ -93,7 +93,7 @@ All test endpoints support streaming responses with progress updates:
 - `/test/security` - Run security test
 
 ### Execute Playbook
-```
+```javascript
 POST http://localhost:8765/playbook/execute
 {
   "name": "My Test Playbook",

@@ -247,7 +247,7 @@ response = requests.post("http://localhost:8765/playbook/execute",
     json=playbook)
 ```
 
-### Using Resources
+## Using Resources
 
 Access the comprehensive resource library:
 
@@ -269,7 +269,7 @@ Access the comprehensive resource library:
 
 ### Project Structure
 
-```
+```javascript
 tinaa-playwright-msp/
 ├── app/                      # Main application code
 │   ├── main.py              # MCP server entry point
