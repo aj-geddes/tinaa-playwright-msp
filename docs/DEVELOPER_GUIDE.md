@@ -1843,6 +1843,102 @@ app.middleware("http")(rate_limit_middleware)
 
 ---
 
+## Deployment Strategies
+
+### Development Deployment
+
+```bash
+# Local development
+docker-compose -f docker-compose.dev.yml up
+
+# Development server with hot reload
+python app/http_server.py --reload --debug
+```
+
+### Staging Deployment
+
+```yaml
+# docker-compose.staging.yml
+version: '3.8'
+services:
+  tinaa:
+    image: tinaa:staging
+    environment:
+      - ENV=staging
+      - LOG_LEVEL=debug
+    volumes:
+      - ./config/staging:/app/config
+```
+
+### Production Deployment
+
+See the [Enterprise Guide](ENTERPRISE_GUIDE.md) for comprehensive production deployment strategies including:
+- Kubernetes deployment
+- Docker Swarm deployment
+- Auto-scaling configurations
+- High availability setups
+
+---
+
+## Contributing
+
+### Getting Started
+
+1. **Fork the Repository**
+   ```bash
+   git clone https://github.com/yourusername/tinaa-playwright-msp.git
+   cd tinaa-playwright-msp
+   ```
+
+2. **Create a Feature Branch**
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+3. **Install Development Dependencies**
+   ```bash
+   pip install -r requirements-dev.txt
+   pre-commit install
+   ```
+
+### Development Guidelines
+
+1. **Code Style**
+   - Follow PEP 8 for Python code
+   - Use type hints for all functions
+   - Add docstrings to all public methods
+
+2. **Testing Requirements**
+   - Write tests for all new features
+   - Maintain >80% test coverage
+   - Run tests before submitting PR
+
+3. **Documentation**
+   - Update relevant documentation
+   - Add examples for new features
+   - Update API documentation
+
+### Submitting Pull Requests
+
+1. **Run Quality Checks**
+   ```bash
+   make lint
+   make test
+   make coverage
+   ```
+
+2. **Create Pull Request**
+   - Clear description of changes
+   - Link related issues
+   - Include test results
+
+3. **Code Review Process**
+   - Address reviewer feedback
+   - Keep PR focused and small
+   - Update branch with main
+
+---
+
 This developer guide provides comprehensive technical documentation for extending, customizing, and integrating TINAA. It covers architecture, development setup, API integration, custom resource development, plugin systems, testing strategies, performance optimization, and security considerations.
 
 The guide enables developers to:

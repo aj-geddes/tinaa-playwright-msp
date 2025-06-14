@@ -9,7 +9,7 @@
 
 1. [Quick Start](#quick-start)
 2. [Core Concepts](#core-concepts)
-3. [Installation & Setup](#installation--setup)
+3. [Installation & Setup](#installation-setup)
 4. [Getting Started](#getting-started)
 5. [Test Generation](#test-generation)
 6. [Advanced Features](#advanced-features)
@@ -1093,7 +1093,7 @@ curl http://localhost:8765/traces/latest
 #### Community Resources
 - **GitHub Issues**: [Report bugs and request features](https://github.com/aj-geddes/tinaa-playwright-msp/issues)
 - **Discussions**: [Community Q&A and best practices](https://github.com/aj-geddes/tinaa-playwright-msp/discussions)
-- **Documentation**: [Complete API reference](docs/API.md)
+- **Documentation**: [Complete API reference](API.md)
 
 #### Enterprise Support
 - **Priority Support**: Contact enterprise@tinaa.dev
@@ -1197,6 +1197,6 @@ TINAA includes 25+ specialized resources:
 
 ---
 
-*This guide represents the complete TINAA user experience. For the latest updates and advanced features, visit the [official documentation](docs/).*
+*This guide represents the complete TINAA user experience. For the latest updates and advanced features, visit the [documentation index](documentation-index.md).*
 
 **Ready to supercharge your Playwright testing?** Start with the [Quick Start](#quick-start) section and begin generating intelligent tests in minutes!

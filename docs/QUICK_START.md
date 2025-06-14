@@ -388,9 +388,9 @@ curl -X POST http://localhost:8765/screenshot -d '{"parameters": {"full_page": t
 ```
 
 ### Resources
-- **Full Documentation**: [docs/USER_GUIDE.md](USER_GUIDE.md)
-- **Developer Guide**: [docs/DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)
-- **API Reference**: [docs/API.md](API.md)
+- **Full Documentation**: [USER_GUIDE.md](USER_GUIDE.md)
+- **Developer Guide**: [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)
+- **API Reference**: [API.md](API.md)
 - **GitHub Issues**: [Report bugs](https://github.com/aj-geddes/tinaa-playwright-msp/issues)
 
 ---

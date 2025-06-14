@@ -79,13 +79,13 @@ Welcome to the comprehensive documentation center for TINAA (Testing Intelligenc
 ### By Feature
 - **AI Test Generation** → [User Guide](USER_GUIDE.md#test-generation)
 - **API Integration** → [API Reference](API.md)
-- **Docker Deployment** → [Deployment Guide](DEPLOYMENT.md#docker)
-- **Kubernetes Setup** → [Enterprise Guide](ENTERPRISE_GUIDE.md#kubernetes)
+- **Docker Deployment** → [Deployment Guide](DEPLOYMENT.md#local-development)
+- **Kubernetes Setup** → [Enterprise Guide](ENTERPRISE_GUIDE.md#production-deployment)
 - **Security Configuration** → [Security Guide](enterprise/security.md)
 
 ### By Task
-- **Generate a test** → [Quick Start](QUICK_START.md#your-first-test)
-- **Customize test patterns** → [Developer Guide](DEVELOPER_GUIDE.md#custom-resources)
+- **Generate a test** → [Quick Start](QUICK_START.md#your-first-test-in-60-seconds)
+- **Customize test patterns** → [Developer Guide](DEVELOPER_GUIDE.md#custom-resource-development)
 - **Deploy to production** → [Deployment Guide](DEPLOYMENT.md)
 - **Troubleshoot errors** → [Troubleshooting](TROUBLESHOOTING.md)
 - **Contribute code** → [Development Guide](DEVELOPMENT.md)
@@ -110,7 +110,7 @@ Help us improve the documentation:
 
 1. **Report Issues** - Found an error? [Open an issue](https://github.com/aj-geddes/tinaa-playwright-msp/issues)
 2. **Suggest Improvements** - Have ideas? [Start a discussion](https://github.com/aj-geddes/tinaa-playwright-msp/discussions)
-3. **Submit Updates** - Know the fix? [Create a pull request](DEVELOPMENT.md#documentation)
+3. **Submit Updates** - Know the fix? [Create a pull request](DEVELOPMENT.md)
 
 ---
 

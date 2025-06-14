@@ -39,7 +39,7 @@ TINAA is an enterprise-grade AI-powered testing platform that revolutionizes how
     
     OAuth2, SAML, RBAC, audit logging, and compliance features built-in.
     
-    [:octicons-arrow-right-24: Security Guide](ENTERPRISE_GUIDE.md#security--compliance)
+    [:octicons-arrow-right-24: Security Guide](ENTERPRISE_GUIDE.md#security-compliance)
 
 - :chart_with_upwards_trend: **Production Ready**
     
@@ -267,8 +267,8 @@ Choose the installation method that works best for you:
   <h2>Start Building Intelligent Tests Today</h2>
   <p>Join thousands of developers who are already saving time and improving quality with TINAA</p>
   <div class="cta-buttons">
-    <a href="QUICK_START/" class="cta-button cta-button--primary">Get Started Now</a>
-    <a href="documentation-index/" class="cta-button cta-button--secondary">Browse Documentation</a>
+    <a href="QUICK_START.md" class="cta-button cta-button--primary">Get Started Now</a>
+    <a href="documentation-index.md" class="cta-button cta-button--secondary">Browse Documentation</a>
   </div>
 </div>
 
