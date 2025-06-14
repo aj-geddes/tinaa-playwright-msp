@@ -196,13 +196,7 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/aj-geddes/tinaa-playwright-msp
     - icon: fontawesome/brands/docker
-      link: https://hub.docker.com/r/tinaa/playwright-msp
-    - icon: fontawesome/brands/python
-      link: https://pypi.org/project/tinaa-playwright/
-    - icon: fontawesome/brands/npm
-      link: https://www.npmjs.com/package/tinaa-client
-    - icon: fontawesome/brands/discord
-      link: https://discord.gg/tinaa-community
+      link: https://github.com/aj-geddes/tinaa-playwright-msp/pkgs/container/tinaa-playwright-msp
   
   # Analytics (Google Analytics 4)
   analytics:

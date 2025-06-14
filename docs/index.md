@@ -13,9 +13,9 @@ hide:
 <div align="center" style="margin: 2rem 0;">
 
   [![GitHub Stars](https://img.shields.io/github/stars/aj-geddes/tinaa-playwright-msp?style=for-the-badge&logo=github)](https://github.com/aj-geddes/tinaa-playwright-msp)
-  [![Docker Pulls](https://img.shields.io/docker/pulls/tinaa/playwright-msp?style=for-the-badge&logo=docker)](#)
-  [![License](https://img.shields.io/github/license/aj-geddes/tinaa-playwright-msp?style=for-the-badge)](LICENSE)
-  [![Documentation](https://img.shields.io/badge/docs-live-success?style=for-the-badge&logo=readthedocs)](#)
+  [![GitHub Release](https://img.shields.io/github/v/release/aj-geddes/tinaa-playwright-msp?style=for-the-badge&logo=github)](https://github.com/aj-geddes/tinaa-playwright-msp/releases)
+  [![License](https://img.shields.io/github/license/aj-geddes/tinaa-playwright-msp?style=for-the-badge)](https://github.com/aj-geddes/tinaa-playwright-msp/blob/main/LICENSE)
+  [![Documentation](https://img.shields.io/badge/docs-live-success?style=for-the-badge&logo=readthedocs)](https://aj-geddes.github.io/tinaa-playwright-msp)
 
 </div>
 

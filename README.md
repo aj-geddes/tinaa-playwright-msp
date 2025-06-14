@@ -1,5 +1,10 @@
 # TINAA - Testing Intelligence Network Automation Assistant
 
+[![GitHub Stars](https://img.shields.io/github/stars/aj-geddes/tinaa-playwright-msp?style=for-the-badge&logo=github)](https://github.com/aj-geddes/tinaa-playwright-msp)
+[![GitHub Release](https://img.shields.io/github/v/release/aj-geddes/tinaa-playwright-msp?style=for-the-badge&logo=github)](https://github.com/aj-geddes/tinaa-playwright-msp/releases)
+[![License](https://img.shields.io/github/license/aj-geddes/tinaa-playwright-msp?style=for-the-badge)](https://github.com/aj-geddes/tinaa-playwright-msp/blob/main/LICENSE)
+[![Documentation](https://img.shields.io/badge/docs-live-success?style=for-the-badge&logo=mkdocs)](https://aj-geddes.github.io/tinaa-playwright-msp)
+
 A Model Context Protocol (MCP) server for Playwright automation with integrated Language Server Protocol (LSP) for intelligent test automation assistance.
 
 ## Quick Start with Pre-built Docker Image
