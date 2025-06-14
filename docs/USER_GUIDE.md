@@ -1092,7 +1092,7 @@ curl http://localhost:8765/traces/latest
 
 #### Community Resources
 - **GitHub Issues**: [Report bugs and request features](https://github.com/aj-geddes/tinaa-playwright-msp/issues)
-- **Discussions**: [Community Q&A and best practices](https://github.com/aj-geddes/tinaa-playwright-msp/discussions)
+- **Discussions**: [Community Q&A and best practices](https://github.com/aj-geddes/tinaa-playwright-msp/issues)
 - **Documentation**: [Complete API reference](API.md)
 
 #### Enterprise Support

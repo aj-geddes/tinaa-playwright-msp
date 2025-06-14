@@ -109,7 +109,7 @@ All TINAA documentation follows these principles:
 Help us improve the documentation:
 
 1. **Report Issues** - Found an error? [Open an issue](https://github.com/aj-geddes/tinaa-playwright-msp/issues)
-2. **Suggest Improvements** - Have ideas? [Start a discussion](https://github.com/aj-geddes/tinaa-playwright-msp/discussions)
+2. **Suggest Improvements** - Have ideas? [Start a discussion](https://github.com/aj-geddes/tinaa-playwright-msp/issues)
 3. **Submit Updates** - Know the fix? [Create a pull request](DEVELOPMENT.md)
 
 ---
@@ -117,7 +117,7 @@ Help us improve the documentation:
 ## 📞 Need More Help?
 
 - **GitHub Issues**: [Report bugs](https://github.com/aj-geddes/tinaa-playwright-msp/issues)
-- **Discussions**: [Ask questions](https://github.com/aj-geddes/tinaa-playwright-msp/discussions)
+- **Discussions**: [Ask questions](https://github.com/aj-geddes/tinaa-playwright-msp/issues)
 - **Discord**: [Join the community](https://discord.gg/tinaa-community)
 - **Enterprise Support**: [Contact us](mailto:enterprise@tinaa.dev)
 

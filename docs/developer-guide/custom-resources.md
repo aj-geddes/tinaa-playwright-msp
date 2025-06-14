@@ -351,4 +351,4 @@ Share your resources with the community:
 - [SDK Development](sdk-development.md)
 - [Plugin Development](../DEVELOPER_GUIDE.md#plugin-development)
 - [API Reference](../API.md)
-- [Pattern Examples](https://github.com/tinaa-examples/custom-patterns)
+- [Pattern Examples](#)

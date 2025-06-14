@@ -119,7 +119,7 @@ TINAA is available under MIT license for open-source use and commercial licenses
 
 ### How do I get support?
 
-- Community: [GitHub Discussions](https://github.com/aj-geddes/tinaa-playwright-msp/discussions)
+- Community: [GitHub Discussions](https://github.com/aj-geddes/tinaa-playwright-msp/issues)
 - Documentation: [User Guide](../USER_GUIDE.md)
 - Enterprise: enterprise@tinaa.dev
 

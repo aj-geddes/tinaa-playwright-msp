@@ -49,7 +49,7 @@ git push origin main
 
 After the workflow completes (usually 2-3 minutes):
 
-- **GitHub Pages URL**: https://aj-geddes.github.io/tinaa-playwright-msp/
+- **GitHub Pages URL**: #
 - **Check deployment**: Go to Settings → Pages to see the live URL
 
 ## 🔍 Verification Steps
@@ -93,6 +93,6 @@ After the workflow completes (usually 2-3 minutes):
 ## 🎉 Success!
 
 Once configured, your documentation will be available at:
-- https://aj-geddes.github.io/tinaa-playwright-msp/
+- #
 
 The site will automatically update whenever you push changes to the main branch!

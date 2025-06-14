@@ -264,8 +264,8 @@ Current community-developed SDKs:
 
 ## Getting Help
 
-- [Developer Forum](https://github.com/aj-geddes/tinaa-playwright-msp/discussions/categories/developers)
-- [SDK Examples](https://github.com/tinaa-examples/sdk-development)
+- [Developer Forum](https://github.com/aj-geddes/tinaa-playwright-msp/issues/categories/developers)
+- [SDK Examples](#)
 - [API Documentation](../API.md)
 
 ## Related Resources

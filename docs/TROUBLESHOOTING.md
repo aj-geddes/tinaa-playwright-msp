@@ -894,8 +894,8 @@ echo ""
 ## Support Channels
 
 1. **GitHub Issues**: [Report bugs](https://github.com/aj-geddes/tinaa-playwright-msp/issues)
-2. **Documentation**: [Complete guides](https://github.com/aj-geddes/tinaa-playwright-msp/docs)
-3. **Community**: [Discussions](https://github.com/aj-geddes/tinaa-playwright-msp/discussions)
+2. **Documentation**: [Complete guides](https://github.com/aj-geddes/tinaa-playwright-msp)
+3. **Community**: [Discussions](https://github.com/aj-geddes/tinaa-playwright-msp/issues)
 
 ### Creating Effective Bug Reports
 

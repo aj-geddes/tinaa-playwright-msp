@@ -11,12 +11,12 @@ hide:
 </div>
 
 <div align="center" style="margin: 2rem 0;">
-  
+
   [![GitHub Stars](https://img.shields.io/github/stars/aj-geddes/tinaa-playwright-msp?style=for-the-badge&logo=github)](https://github.com/aj-geddes/tinaa-playwright-msp)
-  [![Docker Pulls](https://img.shields.io/docker/pulls/tinaa/playwright-msp?style=for-the-badge&logo=docker)](https://hub.docker.com/r/tinaa/playwright-msp)
+  [![Docker Pulls](https://img.shields.io/docker/pulls/tinaa/playwright-msp?style=for-the-badge&logo=docker)](#)
   [![License](https://img.shields.io/github/license/aj-geddes/tinaa-playwright-msp?style=for-the-badge)](LICENSE)
-  [![Documentation](https://img.shields.io/badge/docs-live-success?style=for-the-badge&logo=readthedocs)](https://tinaa-playwright.readthedocs.io)
-  
+  [![Documentation](https://img.shields.io/badge/docs-live-success?style=for-the-badge&logo=readthedocs)](#)
+
 </div>
 
 TINAA is an enterprise-grade AI-powered testing platform that revolutionizes how you create, maintain, and scale Playwright browser automation tests. Instead of writing complex test code from scratch, TINAA generates intelligent tests, provides real-time guidance, and automates tedious testing tasks.
@@ -24,27 +24,27 @@ TINAA is an enterprise-grade AI-powered testing platform that revolutionizes how
 <div class="grid cards" markdown>
 
 - :rocket: **Get Started in 5 Minutes**
-    
+
     Quick setup with Docker or Python. Generate your first test in 60 seconds.
-    
+
     [:octicons-arrow-right-24: Quick Start](QUICK_START.md)
 
 - :brain: **AI-Powered Test Generation**
-    
+
     Automatically generate comprehensive test suites from any URL.
-    
+
     [:octicons-arrow-right-24: Learn More](USER_GUIDE.md#test-generation)
 
 - :shield: **Enterprise Security**
-    
+
     OAuth2, SAML, RBAC, audit logging, and compliance features built-in.
-    
+
     [:octicons-arrow-right-24: Security Guide](ENTERPRISE_GUIDE.md#security-compliance)
 
 - :chart_with_upwards_trend: **Production Ready**
-    
+
     Kubernetes, Docker Swarm, auto-scaling, and monitoring out of the box.
-    
+
     [:octicons-arrow-right-24: Deploy to Production](ENTERPRISE_GUIDE.md#production-deployment)
 
 </div>
@@ -152,17 +152,17 @@ See TINAA in action with this simple example:
 
     test('GitHub Navigation Test', async ({ page }) => {
       await page.goto('https://github.com');
-      
+
       // Test main navigation
       await expect(page.locator('[aria-label="Homepage"]')).toBeVisible();
       await page.locator('a[href="/features"]').click();
       await expect(page).toHaveURL(/.*features/);
-      
+
       // Test search functionality
       await page.locator('[data-target="qbsearch-input.inputButton"]').click();
       await page.locator('[id="query-builder-test"]').fill('playwright');
       await page.keyboard.press('Enter');
-      
+
       // Verify search results
       await expect(page.locator('[data-testid="results-list"]')).toBeVisible();
     });
@@ -181,7 +181,7 @@ Choose the installation method that works best for you:
     git clone https://github.com/aj-geddes/tinaa-playwright-msp.git
     cd tinaa-playwright-msp
     docker-compose up -d
-    
+
     # Verify installation
     curl http://localhost:8765/health
     ```
@@ -192,10 +192,10 @@ Choose the installation method that works best for you:
     # Clone repository
     git clone https://github.com/aj-geddes/tinaa-playwright-msp.git
     cd tinaa-playwright-msp
-    
+
     # Install dependencies
     pip install -r requirements.txt
-    
+
     # Start server
     python app/http_server.py
     ```
@@ -218,19 +218,19 @@ Choose the installation method that works best for you:
 <div class="grid cards" markdown>
 
 - :material-clock-fast: **[Quick Start Guide](QUICK_START.md)**
-    
+
     Get up and running in 5 minutes
 
 - :material-book-open-variant: **[User Guide](USER_GUIDE.md)**
-    
+
     Comprehensive feature documentation
 
 - :material-code-braces: **[API Reference](API.md)**
-    
+
     Complete technical API documentation
 
 - :material-server: **[Enterprise Guide](ENTERPRISE_GUIDE.md)**
-    
+
     Production deployment and scaling
 
 </div>
@@ -242,19 +242,19 @@ Choose the installation method that works best for you:
 <div class="grid" markdown>
 
 - :material-github: **GitHub**
-    
+
     [Report issues and contribute](https://github.com/aj-geddes/tinaa-playwright-msp)
 
 - :material-forum: **Discussions**
-    
-    [Join the community](https://github.com/aj-geddes/tinaa-playwright-msp/discussions)
+
+    [Join the community](https://github.com/aj-geddes/tinaa-playwright-msp/issues)
 
 - :material-discord: **Discord**
-    
+
     [Real-time chat support](https://discord.gg/tinaa-community)
 
 - :material-email: **Enterprise Support**
-    
+
     [Contact for enterprise](mailto:enterprise@tinaa.dev)
 
 </div>
@@ -276,7 +276,7 @@ Choose the installation method that works best for you:
 
 <div align="center" style="margin: 3rem 0;">
   <p style="color: var(--md-default-fg-color--light);">
-    Made with <span style="color: #e74c3c;">❤️</span> by the TINAA Team | 
+    Made with <span style="color: #e74c3c;">❤️</span> by the TINAA Team |
     <a href="https://github.com/aj-geddes/tinaa-playwright-msp">⭐ Star us on GitHub</a>
   </p>
 </div>

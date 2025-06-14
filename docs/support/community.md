@@ -7,9 +7,9 @@ Welcome to the TINAA community! Here you'll find various ways to get help, share
 ### GitHub Discussions
 
 The primary place for community support:
-- [Ask Questions](https://github.com/aj-geddes/tinaa-playwright-msp/discussions/categories/q-a)
-- [Share Ideas](https://github.com/aj-geddes/tinaa-playwright-msp/discussions/categories/ideas)
-- [Show & Tell](https://github.com/aj-geddes/tinaa-playwright-msp/discussions/categories/show-and-tell)
+- [Ask Questions](https://github.com/aj-geddes/tinaa-playwright-msp/issues/categories/q-a)
+- [Share Ideas](https://github.com/aj-geddes/tinaa-playwright-msp/issues/categories/ideas)
+- [Show & Tell](https://github.com/aj-geddes/tinaa-playwright-msp/issues/categories/show-and-tell)
 
 ### Discord Community
 
@@ -24,8 +24,8 @@ Join our Discord server for real-time chat:
 ### Stack Overflow
 
 For technical questions, use the `tinaa` tag on Stack Overflow:
-- [Ask a Question](https://stackoverflow.com/questions/ask?tags=tinaa)
-- [Browse Questions](https://stackoverflow.com/questions/tagged/tinaa)
+- [Ask a Question](#)
+- [Browse Questions](#)
 
 ## Reporting Issues
 
@@ -71,7 +71,7 @@ Have an idea for improvement?
 
 ### Code of Conduct
 
-We follow a [Code of Conduct](https://github.com/aj-geddes/tinaa-playwright-msp/blob/main/CODE_OF_CONDUCT.md) to ensure a welcoming community for everyone.
+We follow a [Code of Conduct](#) to ensure a welcoming community for everyone.
 
 ## Community Resources
 
@@ -91,7 +91,7 @@ We follow a [Code of Conduct](https://github.com/aj-geddes/tinaa-playwright-msp/
 
 ### Video Content
 
-- [YouTube Channel](https://youtube.com/@tinaa-testing)
+- [YouTube Channel](#)
 - Community screencasts
 - Conference talks
 - Tutorial series
@@ -121,14 +121,14 @@ Subscribe to our monthly newsletter:
 - Tips and tricks
 - Event notifications
 
-[Subscribe](https://tinaa.dev/newsletter)
+[Subscribe](#)
 
 ### Social Media
 
 Follow us for updates:
 - [Twitter/X](https://twitter.com/tinaa_testing)
 - [LinkedIn](https://linkedin.com/company/tinaa)
-- [Blog](https://tinaa.dev/blog)
+- [Blog](#)
 
 ## Recognition
 
@@ -166,7 +166,7 @@ Contact: enterprise@tinaa.dev
 ## Feedback
 
 Your feedback helps improve TINAA:
-- [Product Feedback](https://tinaa.dev/feedback)
+- [Product Feedback](#)
 - [Documentation Feedback](https://github.com/aj-geddes/tinaa-playwright-msp/issues/new?labels=documentation)
 - [Community Feedback](mailto:community@tinaa.dev)
 
