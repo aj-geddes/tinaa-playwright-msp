@@ -1,4 +1,4 @@
-# TINAA - Test Intelligence and Automation Advanced
+# TINAA - Testing Intelligence Network Automation Assistant
 
 A Model Context Protocol (MCP) server for Playwright automation with integrated Language Server Protocol (LSP) for intelligent test automation assistance.
 

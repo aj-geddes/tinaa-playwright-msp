@@ -1,6 +1,6 @@
 # Playwright MCP Resources
 
-This directory contains comprehensive resources for Playwright test automation, designed to work with the TINAA (Test Intelligence and Automation Advanced) MCP server.
+This directory contains comprehensive resources for Playwright test automation, designed to work with the TINAA (Testing Intelligence Network Automation Assistant) MCP server.
 
 ## 📁 Directory Structure
 

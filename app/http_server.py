@@ -46,7 +46,7 @@ from mcp_handler import (
 )
 
 # FastAPI app
-app = FastAPI(title="TINAA - Test Intelligence and Automation Advanced", version="2.0.0")
+app = FastAPI(title="TINAA - Testing Intelligence Network Automation Assistant", version="2.0.0")
 
 # Enable CORS for IDE integration
 app.add_middleware(

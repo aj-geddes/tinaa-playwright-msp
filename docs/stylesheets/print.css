@@ -1,0 +1,292 @@
+/* TINAA Print Styles */
+/* Optimized CSS for printing documentation */
+
+@media print {
+  /* Reset backgrounds and shadows */
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Page setup */
+  @page {
+    margin: 2cm;
+    size: A4;
+  }
+
+  /* Hide navigation and UI elements */
+  .md-header,
+  .md-tabs,
+  .md-sidebar,
+  .md-footer,
+  .md-dialog,
+  .md-search,
+  .md-version,
+  .md-clipboard,
+  .md-top,
+  .reading-progress,
+  .api-run-button,
+  .md-content__button {
+    display: none !important;
+  }
+
+  /* Main content adjustments */
+  .md-main {
+    padding: 0 !important;
+  }
+
+  .md-main__inner {
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .md-content {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .md-content__inner {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Headings */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+    margin-top: 2em;
+    margin-bottom: 1em;
+  }
+
+  h1 {
+    font-size: 24pt;
+    border-bottom: 2px solid #000;
+    padding-bottom: 0.5em;
+  }
+
+  h2 {
+    font-size: 18pt;
+    border-bottom: 1px solid #666;
+    padding-bottom: 0.3em;
+  }
+
+  h3 {
+    font-size: 14pt;
+  }
+
+  /* Content elements */
+  p, li, blockquote {
+    orphans: 3;
+    widows: 3;
+    page-break-inside: avoid;
+  }
+
+  /* Links */
+  a {
+    text-decoration: underline;
+  }
+
+  a[href^="http"]:after {
+    content: " (" attr(href) ")";
+    font-size: 80%;
+    color: #666;
+  }
+
+  a[href^="#"]:after {
+    content: "";
+  }
+
+  /* Code blocks */
+  pre {
+    border: 1px solid #ccc;
+    padding: 1em;
+    page-break-inside: avoid;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  code {
+    background-color: #f5f5f5 !important;
+    border: 1px solid #e0e0e0;
+    padding: 0.1em 0.3em;
+    font-size: 85%;
+  }
+
+  pre code {
+    border: none;
+    padding: 0;
+    background-color: transparent !important;
+  }
+
+  /* Tables */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    page-break-inside: avoid;
+  }
+
+  table, th, td {
+    border: 1px solid #ccc;
+  }
+
+  th, td {
+    padding: 0.5em;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f0f0f0 !important;
+    font-weight: bold;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f9f9f9 !important;
+  }
+
+  /* Images */
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  /* Admonitions */
+  .admonition {
+    border: 1px solid #ccc;
+    padding: 1em;
+    margin: 1em 0;
+    page-break-inside: avoid;
+  }
+
+  .admonition-title {
+    font-weight: bold;
+    margin-bottom: 0.5em;
+  }
+
+  /* Lists */
+  ul, ol {
+    margin-left: 1.5em;
+  }
+
+  /* Grid and cards */
+  .grid {
+    display: block !important;
+  }
+
+  .grid > *, .grid.cards > :is(ul, ol) > li {
+    page-break-inside: avoid;
+    border: 1px solid #ccc;
+    padding: 1em;
+    margin-bottom: 1em;
+  }
+
+  /* Feature boxes */
+  .feature-box {
+    border: 1px solid #ccc;
+    padding: 1em;
+    margin: 1em 0;
+    page-break-inside: avoid;
+  }
+
+  /* Hero sections */
+  .hero {
+    border: 2px solid #000;
+    padding: 1em;
+    margin: 1em 0;
+    text-align: center;
+  }
+
+  /* Tab content */
+  .tabbed-set {
+    border: 1px solid #ccc;
+    padding: 1em;
+    margin: 1em 0;
+  }
+
+  .tabbed-set input[type="radio"] {
+    display: none;
+  }
+
+  .tabbed-labels {
+    display: none;
+  }
+
+  .tabbed-content {
+    display: block !important;
+    border-top: 1px solid #ccc;
+    padding-top: 1em;
+    margin-top: 1em;
+  }
+
+  .tabbed-content:before {
+    content: attr(data-tab-label);
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.5em;
+  }
+
+  /* Footer information */
+  .md-content:after {
+    content: "TINAA Documentation - Printed on " attr(data-print-date);
+    display: block;
+    margin-top: 3em;
+    padding-top: 1em;
+    border-top: 1px solid #ccc;
+    font-size: 90%;
+    color: #666;
+  }
+
+  /* Page numbers */
+  .page-break {
+    page-break-before: always;
+  }
+
+  /* Success metrics */
+  .success-metrics {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .success-metrics .metric {
+    display: table-cell;
+    border: 1px solid #ccc;
+    padding: 1em;
+    text-align: center;
+  }
+
+  /* Documentation navigation */
+  .doc-nav {
+    display: none;
+  }
+
+  /* Buttons */
+  .md-button {
+    border: 1px solid #000;
+    padding: 0.5em 1em;
+    display: inline-block;
+    text-decoration: none;
+  }
+
+  /* Hide interactive elements */
+  .terminal-cursor:after,
+  .annotate ol li::before {
+    display: none;
+  }
+}
+
+/* Print utilities */
+.print-only {
+  display: none;
+}
+
+@media print {
+  .print-only {
+    display: block;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+}

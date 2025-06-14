@@ -1,7 +1,7 @@
 # TINAA Documentation Hub
 ## Complete Enterprise-Grade Documentation
 
-Welcome to the comprehensive documentation for TINAA (Test Intelligence and Automation Advanced) - the AI-powered Playwright testing platform that transforms how you create, maintain, and scale browser automation tests.
+Welcome to the comprehensive documentation for TINAA (Testing Intelligence Network Automation Assistant) - the AI-powered Playwright testing platform that transforms how you create, maintain, and scale browser automation tests.
 
 ## 🚀 Start Here
 

@@ -89,7 +89,7 @@ The main entry point for MCP mode. Uses FastMCP framework to expose tools.
 ```python
 from fastmcp import FastMCP, Context
 
-mcp = FastMCP("TINAA - Test Intelligence and Automation Advanced")
+mcp = FastMCP("TINAA - Testing Intelligence Network Automation Assistant")
 
 @mcp.tool()
 async def tool_name(param: str, ctx: Context = None) -> str:

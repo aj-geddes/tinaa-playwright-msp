@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TINAA - Test Intelligence and Automation Advanced - MCP Integration with Playwright
+TINAA - Testing Intelligence Network Automation Assistant - MCP Integration with Playwright
 """
 import logging
 import sys
@@ -23,7 +23,7 @@ logging.basicConfig(
 logger = logging.getLogger("tinaa-mcp")
 
 # Initialize the MCP server
-mcp = FastMCP("TINAA - Test Intelligence and Automation Advanced")
+mcp = FastMCP("TINAA - Testing Intelligence Network Automation Assistant")
 
 # We'll import and register the handler functions after defining mcp
 

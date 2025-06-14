@@ -1,5 +1,5 @@
 # TINAA User Guide
-## Test Intelligence and Automation Advanced
+## Testing Intelligence Network Automation Assistant
 
 *Your Complete Guide to Supercharging Playwright Testing with AI-Powered Automation*
 
@@ -24,7 +24,7 @@
 
 ### What is TINAA?
 
-TINAA (Test Intelligence and Automation Advanced) is an AI-powered Playwright testing platform that transforms how you create, maintain, and scale browser automation tests. Instead of writing complex test code from scratch, TINAA generates intelligent tests, provides real-time guidance, and automates tedious testing tasks.
+TINAA (Testing Intelligence Network Automation Assistant) is an AI-powered Playwright testing platform that transforms how you create, maintain, and scale browser automation tests. Instead of writing complex test code from scratch, TINAA generates intelligent tests, provides real-time guidance, and automates tedious testing tasks.
 
 ### 5-Minute Setup
 

@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "tinaa-playwright-msp"
 version = "0.1.0"
-description = "Test Intelligence and Automation Advanced - MSP Integration with Playwright LSP"
+description = "Testing Intelligence Network Automation Assistant - MSP Integration with Playwright LSP"
 authors = ["TINAA Team"]
 
 [tool.poetry.dependencies]

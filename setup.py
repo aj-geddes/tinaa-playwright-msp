@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name="tinaa-playwright-msp",
     version="0.1.0",
-    description="TINAA - Test Intelligence and Automation Advanced MSP",
+    description="TINAA - Testing Intelligence Network Automation Assistant MSP",
     author="Your Name",
     author_email="your.email@example.com",
     packages=find_packages(),

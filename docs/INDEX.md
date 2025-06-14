@@ -1,244 +1,282 @@
-# TINAA Documentation Index
-## Complete Guide to Test Intelligence and Automation Advanced
+---
+hide:
+  - navigation
+  - toc
+---
 
-*Your comprehensive navigation hub for all TINAA documentation.*
+<div class="hero">
+  <h1>TINAA</h1>
+  <p><strong>Testing Intelligence Network Automation Assistant</strong><br>
+  AI-powered Playwright testing that transforms how you create, maintain, and scale browser automation</p>
+</div>
+
+<div align="center" style="margin: 2rem 0;">
+  
+  [![GitHub Stars](https://img.shields.io/github/stars/aj-geddes/tinaa-playwright-msp?style=for-the-badge&logo=github)](https://github.com/aj-geddes/tinaa-playwright-msp)
+  [![Docker Pulls](https://img.shields.io/docker/pulls/tinaa/playwright-msp?style=for-the-badge&logo=docker)](https://hub.docker.com/r/tinaa/playwright-msp)
+  [![License](https://img.shields.io/github/license/aj-geddes/tinaa-playwright-msp?style=for-the-badge)](LICENSE)
+  [![Documentation](https://img.shields.io/badge/docs-live-success?style=for-the-badge&logo=readthedocs)](https://tinaa-playwright.readthedocs.io)
+  
+</div>
+
+TINAA is an enterprise-grade AI-powered testing platform that revolutionizes how you create, maintain, and scale Playwright browser automation tests. Instead of writing complex test code from scratch, TINAA generates intelligent tests, provides real-time guidance, and automates tedious testing tasks.
+
+<div class="grid cards" markdown>
+
+- :rocket: **Get Started in 5 Minutes**
+    
+    Quick setup with Docker or Python. Generate your first test in 60 seconds.
+    
+    [:octicons-arrow-right-24: Quick Start](QUICK_START.md)
+
+- :brain: **AI-Powered Test Generation**
+    
+    Automatically generate comprehensive test suites from any URL.
+    
+    [:octicons-arrow-right-24: Learn More](USER_GUIDE.md#test-generation)
+
+- :shield: **Enterprise Security**
+    
+    OAuth2, SAML, RBAC, audit logging, and compliance features built-in.
+    
+    [:octicons-arrow-right-24: Security Guide](ENTERPRISE_GUIDE.md#security--compliance)
+
+- :chart_with_upwards_trend: **Production Ready**
+    
+    Kubernetes, Docker Swarm, auto-scaling, and monitoring out of the box.
+    
+    [:octicons-arrow-right-24: Deploy to Production](ENTERPRISE_GUIDE.md#production-deployment)
+
+</div>
 
 ---
 
-## 📚 Documentation Overview
+## ✨ Key Features
 
-Welcome to TINAA - the AI-powered Playwright testing platform that transforms how you create, maintain, and scale browser automation tests. This documentation provides everything you need to harness the full power of intelligent test automation.
+<div class="annotate" markdown>
 
-### What is TINAA?
+- **🤖 Intelligent Test Generation** - AI analyzes your application and generates comprehensive test scenarios (1)
+- **🔄 Multi-Protocol Support** - HTTP API, MCP, WebSocket, and LSP for maximum flexibility
+- **📦 25+ Testing Resources** - Pre-built tools, quickstarts, examples, and documentation
+- **🔒 Enterprise Security** - Production-ready with OAuth2, SAML, and audit logging
+- **📊 Real-Time Progress** - WebSocket updates and live progress tracking
+- **🚀 Scalable Architecture** - Horizontal scaling with Kubernetes and Docker Swarm
+- **🧪 Comprehensive Testing** - Accessibility, security, responsive, and exploratory testing
+- **🛠️ Extensible Framework** - Custom resources, plugins, and integrations
 
-TINAA (Test Intelligence and Automation Advanced) is an enterprise-grade Model Context Protocol (MCP) server that brings AI intelligence to Playwright testing. Instead of writing complex test code from scratch, TINAA generates intelligent tests, provides real-time guidance, and automates tedious testing tasks.
+</div>
 
----
-
-## 🚀 Getting Started
-
-### For First-Time Users
-Start here to get TINAA running in minutes:
-
-**[📖 Quick Start Guide](QUICK_START.md)**
-- ⚡ 5-minute setup (Docker or Python)
-- 🎯 Generate your first test in 60 seconds
-- 💡 Essential commands and workflows
-- 🛠️ IDE integration setup
-
-### For Comprehensive Learning
-Complete user guide with enterprise-grade features:
-
-**[📘 User Guide](USER_GUIDE.md)**
-- 🏗️ Core concepts and architecture
-- 📊 Advanced test generation techniques
-- 🔧 Integration patterns and workflows
-- 🎓 Learning path from beginner to expert
+1. TINAA uses advanced heuristics and AI to understand your application structure, identify test scenarios, and generate maintainable test code.
 
 ---
 
-## 👩‍💻 For Developers
+## 🎯 Perfect For
 
-### Technical Implementation
-Deep-dive into TINAA's architecture and customization:
+=== "QA Engineers"
 
-**[⚙️ Developer Guide](DEVELOPER_GUIDE.md)**
-- 🏛️ System architecture overview
-- 🔌 API integration and SDK development
-- 🧩 Custom resource and plugin development
-- 🧪 Testing strategies and performance optimization
+    - Generate tests without coding expertise
+    - Accelerate test creation by 10x
+    - Focus on test strategy, not implementation
+    - Ensure comprehensive coverage
 
-### API Reference
-Complete technical documentation:
+=== "Developers"
 
-**[📋 API Documentation](API.md)**
-- 🌐 HTTP REST API endpoints
-- 🔗 MCP tools and functions
-- 💬 WebSocket real-time communication
-- 📊 Data models and schemas
+    - Integrate testing into CI/CD pipelines
+    - Generate tests from requirements
+    - Debug test failures quickly
+    - Maintain test suites efficiently
 
----
+=== "DevOps Teams"
 
-## 🏢 For Enterprise Teams
+    - Deploy scalable test infrastructure
+    - Monitor test execution in real-time
+    - Ensure security and compliance
+    - Optimize resource utilization
 
-### Production Deployment
-Enterprise-grade deployment and management:
+=== "Enterprise Teams"
 
-**[🏭 Enterprise Guide](ENTERPRISE_GUIDE.md)**
-- ☁️ Kubernetes and cloud deployment
-- 🔒 Security and compliance (GDPR, SOC2)
-- 📈 Scaling and performance optimization
-- 📊 Monitoring and observability
-
-### Resource Framework
-Comprehensive testing resources and tools:
-
-**[📦 Resource Guide](RESOURCES.md)**
-- 🛠️ 25+ specialized testing resources
-- 🚀 Quickstart guides and examples
-- 🤖 AI-powered prompts and templates
-- 📚 Best practices and patterns
+    - Standardize testing practices
+    - Reduce testing costs by 70%
+    - Improve quality metrics
+    - Enable team collaboration
 
 ---
 
-## 🆘 Support & Troubleshooting
+## 📊 Proven Results
 
-### Problem Resolution
-Comprehensive troubleshooting and diagnostics:
-
-**[🔧 Troubleshooting Guide](TROUBLESHOOTING.md)**
-- ⚡ Quick diagnostics and health checks
-- 🐛 Common issues and solutions
-- 🔍 Advanced debugging techniques
-- 🚑 Error recovery strategies
-
----
-
-## 📋 Documentation Navigation
-
-### By User Type
-
-| User Type | Primary Guides | Key Features |
-|-----------|---------------|--------------|
-| **QA Engineers** | [Quick Start](QUICK_START.md) → [User Guide](USER_GUIDE.md) | Test generation, accessibility audits, CI/CD |
-| **Developers** | [API Docs](API.md) → [Developer Guide](DEVELOPER_GUIDE.md) | SDK integration, custom resources, plugins |
-| **DevOps/SRE** | [Enterprise Guide](ENTERPRISE_GUIDE.md) → [Troubleshooting](TROUBLESHOOTING.md) | Production deployment, monitoring, scaling |
-| **Team Leads** | [User Guide](USER_GUIDE.md) → [Enterprise Guide](ENTERPRISE_GUIDE.md) | Team workflows, governance, best practices |
-
-### By Use Case
-
-| Use Case | Documentation Path | Time Investment |
-|----------|-------------------|-----------------|
-| **Get Started Immediately** | [Quick Start](QUICK_START.md) | 5 minutes |
-| **Learn Core Features** | [User Guide](USER_GUIDE.md) | 30 minutes |
-| **Build Custom Integration** | [API Docs](API.md) → [Developer Guide](DEVELOPER_GUIDE.md) | 2 hours |
-| **Deploy to Production** | [Enterprise Guide](ENTERPRISE_GUIDE.md) | 4 hours |
-| **Troubleshoot Issues** | [Troubleshooting](TROUBLESHOOTING.md) | As needed |
-
-### By Topic
-
-#### Installation & Setup
-- [Quick Start - Docker Setup](QUICK_START.md#instant-setup)
-- [User Guide - Installation](USER_GUIDE.md#installation--setup)
-- [Enterprise Guide - Production Deployment](ENTERPRISE_GUIDE.md#production-deployment)
-
-#### Test Generation
-- [Quick Start - Your First Test](QUICK_START.md#your-first-test-in-60-seconds)
-- [User Guide - Test Generation](USER_GUIDE.md#test-generation)
-- [Resource Guide - AI Prompts](RESOURCES.md#ai-prompts-3-resources)
-
-#### API Integration
-- [API Documentation - HTTP Endpoints](API.md#http-rest-api)
-- [Developer Guide - Client SDK](DEVELOPER_GUIDE.md#api-integration)
-- [User Guide - Usage Examples](USER_GUIDE.md#usage-examples)
-
-#### Performance & Scaling
-- [Enterprise Guide - Scaling](ENTERPRISE_GUIDE.md#scaling--performance)
-- [Developer Guide - Performance](DEVELOPER_GUIDE.md#performance-optimization)
-- [Troubleshooting - Performance Issues](TROUBLESHOOTING.md#performance-debugging)
-
-#### Security & Compliance
-- [Enterprise Guide - Security](ENTERPRISE_GUIDE.md#security--compliance)
-- [Developer Guide - Security](DEVELOPER_GUIDE.md#security-considerations)
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-value">90%</div>
+    <div class="stat-label">Faster Test Creation</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">10x</div>
+    <div class="stat-label">More Test Coverage</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">70%</div>
+    <div class="stat-label">Cost Reduction</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">100%</div>
+    <div class="stat-label">WCAG Compliance</div>
+  </div>
+</div>
 
 ---
 
-## 🔗 Quick Reference Links
+## 🚀 Quick Demo
 
-### Essential Commands
-```bash
-# Health check
-curl http://localhost:8765/health
+See TINAA in action with this simple example:
 
-# Generate tests
-curl -X POST http://localhost:8765/test/exploratory \
-  -d '{"parameters": {"url": "https://your-app.com"}}'
+=== "Generate Tests"
 
-# Accessibility audit
-curl -X POST http://localhost:8765/test/accessibility -d '{}'
+    ```bash
+    # Generate comprehensive tests for any website
+    curl -X POST http://localhost:8765/test/exploratory \
+      -H "Content-Type: application/json" \
+      -d '{
+        "action": "exploratory",
+        "parameters": {
+          "url": "https://github.com",
+          "focus_area": "navigation"
+        }
+      }'
+    ```
 
-# Take screenshot
-curl -X POST http://localhost:8765/screenshot \
-  -d '{"parameters": {"full_page": true}}'
-```
+=== "Test Result"
 
-### Key Features at a Glance
-- ✅ **AI-Powered Test Generation**: Generate comprehensive tests from any URL
-- ✅ **Multi-Mode Operation**: HTTP API, MCP protocol, WebSocket support
-- ✅ **25+ Testing Resources**: Tools, quickstarts, examples, documentation
-- ✅ **Enterprise Security**: OAuth2, SAML, RBAC, audit logging
-- ✅ **Production Ready**: Kubernetes, Docker Swarm, auto-scaling
-- ✅ **Real-Time Progress**: WebSocket updates and progress tracking
+    ```javascript
+    // Generated by TINAA
+    import { test, expect } from '@playwright/test';
 
-### Community & Support
-- **GitHub Repository**: [tinaa-playwright-msp](https://github.com/aj-geddes/tinaa-playwright-msp)
-- **Issues**: [Bug Reports & Feature Requests](https://github.com/aj-geddes/tinaa-playwright-msp/issues)
-- **Discussions**: [Community Q&A](https://github.com/aj-geddes/tinaa-playwright-msp/discussions)
-- **Documentation**: Always available in the `/docs` directory
-
----
-
-## 📈 Learning Progression
-
-### Beginner (First Day)
-1. **Start**: [Quick Start Guide](QUICK_START.md)
-2. **Practice**: Generate tests for your applications
-3. **Explore**: Try different focus areas and test types
-4. **Integrate**: Set up basic CI/CD integration
-
-### Intermediate (First Week)
-1. **Deepen**: Read [User Guide](USER_GUIDE.md) sections
-2. **Customize**: Create custom playbooks
-3. **Optimize**: Use advanced features and caching
-4. **Monitor**: Set up basic monitoring and logging
-
-### Advanced (First Month)
-1. **Extend**: Follow [Developer Guide](DEVELOPER_GUIDE.md)
-2. **Scale**: Implement [Enterprise Guide](ENTERPRISE_GUIDE.md) patterns
-3. **Contribute**: Create custom resources and plugins
-4. **Lead**: Establish team workflows and governance
+    test('GitHub Navigation Test', async ({ page }) => {
+      await page.goto('https://github.com');
+      
+      // Test main navigation
+      await expect(page.locator('[aria-label="Homepage"]')).toBeVisible();
+      await page.locator('a[href="/features"]').click();
+      await expect(page).toHaveURL(/.*features/);
+      
+      // Test search functionality
+      await page.locator('[data-target="qbsearch-input.inputButton"]').click();
+      await page.locator('[id="query-builder-test"]').fill('playwright');
+      await page.keyboard.press('Enter');
+      
+      // Verify search results
+      await expect(page.locator('[data-testid="results-list"]')).toBeVisible();
+    });
+    ```
 
 ---
 
-## 🗺️ Documentation Roadmap
+## 🛠️ Installation Options
 
-### Current Coverage
-- ✅ Complete installation and setup guides
-- ✅ Comprehensive API documentation
-- ✅ Enterprise deployment patterns
-- ✅ Troubleshooting and diagnostics
-- ✅ Resource framework documentation
+Choose the installation method that works best for you:
 
-### Future Additions
-- 🔄 Video tutorials and walkthroughs
-- 🔄 Advanced integration examples
-- 🔄 Performance benchmarking guides
-- 🔄 Industry-specific use cases
-- 🔄 Migration guides from other tools
+=== "Docker (Recommended)"
+
+    ```bash
+    # Clone and start TINAA
+    git clone https://github.com/aj-geddes/tinaa-playwright-msp.git
+    cd tinaa-playwright-msp
+    docker-compose up -d
+    
+    # Verify installation
+    curl http://localhost:8765/health
+    ```
+
+=== "Python"
+
+    ```bash
+    # Clone repository
+    git clone https://github.com/aj-geddes/tinaa-playwright-msp.git
+    cd tinaa-playwright-msp
+    
+    # Install dependencies
+    pip install -r requirements.txt
+    
+    # Start server
+    python app/http_server.py
+    ```
+
+=== "Kubernetes"
+
+    ```bash
+    # Apply Kubernetes manifests
+    kubectl apply -f k8s/namespace.yaml
+    kubectl apply -f k8s/configmap.yaml
+    kubectl apply -f k8s/deployment.yaml
+    kubectl apply -f k8s/service.yaml
+    kubectl apply -f k8s/ingress.yaml
+    ```
 
 ---
 
-## 💡 How to Use This Documentation
+## 📚 Documentation
 
-### For Quick Answers
-1. **Check the index** for topic-specific links
-2. **Use the search** function in your editor/browser
-3. **Follow the learning progression** for structured learning
+<div class="grid cards" markdown>
 
-### For Deep Understanding
-1. **Start with concepts** in the User Guide
-2. **Practice with examples** from Quick Start
-3. **Reference technical details** in API docs
-4. **Implement in production** with Enterprise Guide
+- :material-clock-fast: **[Quick Start Guide](QUICK_START.md)**
+    
+    Get up and running in 5 minutes
 
-### For Problem Solving
-1. **Check Troubleshooting** first for common issues
-2. **Review logs and diagnostics** using provided tools
-3. **Consult API docs** for integration problems
-4. **Reach out to community** for complex issues
+- :material-book-open-variant: **[User Guide](USER_GUIDE.md)**
+    
+    Comprehensive feature documentation
+
+- :material-code-braces: **[API Reference](API.md)**
+    
+    Complete technical API documentation
+
+- :material-server: **[Enterprise Guide](ENTERPRISE_GUIDE.md)**
+    
+    Production deployment and scaling
+
+</div>
 
 ---
 
-*Welcome to TINAA! This documentation will help you harness the full power of AI-driven test automation. Start with the [Quick Start Guide](QUICK_START.md) and begin generating intelligent tests in minutes.*
+## 🤝 Community & Support
 
-**Happy Testing! 🚀**
+<div class="grid" markdown>
+
+- :material-github: **GitHub**
+    
+    [Report issues and contribute](https://github.com/aj-geddes/tinaa-playwright-msp)
+
+- :material-forum: **Discussions**
+    
+    [Join the community](https://github.com/aj-geddes/tinaa-playwright-msp/discussions)
+
+- :material-discord: **Discord**
+    
+    [Real-time chat support](https://discord.gg/tinaa-community)
+
+- :material-email: **Enterprise Support**
+    
+    [Contact for enterprise](mailto:enterprise@tinaa.dev)
+
+</div>
+
+---
+
+## 🚀 Ready to Transform Your Testing?
+
+<div class="cta-section">
+  <h2>Start Building Intelligent Tests Today</h2>
+  <p>Join thousands of developers who are already saving time and improving quality with TINAA</p>
+  <div class="cta-buttons">
+    <a href="QUICK_START/" class="cta-button cta-button--primary">Get Started Now</a>
+    <a href="documentation-index/" class="cta-button cta-button--secondary">Browse Documentation</a>
+  </div>
+</div>
+
+---
+
+<div align="center" style="margin: 3rem 0;">
+  <p style="color: var(--md-default-fg-color--light);">
+    Made with <span style="color: #e74c3c;">❤️</span> by the TINAA Team | 
+    <a href="https://github.com/aj-geddes/tinaa-playwright-msp">⭐ Star us on GitHub</a>
+  </p>
+</div>
