@@ -25,6 +25,10 @@ logging.basicConfig(
 logger = logging.getLogger("tinaa-http")
 
 # Import the MCP handler functions
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from mcp_handler import (
     navigate_to_url as handle_navigate_to_url,
     take_page_screenshot as handle_take_page_screenshot,
@@ -193,6 +197,8 @@ async def screenshot(request: TestRequest):
 @app.post("/test/exploratory")
 async def exploratory_test(request: TestRequest):
     client_id = request.client_id
+    url = request.parameters.get("url", "https://example.com")  # Default URL if not provided
+    focus_area = request.parameters.get("focus_area", "general")
     
     async def stream_test():
         if client_id:
@@ -200,7 +206,7 @@ async def exploratory_test(request: TestRequest):
             await manager.send_progress(client_id, {"phase": "initialization", "progress": 0})
         
         # Run the test with progress updates
-        result = await handle_run_exploratory_test(ctx=None)
+        result = await handle_run_exploratory_test(url, focus_area, ctx=None)
         
         if client_id:
             await manager.send_progress(client_id, {"phase": "complete", "progress": 100})
@@ -308,7 +314,7 @@ async def execute_step(step: PlaybookStep) -> Dict:
         "navigate": lambda p: handle_navigate_to_url(p.get("url"), ctx=None),
         "screenshot": lambda p: handle_take_page_screenshot(p.get("full_page", True), ctx=None),
         "fill_form": lambda p: handle_fill_form_fields(p.get("fields", {}), ctx=None),
-        "test_exploratory": lambda p: handle_run_exploratory_test(ctx=None),
+        "test_exploratory": lambda p: handle_run_exploratory_test(p.get("url", "https://example.com"), p.get("focus_area", "general"), ctx=None),
         "test_accessibility": lambda p: handle_run_accessibility_test(ctx=None),
         "test_responsive": lambda p: handle_run_responsive_test(ctx=None),
         "test_security": lambda p: handle_run_security_test(ctx=None),
