@@ -1,0 +1,20 @@
+services:
+  tinaa-playwright-msp:
+    image: ghcr.io/aj-geddes/tinaa-playwright-msp:latest
+    container_name: tinaa-playwright-msp
+    volumes:
+      - ./logs:/app/logs
+      - ${PWD}:/mnt/workspace
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONPATH=/app
+      - PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+    ports:
+      - "8765:8765"
+    working_dir: /mnt/workspace
+    stdin_open: true
+    tty: true
+    cap_add:
+      - SYS_ADMIN
+    stop_signal: SIGTERM
+    restart: unless-stopped

@@ -2,6 +2,20 @@
 
 A Model Context Protocol (MCP) server for Playwright automation with integrated Language Server Protocol (LSP) for intelligent test automation assistance.
 
+## Quick Start with Pre-built Docker Image
+
+```bash
+# Pull the latest pre-built image from GitHub Container Registry
+docker pull ghcr.io/aj-geddes/tinaa-playwright-msp:latest
+
+# Run with docker-compose (recommended)
+wget https://raw.githubusercontent.com/aj-geddes/tinaa-playwright-msp/main/docker-compose.prod.yml
+docker-compose -f docker-compose.prod.yml up -d
+
+# Or run directly
+docker run -d -p 8765:8765 ghcr.io/aj-geddes/tinaa-playwright-msp:latest
+```
+
 ## Architecture Overview
 
 ```mermaid
@@ -111,7 +125,20 @@ TINAA includes a comprehensive resource framework following the gofastmcp.com v2
 
 ## Installation
 
-### Using Docker (Recommended)
+### Option 1: Use Pre-built Docker Image (Fastest)
+
+```bash
+# Download production docker-compose file
+wget https://raw.githubusercontent.com/aj-geddes/tinaa-playwright-msp/main/docker-compose.prod.yml
+
+# Start the service
+docker-compose -f docker-compose.prod.yml up -d
+
+# Verify it's running
+curl http://localhost:8765/health
+```
+
+### Option 2: Build from Source with Docker
 
 1. Clone the repository:
    ```bash
@@ -129,7 +156,7 @@ TINAA includes a comprehensive resource framework following the gofastmcp.com v2
    docker-compose -f docker-compose.http.yml up -d
    ```
 
-### Manual Installation
+### Option 3: Manual Installation
 
 Install dependencies from `requirements.txt`:
 ```bash
