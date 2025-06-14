@@ -200,7 +200,7 @@ for command in installer["content"]["commands"]:
     subprocess.run(command, shell=True)
 ```
 
-## Using Test Generation Prompts
+## Using Test Execution Prompts
 ```python
 # Get test generator prompt
 prompt_resource = requests.get("http://localhost:8765/resources/prompts/test-generator.json").json()

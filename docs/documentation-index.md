@@ -65,7 +65,7 @@ Welcome to the comprehensive documentation center for TINAA (Testing Intelligenc
 ## 🚀 Learning Paths
 
 ### Path 1: QA Engineer Quick Start
-1. [Quick Start Guide](QUICK_START.md) → 2. [Test Generation](user-guide/test-generation.md) → 3. [Best Practices](user-guide/best-practices.md)
+1. [Quick Start Guide](QUICK_START.md) → 2. [Test Execution](user-guide/test-execution.md) → 3. [Best Practices](user-guide/best-practices.md)
 
 ### Path 2: Developer Integration
 1. [API Overview](API.md) → 2. [SDK Development](developer-guide/sdk-development.md) → 3. [Custom Resources](developer-guide/custom-resources.md)
@@ -78,7 +78,7 @@ Welcome to the comprehensive documentation center for TINAA (Testing Intelligenc
 ## 🔍 Find What You Need
 
 ### By Feature
-- **AI Test Generation** → [User Guide](USER_GUIDE.md#test-generation)
+- **AI Test Execution** → [User Guide](USER_GUIDE.md#test-execution)
 - **API Integration** → [API Reference](API.md)
 - **Docker Deployment** → [Deployment Guide](DEPLOYMENT.md#local-development)
 - **Pre-built Images** → [Docker Image Guide](DOCKER_IMAGE.md)

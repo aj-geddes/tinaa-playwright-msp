@@ -29,11 +29,11 @@ TINAA is an enterprise-grade AI-powered testing platform that revolutionizes how
 
     [:octicons-arrow-right-24: Quick Start](QUICK_START.md)
 
-- :brain: **AI-Powered Test Generation**
+- :brain: **AI-Powered Test Execution**
 
     Automatically generate comprehensive test suites from any URL.
 
-    [:octicons-arrow-right-24: Learn More](USER_GUIDE.md#test-generation)
+    [:octicons-arrow-right-24: Learn More](USER_GUIDE.md#test-execution)
 
 - :shield: **Enterprise Security**
 
@@ -55,7 +55,7 @@ TINAA is an enterprise-grade AI-powered testing platform that revolutionizes how
 
 <div class="annotate" markdown>
 
-- **🤖 Intelligent Test Generation** - AI analyzes your application and generates comprehensive test scenarios (1)
+- **🤖 Intelligent Test Execution** - AI analyzes your application and generates comprehensive test scenarios (1)
 - **🔄 Multi-Protocol Support** - HTTP API, MCP, WebSocket, and LSP for maximum flexibility
 - **📦 25+ Testing Resources** - Pre-built tools, quickstarts, examples, and documentation
 - **🔒 Enterprise Security** - Production-ready with OAuth2, SAML, and audit logging

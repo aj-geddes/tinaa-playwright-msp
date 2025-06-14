@@ -335,7 +335,7 @@ curl --include \
 
 ## Test Execution Problems
 
-### Test Generation Issues
+### Test Execution Issues
 
 #### Problem: No Tests Generated
 ```json

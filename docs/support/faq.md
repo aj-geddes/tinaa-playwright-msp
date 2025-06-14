@@ -60,17 +60,17 @@ Pre-built images are available on GitHub Container Registry:
 
 See the [Docker Image Guide](../DOCKER_IMAGE.md) for detailed usage instructions.
 
-## Test Generation
+## Test Execution
 
 ### How accurate are AI-generated tests?
 
-TINAA achieves 85-95% accuracy in test generation, depending on application complexity. Generated tests should always be reviewed before production use.
+TINAA provides intelligent test insights and recommendations to help you create more effective tests. The AI analyzes your application to suggest test scenarios, identify edge cases, and recommend best practices. While TINAA doesn't automatically generate tests, its insights help developers write more comprehensive and reliable test suites.
 
 ### Can I customize generated tests?
 
-Yes! Generated tests are standard Playwright tests that can be edited, extended, and customized as needed.
+TINAA helps you execute and manage your Playwright tests efficiently. Since you write your own tests with TINAA's guidance, you have complete control over test implementation. TINAA provides recommendations and insights that you can incorporate into your test development process.
 
-### What types of tests can TINAA generate?
+### What types of tests can TINAA execute?
 
 - Functional tests
 - End-to-end tests

@@ -11,7 +11,7 @@
 2. [Core Concepts](#core-concepts)
 3. [Installation & Setup](#installation-setup)
 4. [Getting Started](#getting-started)
-5. [Test Generation](#test-generation)
+5. [Test Execution](#test-execution)
 6. [Advanced Features](#advanced-features)
 7. [Enterprise Integration](#enterprise-integration)
 8. [Best Practices](#best-practices)
@@ -67,7 +67,7 @@ With TINAA, you get:
 ```mermaid
 flowchart LR
     A[Your Web App] --> B[TINAA Analysis]
-    B --> C[AI Test Generation]
+    B --> C[AI Test Execution]
     C --> D[Playwright Execution]
     D --> E[Intelligent Reports]
     E --> F[Actionable Insights]
@@ -298,13 +298,13 @@ test('Login Flow Test', async ({ page }) => {
 
 ---
 
-## Test Generation
+## Test Execution
 
 ### AI-Powered Test Creation
 
 TINAA's AI understands your application and generates intelligent tests automatically.
 
-#### Exploratory Test Generation
+#### Exploratory Test Execution
 
 **Use Case**: Discover all testable functionality without prior knowledge
 
@@ -362,14 +362,34 @@ prompt_template = response.json()["content"]["prompts"]["generate_from_requireme
 # Use the prompt with your AI assistant or automation
 ```
 
-## Form-Specific Test Generation
+## Form-Specific Test Execution
 
-**Use Case**: Comprehensive form testing
+**Use Case**: Comprehensive form testing through playbooks
 
-```bash
-curl -X POST http://localhost:8765/detect_forms \
-  -H "Content-Type: application/json" \
-  -d '{"action": "detect_forms", "parameters": {}}'
+Form detection and testing is available through the playbook system:
+
+```json
+{
+  "name": "Form Testing Playbook",
+  "steps": [
+    {
+      "action": "navigate",
+      "parameters": {"url": "https://your-app.com/form"}
+    },
+    {
+      "action": "detect_forms",
+      "parameters": {}
+    },
+    {
+      "action": "fill_form",
+      "parameters": {
+        "fields": {
+          "[name='email']": "test@example.com"
+        }
+      }
+    }
+  ]
+}
 ```
 
 **TINAA automatically**:
@@ -527,72 +547,62 @@ ws.send(JSON.stringify({
 }));
 ```
 
-### Visual Regression Testing
+### Screenshot Capture
 
-TINAA automatically captures screenshots and compares them:
+TINAA can capture screenshots for visual documentation:
 
 ```bash
-# Take baseline screenshots
+# Take screenshots
 curl -X POST http://localhost:8765/screenshot \
   -H "Content-Type: application/json" \
   -d '{"action": "screenshot", "parameters": {"full_page": true}}'
-
-# Run visual comparison test
-curl -X POST http://localhost:8765/test/visual \
-  -H "Content-Type: application/json" \
-  -d '{
-    "action": "visual_regression",
-    "parameters": {
-      "baseline_url": "https://staging.your-app.com",
-      "comparison_url": "https://your-app.com",
-      "threshold": 0.1
-    }
-  }'
 ```
+
+For visual regression testing, you can capture screenshots at different stages and compare them manually or integrate with your preferred visual testing tools.
 
 ## Multi-Device Testing
 
-Test responsive designs across devices:
+Test responsive designs across devices through playbooks:
 
 ```json
 {
   "name": "Responsive Design Test",
   "steps": [
     {
+      "action": "navigate",
+      "parameters": {"url": "https://your-app.com"}
+    },
+    {
       "action": "test_responsive",
-      "parameters": {
-        "url": "https://your-app.com",
-        "devices": [
-          {"name": "Desktop", "width": 1920, "height": 1080},
-          {"name": "Tablet", "width": 768, "height": 1024},
-          {"name": "Mobile", "width": 375, "height": 667}
-        ]
-      }
+      "parameters": {}
     }
   ]
 }
 ```
 
+The responsive test action (available in playbooks) automatically tests common device viewports and identifies responsive design issues.
+
 ### Security Testing
 
-Automated security vulnerability scanning:
+Security testing is available through playbooks:
 
-```bash
-curl -X POST http://localhost:8765/test/security \
-  -H "Content-Type: application/json" \
-  -d '{
-    "action": "security_scan",
-    "parameters": {
-      "url": "https://your-app.com",
-      "checks": [
-        "csrf_protection",
-        "xss_vulnerability",
-        "sql_injection",
-        "sensitive_data_exposure"
-      ]
+```json
+{
+  "name": "Security Audit",
+  "steps": [
+    {
+      "action": "navigate",
+      "parameters": {"url": "https://your-app.com"}
+    },
+    {
+      "action": "test_security",
+      "parameters": {}
     }
-  }'
+  ]
+}
 ```
+
+The security test action performs basic security checks and identifies common vulnerabilities.
 
 ---
 
@@ -832,22 +842,28 @@ Create a simple dashboard for team visibility:
     </div>
 
     <script>
-        // Fetch latest test results
-        fetch('http://localhost:8765/api/test-results/latest')
-            .then(response => response.json())
-            .then(data => {
-                const ctx = document.getElementById('statusChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Passed', 'Failed', 'Warnings'],
-                        datasets: [{
-                            data: [data.passed, data.failed, data.warnings],
-                            backgroundColor: ['#4CAF50', '#F44336', '#FF9800']
-                        }]
-                    }
-                });
-            });
+        // Example: Parse test results from your stored test outputs
+        // You would need to implement your own endpoint or file storage
+        // to track test results over time
+        
+        // Sample data for demonstration
+        const sampleData = {
+            passed: 15,
+            failed: 2,
+            warnings: 3
+        };
+        
+        const ctx = document.getElementById('statusChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Passed', 'Failed', 'Warnings'],
+                datasets: [{
+                    data: [sampleData.passed, sampleData.failed, sampleData.warnings],
+                    backgroundColor: ['#4CAF50', '#F44336', '#FF9800']
+                }]
+            }
+        });
     </script>
 </body>
 </html>
@@ -1033,13 +1049,15 @@ docker exec -it tinaa-container playwright install --dry-run
 
 **Solutions**:
 ```bash
-# Regenerate selectors with current page
-curl -X POST http://localhost:8765/analyze_selectors \
-  -d '{"url": "https://your-app.com"}'
+# Navigate to the page and run exploratory test to find selectors
+curl -X POST http://localhost:8765/navigate \
+  -H "Content-Type: application/json" \
+  -d '{"action": "navigate", "parameters": {"url": "https://your-app.com"}}'
 
-# Use TINAA's selector debugging
-curl -X POST http://localhost:8765/debug/selectors \
-  -d '{"selector": "[data-testid=submit]", "url": "https://your-app.com"}'
+# Run exploratory test which will analyze and suggest selectors
+curl -X POST http://localhost:8765/test/exploratory \
+  -H "Content-Type: application/json" \
+  -d '{"action": "exploratory", "parameters": {"url": "https://your-app.com"}}'
 ```
 
 ## 3. Timeout Errors
@@ -1051,13 +1069,13 @@ curl -X POST http://localhost:8765/debug/selectors \
 
 **Solutions**:
 ```bash
-# Increase timeout for slow pages
-curl -X POST http://localhost:8765/configure \
-  -d '{"default_timeout": 60000}'
+# Set timeout through environment variable when starting TINAA
+docker run -e DEFAULT_TIMEOUT=60000 ghcr.io/aj-geddes/tinaa-playwright-msp:latest
 
-# Use TINAA's performance analysis
-curl -X POST http://localhost:8765/test/performance \
-  -d '{"url": "https://your-app.com"}'
+# Check page load time through exploratory testing
+curl -X POST http://localhost:8765/test/exploratory \
+  -H "Content-Type: application/json" \
+  -d '{"action": "exploratory", "parameters": {"url": "https://your-app.com"}}'
 ```
 
 ## 4. Memory Issues
@@ -1072,9 +1090,8 @@ curl -X POST http://localhost:8765/test/performance \
 # Increase Docker memory
 docker run -m 4g tinaa-playwright-msp
 
-# Enable memory optimization
-curl -X POST http://localhost:8765/configure \
-  -d '{"memory_optimization": true, "max_concurrent_tests": 1}'
+# Configure memory settings through environment variables
+docker run -m 4g -e MAX_CONCURRENT_TESTS=1 ghcr.io/aj-geddes/tinaa-playwright-msp:latest
 ```
 
 ## Debug Mode
@@ -1092,17 +1109,17 @@ curl -X POST http://localhost:8765/test/exploratory \
 
 ## Performance Monitoring
 
-Monitor TINAA performance:
+Monitor TINAA performance through Docker:
 
 ```bash
-# Check system resources
-curl http://localhost:8765/system/stats
+# Check container resources
+docker stats tinaa-container
 
-# Monitor test execution
-curl http://localhost:8765/test/metrics
+# View container logs
+docker logs -f tinaa-container
 
-# View detailed traces
-curl http://localhost:8765/traces/latest
+# Check health status
+curl http://localhost:8765/health
 ```
 
 ## Getting Help
@@ -1128,29 +1145,40 @@ curl http://localhost:8765/traces/latest
 # Health check
 curl http://localhost:8765/health
 
+# Test browser connectivity
+curl -X POST http://localhost:8765/test/connectivity
+
 # Navigate to page
-curl -X POST http://localhost:8765/navigate -d '{"url": "URL"}'
+curl -X POST http://localhost:8765/navigate \
+  -H "Content-Type: application/json" \
+  -d '{"action": "navigate", "parameters": {"url": "https://your-app.com"}}'
 
 # Generate exploratory tests
-curl -X POST http://localhost:8765/test/exploratory -d '{"parameters": {"url": "URL"}}'
+curl -X POST http://localhost:8765/test/exploratory \
+  -H "Content-Type: application/json" \
+  -d '{"action": "exploratory", "parameters": {"url": "https://your-app.com"}}'
 
 # Run accessibility audit
-curl -X POST http://localhost:8765/test/accessibility -d '{}'
+curl -X POST http://localhost:8765/test/accessibility \
+  -H "Content-Type: application/json" \
+  -d '{"action": "accessibility", "parameters": {}}'
 
 # Take screenshot
-curl -X POST http://localhost:8765/screenshot -d '{"parameters": {"full_page": true}}'
+curl -X POST http://localhost:8765/screenshot \
+  -H "Content-Type: application/json" \
+  -d '{"action": "screenshot", "parameters": {"full_page": true}}'
 ```
 
 ## Advanced Operations
 ```bash
-# Execute playbook
+# Execute playbook (for advanced test types)
 curl -X POST http://localhost:8765/playbook/execute -d @playbook.json
 
-# Security scan
-curl -X POST http://localhost:8765/test/security -d '{"parameters": {"url": "URL"}}'
-
-# Visual regression test
-curl -X POST http://localhost:8765/test/visual -d '{"parameters": {"baseline": "URL1", "comparison": "URL2"}}'
+# Playbooks enable:
+# - Security testing
+# - Responsive testing
+# - Form detection and testing
+# - Complex multi-step workflows
 ```
 
 ## Environment Variables
@@ -1203,13 +1231,12 @@ TINAA includes 25+ specialized resources:
 | Method | Endpoint | Purpose |
 |--------|----------|---------|
 | GET | `/health` | System health check |
+| POST | `/test/connectivity` | Test browser connectivity |
 | POST | `/navigate` | Browser navigation |
 | POST | `/screenshot` | Capture screenshots |
 | POST | `/test/exploratory` | Generate comprehensive tests |
 | POST | `/test/accessibility` | WCAG compliance audit |
-| POST | `/test/security` | Security vulnerability scan |
-| POST | `/test/responsive` | Multi-device testing |
-| POST | `/playbook/execute` | Run test sequences |
+| POST | `/playbook/execute` | Run test sequences and advanced tests |
 | WS | `/ws/{client_id}` | Real-time communication |
 
 ---

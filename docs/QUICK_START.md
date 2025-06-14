@@ -102,29 +102,14 @@ curl -X POST http://localhost:8765/test/accessibility \
   -d '{"action": "accessibility", "parameters": {}}'
 ```
 
-### 3. Test Mobile Responsiveness
+### 3. Test Connectivity
 ```bash
-curl -X POST http://localhost:8765/test/responsive \
+curl -X POST http://localhost:8765/test/connectivity \
   -H "Content-Type: application/json" \
-  -d '{
-    "action": "responsive",
-    "parameters": {
-      "url": "https://your-app.com"
-    }
-  }'
+  -d '{"action": "connectivity"}'
 ```
 
-### 4. Security Vulnerability Scan
-```bash
-curl -X POST http://localhost:8765/test/security \
-  -H "Content-Type: application/json" \
-  -d '{
-    "action": "security",
-    "parameters": {
-      "url": "https://your-app.com"
-    }
-  }'
-```
+> **Note**: For security, responsive, visual, and performance testing, use the playbook execution endpoint with appropriate actions. These test types are not available as direct HTTP endpoints.
 
 ---
 
@@ -339,8 +324,8 @@ tinaa-test '{"parameters": {"url": "http://localhost:3000", "focus_area": "gener
 # 2. Check accessibility
 curl -X POST http://localhost:8765/test/accessibility -d '{}'
 
-# 3. Verify mobile responsiveness
-curl -X POST http://localhost:8765/test/responsive -d '{"parameters": {"url": "http://localhost:3000"}}'
+# 3. Test browser connectivity
+curl -X POST http://localhost:8765/test/connectivity -d '{"action": "connectivity"}'
 ```
 
 ## CI/CD Integration
@@ -356,11 +341,23 @@ curl -X POST http://localhost:8765/test/responsive -d '{"parameters": {"url": "h
 ## Pre-Production Checklist
 ```bash
 # Complete pre-production test suite
-for test_type in exploratory accessibility security responsive; do
+for test_type in exploratory accessibility connectivity; do
   curl -X POST http://localhost:8765/test/$test_type \
     -d '{"parameters": {"url": "https://staging.your-app.com"}}' \
     > results-$test_type.json
 done
+
+# For security, responsive, visual, and performance testing, use playbooks:
+curl -X POST http://localhost:8765/playbook/execute \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Pre-Production Security & Performance Tests",
+    "steps": [
+      {"action": "test_security", "parameters": {"url": "https://staging.your-app.com"}},
+      {"action": "test_responsive", "parameters": {"url": "https://staging.your-app.com"}},
+      {"action": "test_performance", "parameters": {"url": "https://staging.your-app.com"}}
+    ]
+  }' > results-advanced-tests.json
 ```
 
 ---

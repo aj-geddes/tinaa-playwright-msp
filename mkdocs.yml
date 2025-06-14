@@ -100,7 +100,7 @@ nav:
     - Overview: USER_GUIDE.md
     - Installation: user-guide/installation.md
     - Getting Started: user-guide/getting-started.md
-    - Test Generation: user-guide/test-generation.md
+    - Test Execution: user-guide/test-execution.md
     - Best Practices: user-guide/best-practices.md
   
   - Developer Guide:

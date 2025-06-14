@@ -115,7 +115,7 @@ Key panels:
     "title": "TINAA Operations",
     "panels": [
       {
-        "title": "Test Generation Rate",
+        "title": "Test Execution Rate",
         "targets": [{
           "expr": "rate(tinaa_tests_generated_total[5m])"
         }]
