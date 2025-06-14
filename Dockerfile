@@ -57,7 +57,8 @@ ls -la >> /app/logs/startup.log\n\
 exec python /app/minimalist_mcp.py\n\
 ' > /app/startup.sh && chmod +x /app/startup.sh
 
-# Make HTTP startup script executable
+# Copy and make HTTP startup script executable
+COPY scripts/startup_http.sh /app/startup_http.sh
 RUN chmod +x /app/startup_http.sh
 
 # Create a unified entrypoint that can run either MCP or HTTP mode
