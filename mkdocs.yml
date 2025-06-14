@@ -98,22 +98,38 @@ nav:
   
   - User Guide:
     - Overview: USER_GUIDE.md
+    - Installation: user-guide/installation.md
+    - Getting Started: user-guide/getting-started.md
+    - Test Generation: user-guide/test-generation.md
+    - Best Practices: user-guide/best-practices.md
   
   - Developer Guide:
     - Overview: DEVELOPER_GUIDE.md
     - Architecture: ARCHITECTURE.md
     - API Reference: API.md
+    - Custom Resources: developer-guide/custom-resources.md
+    - SDK Development: developer-guide/sdk-development.md
   
   - Enterprise:
     - Overview: ENTERPRISE_GUIDE.md
     - Deployment: DEPLOYMENT.md
+    - Security: enterprise/security.md
+    - Scaling: enterprise/scaling.md
+    - Monitoring: enterprise/monitoring.md
   
   - Resources:
     - Overview: RESOURCES.md
   
+  - Testing:
+    - Testing Guide: TESTING_GUIDE.md
+  
   - Support:
     - Troubleshooting: TROUBLESHOOTING.md
     - Contributing: DEVELOPMENT.md
+    - FAQ: support/faq.md
+    - Community: support/community.md
+  
+  - Tags: tags.md
 
 # Plugins
 plugins:
