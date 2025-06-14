@@ -1,33 +1,76 @@
-# TINAA - Test Intelligence Network Automation Assistant
+# TINAA - Test Intelligence and Automation Advanced
 
-This is a Model Context Protocol (MCP) server for Playwright automation with integrated Language Server Protocol (LSP) for intelligent playbook creation assistance.
+A Model Context Protocol (MCP) server for Playwright automation with integrated Language Server Protocol (LSP) for intelligent test automation assistance.
 
-## Overview
+## Architecture Overview
 
-TINAA provides comprehensive browser automation and testing capabilities through the MCP protocol, with support for both stdio communication and HTTP/WebSocket APIs for real-time progress tracking and IDE integration.
+```mermaid
+%%{init: {
+  'theme': 'dark',
+  'themeVariables': {
+    'fontFamily': 'monospace',
+    'primaryBorderColor': '#6BB4DD',
+    'primaryColor': '#2D3A4D',
+    'primaryTextColor': '#fff',
+    'lineColor': '#6BB4DD'
+  },
+  'themeCSS': '.node rect, .node circle, .node polygon, .node path { stroke-width: 2px; stroke-dasharray: 3,3; } .nodeLabel { font-family: monospace; } .edgeLabel { font-family: monospace; } #flowchart line, .path, #statediagram-barbEnd, path.messageLineC { stroke-width: 1.5px; stroke-dasharray: 3,3; }'
+}}%%
+flowchart TD
+    subgraph Client["Client Layer"]
+        Claude[Claude Desktop]
+        IDE[IDE/Editor]
+        API[REST Client]
+    end
+    
+    subgraph Server["Server Layer"]
+        MCP[MCP Server<br/>app/main.py]
+        HTTP[HTTP Server<br/>app/http_server.py]
+        LSP[LSP Server<br/>playwright_lsp/server.py]
+    end
+    
+    subgraph Core["Core Components"]
+        PC[Playwright Controller<br/>playwright_controller/controller.py]
+        PT[Progress Tracker<br/>app/progress_tracker.py]
+        RL[Resource Loader<br/>app/resource_loader.py]
+    end
+    
+    subgraph Browser["Browser Layer"]
+        PW[Playwright Engine]
+        Chrome[Chromium Browser]
+    end
+    
+    Claude -.->|stdio| MCP
+    IDE -.->|TCP/stdio| LSP
+    API -.->|HTTP/WS| HTTP
+    
+    MCP -.-> PC
+    HTTP -.-> PC
+    LSP -.-> PC
+    
+    PC -.-> PT
+    PC -.-> RL
+    PC -.-> PW
+    
+    PW -.-> Chrome
+```
 
 ## Features
 
 ### Core Capabilities
-- **Full Playwright Automation**: Complete browser control and interaction
+- **Full Playwright Automation**: Complete browser control through MCP protocol (`app/main.py`)
 - **Multi-Mode Operation**: 
   - MCP mode (stdio) for Claude integration
-  - HTTP mode with WebSocket support for IDE integration
-- **Real-Time Progress Tracking**: Live updates during test execution
-- **Visual Playbook Builder**: IDE integration with drag-and-drop interface
+  - HTTP mode with WebSocket support for IDE integration (`app/http_server.py`)
+- **Real-Time Progress Tracking**: Live updates during test execution (`app/progress_tracker.py`)
+- **Language Server Protocol**: Code assistance for Playwright scripts (`playwright_lsp/server.py`)
 
 ### Testing Capabilities
-- **Exploratory Testing**: Intelligent test generation with heuristics
-- **Accessibility Testing**: WCAG 2.1 compliance validation
+- **Exploratory Testing**: AI-powered test generation with heuristics (`resources/exploratory_heuristics.json`)
+- **Accessibility Testing**: WCAG 2.1 compliance validation (`resources/accessibility_rules.json`)
 - **Responsive Design Testing**: Multi-viewport layout verification
-- **Security Testing**: Basic vulnerability scanning
-- **Form Analysis**: Automatic form field detection and filling
-
-### Developer Features
-- **Language Server Protocol**: Code assistance for Playwright scripts
-- **Streaming Responses**: Progress updates for long-running operations
-- **RESTful API**: Complete HTTP interface for all testing functions
-- **WebSocket Support**: Bidirectional real-time communication
+- **Security Testing**: Basic vulnerability scanning (`resources/security_test_patterns.json`)
+- **Form Analysis**: Automatic form field detection and validation
 
 ## Installation
 
@@ -39,108 +82,154 @@ TINAA provides comprehensive browser automation and testing capabilities through
    cd tinaa-playwright-msp
    ```
 
-2. Build and run in MCP mode (for Claude):
+2. Build and run in MCP mode:
    ```bash
    docker-compose up -d
    ```
 
-3. Or run in HTTP mode (for IDE integration):
+3. Or run in HTTP mode:
    ```bash
    docker-compose -f docker-compose.http.yml up -d
    ```
 
 ### Manual Installation
 
-1. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   python -m playwright install chromium
-   ```
-
-2. Run the server:
-   ```bash
-   # MCP mode
-   python minimalist_mcp.py
-   
-   # HTTP mode
-   python app/http_server.py
-   ```
-
-## Usage
-
-### In Claude (MCP Mode)
-
-Once the MCP server is running, you can use it in Claude with prompts like:
-
-```
-Can you test the accessibility of https://example.com?
-```
-
-```
-Please run an exploratory test on the login form at https://example.com/login
-```
-
-```
-Check the responsive design of https://example.com across different viewports
-```
-
-### IDE Integration (HTTP Mode)
-
-1. Start the server in HTTP mode
-2. Open `examples/ide_integration.html` in a web browser
-3. Use the visual interface to build and execute test playbooks
-
-### API Examples
-
-#### Navigate to URL
+Install dependencies from `requirements.txt`:
 ```bash
-curl -X POST http://localhost:8765/navigate \
-  -H "Content-Type: application/json" \
-  -d '{"action": "navigate", "parameters": {"url": "https://example.com"}}'
+pip install -r requirements.txt
 ```
 
-#### Run Exploratory Test
-```bash
-curl -X POST http://localhost:8765/test/exploratory \
-  -H "Content-Type: application/json" \
-  -d '{"action": "test_exploratory", "parameters": {}, "client_id": "test-client"}'
-```
-
-#### WebSocket Connection
-```javascript
-const ws = new WebSocket('ws://localhost:8765/ws/my-client-id');
-ws.onmessage = (event) => {
-  const data = JSON.parse(event.data);
-  console.log('Progress:', data);
-};
-```
+Required dependencies:
+- `fastmcp==2.8.0`
+- `playwright==1.46.0`
+- `fastapi>=0.104.0`
+- `pygls>=1.0.0`
+- `pydantic>=2.0.0`
 
 ## Configuration
 
 ### Environment Variables
 
-- `TINAA_MODE`: Set to "http" for HTTP mode, defaults to MCP mode
-- `PYTHONPATH`: Should include `/app`
-- `PLAYWRIGHT_BROWSERS_PATH`: Browser installation path
+The following environment variables are used (defined in `docker-compose.yml`):
+- `PYTHONUNBUFFERED=1` - Ensures immediate output
+- `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright` - Browser installation path
+- `TINAA_MODE` - Switches between 'mcp' and 'http' modes
 
-### Docker Compose
+### Docker Configuration
 
-Two compose files are provided:
-- `docker-compose.yml`: Standard MCP mode
-- `docker-compose.http.yml`: HTTP mode with health checks
+**Ports**:
+- `8765` - Used for both MCP stdio server and HTTP API
 
-## Architecture
+**Volumes**:
+- `./logs:/app/logs` - Log file persistence
+- `${PWD}:/mnt/workspace` - Workspace mounting for file access
+
+## API Reference
+
+### MCP Tools
+
+Available tools via MCP protocol (defined in `app/main.py`):
+
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `start_lsp_server` | Launch LSP server | `tcp: bool, port: int` |
+| `test_browser_connectivity` | Verify browser setup | None |
+| `navigate_to_url` | Navigate browser to URL | `url: str` |
+| `take_page_screenshot` | Capture screenshot | `name: str` |
+| `fill_login_form` | Test authentication forms | `username: str, password: str, selectors: dict` |
+| `run_exploratory_test` | Execute exploratory test | `url: str, max_depth: int` |
+| `run_accessibility_test` | Run WCAG compliance test | `url: str, standard: str` |
+| `run_responsive_test` | Test responsive design | `url: str, viewports: list` |
+| `run_security_test` | Basic security scan | `url: str` |
+
+### HTTP Endpoints
+
+Available endpoints via HTTP API (defined in `app/http_server.py`):
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/` | Root endpoint |
+| GET | `/health` | Health check |
+| POST | `/test/connectivity` | Test browser connectivity |
+| POST | `/navigate` | Navigate to URL |
+| POST | `/screenshot` | Take screenshot |
+| POST | `/test/exploratory` | Run exploratory test (streaming) |
+| POST | `/test/accessibility` | Run accessibility test (streaming) |
+| POST | `/playbook/execute` | Execute test playbook |
+| WS | `/ws/{client_id}` | WebSocket connection |
+
+## Usage Examples
+
+### Via Claude Desktop
+
+Configure in Claude Desktop settings:
+```json
+{
+  "mcpServers": {
+    "tinaa-playwright-msp": {
+      "command": "docker",
+      "args": ["run", "--rm", "-i", "tinaa-playwright-msp:latest"]
+    }
+  }
+}
+```
+
+### Via HTTP API
+
+```python
+import requests
+
+# Test connectivity
+response = requests.post("http://localhost:8765/test/connectivity")
+
+# Navigate to URL
+response = requests.post("http://localhost:8765/navigate", 
+    json={"url": "https://example.com"})
+
+# Run accessibility test
+response = requests.post("http://localhost:8765/test/accessibility",
+    json={"url": "https://example.com", "standard": "WCAG2.1-AA"})
+```
+
+## Development
+
+### Project Structure
 
 ```
 tinaa-playwright-msp/
-├── app/                    # Main application code
-│   ├── main.py            # MCP server entry point
-│   ├── http_server.py     # HTTP/WebSocket server
-│   └── progress_tracker.py # Progress tracking system
-├── playwright_controller/  # Browser automation logic
-├── resources/             # Testing strategies and patterns
-├── examples/              # Integration examples
-└── docker-compose.yml     # Container configuration
+├── app/                      # Main application code
+│   ├── main.py              # MCP server entry point
+│   ├── http_server.py       # HTTP/WebSocket server
+│   ├── progress_tracker.py  # Progress tracking system
+│   └── resource_loader.py   # Resource management
+├── playwright_controller/    # Browser automation
+│   └── controller.py        # Playwright wrapper
+├── playwright_lsp/          # Language server
+│   ├── server.py           # LSP server implementation
+│   └── handlers/           # LSP request handlers
+├── resources/              # Test patterns and rules
+│   ├── accessibility_rules.json
+│   ├── exploratory_heuristics.json
+│   └── security_test_patterns.json
+├── tools/                  # Modular testing tools
+├── tests/                  # Test suite
+│   ├── unit/              # Unit tests
+│   ├── integration/       # Integration tests
+│   └── e2e/              # End-to-end tests
+└── scripts/               # Build and utility scripts
+```
+
+### Running Tests
+
+```bash
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov=app --cov=playwright_controller
+
+# Run specific test category
+pytest tests/unit/
 ```
 
 ## Contributing
