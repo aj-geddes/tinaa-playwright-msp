@@ -8,6 +8,32 @@ TINAA provides three different API interfaces for browser automation and testing
 2. **HTTP REST API** - Traditional REST endpoints with WebSocket support
 3. **LSP (Language Server Protocol)** - For IDE integration
 
+## Resources API
+
+TINAA includes a comprehensive resources framework with 25 specialized resources following the gofastmcp.com v2.8.0 specification. All resources are accessible via HTTP endpoints:
+
+### Resource Categories
+
+| Category | Count | Description |
+|----------|-------|-------------|
+| Tools | 9 | CLI tools, scaffolding, CI/CD integration |
+| Quickstarts | 4 | Getting started guides |
+| Examples | 4 | Real-world test examples |
+| Documentation | 3 | Best practices and guides |
+| AI Prompts | 3 | Test generation and code review |
+| Additional | 2 | Resource index and strategies |
+
+### Resource Endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /resources/index.json` | Complete resource registry |
+| `GET /resources/tools/{tool}.json` | Specific tool resource |
+| `GET /resources/quickstarts/{guide}.json` | Quickstart guide |
+| `GET /resources/examples/{example}.json` | Example test pattern |
+| `GET /resources/docs/{doc}.json` | Documentation resource |
+| `GET /resources/prompts/{prompt}.json` | AI prompt resource |
+
 ## MCP Tools API
 
 The MCP interface is defined in `app/main.py` and provides the following tools:

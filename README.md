@@ -72,6 +72,43 @@ flowchart TD
 - **Security Testing**: Basic vulnerability scanning (`resources/security_test_patterns.json`)
 - **Form Analysis**: Automatic form field detection and validation
 
+### Extended Resources Framework
+TINAA includes a comprehensive resource framework following the gofastmcp.com v2.8.0 specification with **25 specialized resources**:
+
+#### 🛠️ **Tools** (9 resources)
+- **CLI Tools**: Playwright installation, advanced test runner
+- **Project Scaffolding**: Page Object Model generator, project initialization
+- **CI/CD Integration**: Setup configurations for major platforms
+- **Visual Testing**: Percy integration, screenshot comparison
+- **Debugging**: Trace viewer utilities
+- **State Management**: Authentication and storage state handling
+
+#### 🚀 **Quickstarts** (4 resources)
+- **Web Testing**: Basic web application testing guides
+- **Mobile Testing**: Device emulation and responsive testing
+- **API Testing**: REST and GraphQL endpoint testing
+- **Hybrid Testing**: Combined UI and API testing approaches
+
+#### 📘 **Examples** (4 resources)
+- **Login Flows**: Authentication patterns and test cases
+- **CRUD Forms**: Create, Read, Update, Delete operation testing
+- **Shopping Cart**: E-commerce checkout flow automation
+- **Analytics Dashboard**: Data visualization and dashboard testing
+
+#### 📚 **Documentation** (3 resources)
+- **Best Practices**: Recommended patterns and approaches
+- **Troubleshooting**: Common issues and solutions guide
+- **Design Patterns**: Architectural patterns for test automation
+
+#### 🤖 **AI Prompts** (3 resources)
+- **Test Generator**: Generate tests from requirements specifications
+- **Code Reviewer**: Automated code quality analysis and suggestions
+- **Debug Assistant**: Intelligent troubleshooting and error resolution
+
+#### 📊 **Additional Resources** (2 resources)
+- **Resource Index**: Central registry of all available resources
+- **Testing Strategies**: Comprehensive testing methodology guidelines
+
 ## Installation
 
 ### Using Docker (Recommended)
@@ -189,6 +226,43 @@ response = requests.post("http://localhost:8765/navigate",
 # Run accessibility test
 response = requests.post("http://localhost:8765/test/accessibility",
     json={"url": "https://example.com", "standard": "WCAG2.1-AA"})
+
+# Execute a test playbook
+playbook = {
+    "name": "Login and Screenshot Test",
+    "steps": [
+        {
+            "id": "nav", 
+            "action": "navigate",
+            "parameters": {"url": "https://example.com"}
+        },
+        {
+            "id": "shot",
+            "action": "screenshot", 
+            "parameters": {"full_page": True}
+        }
+    ]
+}
+response = requests.post("http://localhost:8765/playbook/execute",
+    json=playbook)
+```
+
+### Using Resources
+
+Access the comprehensive resource library:
+
+```python
+# All resources are available at /resources/
+# Browse the resource index: /resources/index.json
+# Example quickstart: /resources/quickstarts/web/basic.json
+# AI prompts: /resources/prompts/test-generator.json
+
+# Resources include:
+# - Scaffolding tools for new projects
+# - CI/CD integration templates
+# - Visual testing configurations
+# - Debugging utilities
+# - Test patterns and examples
 ```
 
 ## Development
@@ -201,16 +275,20 @@ tinaa-playwright-msp/
 │   ├── main.py              # MCP server entry point
 │   ├── http_server.py       # HTTP/WebSocket server
 │   ├── progress_tracker.py  # Progress tracking system
-│   └── resource_loader.py   # Resource management
+│   └── enhanced_mcp_handler.py # Enhanced MCP handlers
 ├── playwright_controller/    # Browser automation
 │   └── controller.py        # Playwright wrapper
 ├── playwright_lsp/          # Language server
 │   ├── server.py           # LSP server implementation
 │   └── handlers/           # LSP request handlers
-├── resources/              # Test patterns and rules
-│   ├── accessibility_rules.json
-│   ├── exploratory_heuristics.json
-│   └── security_test_patterns.json
+├── resources/              # Comprehensive resource framework (25 resources)
+│   ├── index.json          # Resource registry
+│   ├── tools/              # CLI tools, scaffolding, CI/CD setup
+│   ├── quickstarts/        # Getting started guides
+│   ├── examples/           # Real-world test examples
+│   ├── docs/               # Best practices and troubleshooting
+│   ├── prompts/            # AI-powered prompts for testing
+│   └── templates/          # Reusable templates
 ├── tools/                  # Modular testing tools
 ├── tests/                  # Test suite
 │   ├── unit/              # Unit tests
