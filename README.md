@@ -7,6 +7,10 @@
 
 A Model Context Protocol (MCP) server for Playwright automation with integrated Language Server Protocol (LSP) for intelligent test automation assistance.
 
+## 📚 Documentation
+
+**[View Full Documentation](https://aj-geddes.github.io/tinaa-playwright-msp)** - Comprehensive guides, API reference, and examples
+
 ## Quick Start with Pre-built Docker Image
 
 ```bash
@@ -345,6 +349,13 @@ pytest tests/unit/
 ## Contributing
 
 Contributions are welcome! Please feel free to submit issues or pull requests.
+
+## Documentation
+
+- **[Full Documentation](https://aj-geddes.github.io/tinaa-playwright-msp)** - Complete guides and API reference
+- **[Quick Start Guide](https://aj-geddes.github.io/tinaa-playwright-msp/QUICK_START/)** - Get started in 5 minutes
+- **[API Reference](https://aj-geddes.github.io/tinaa-playwright-msp/API/)** - Detailed API documentation
+- **[User Guide](https://aj-geddes.github.io/tinaa-playwright-msp/USER_GUIDE/)** - Comprehensive feature guide
 
 ## License
 
