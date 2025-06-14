@@ -117,7 +117,7 @@ data:
   S3_BUCKET: "tinaa-screenshots"
 ```
 
-#### 2. Deployment Configuration
+## 2. Deployment Configuration
 ```yaml
 # k8s/deployment.yaml
 apiVersion: apps/v1
@@ -198,7 +198,7 @@ spec:
         fsGroup: 1000
 ```
 
-#### 3. Service and Ingress
+## 3. Service and Ingress
 ```yaml
 # k8s/service.yaml
 apiVersion: v1
@@ -248,7 +248,7 @@ spec:
               number: 80
 ```
 
-#### 4. Horizontal Pod Autoscaler
+## 4. Horizontal Pod Autoscaler
 ```yaml
 # k8s/hpa.yaml
 apiVersion: autoscaling/v2
@@ -291,7 +291,7 @@ spec:
         periodSeconds: 60
 ```
 
-### Docker Swarm Deployment
+## Docker Swarm Deployment
 
 ```yaml
 # docker-compose.prod.yml
@@ -470,7 +470,7 @@ async def exploratory_test(
     pass
 ```
 
-#### 2. SAML SSO Integration
+## 2. SAML SSO Integration
 ```python
 # app/auth/saml.py
 from saml2 import BINDING_HTTP_POST, BINDING_HTTP_REDIRECT
@@ -540,7 +540,7 @@ class SAMLAuth:
         }
 ```
 
-### Data Protection & Privacy
+## Data Protection & Privacy
 
 #### 1. Data Encryption
 ```python
@@ -603,7 +603,7 @@ async def get_test_credentials(credential_id: str):
     }
 ```
 
-#### 2. Audit Logging
+## 2. Audit Logging
 ```python
 # app/security/audit.py
 import json
@@ -695,7 +695,7 @@ async def audit_middleware(request: Request, call_next):
 app.middleware("http")(audit_middleware)
 ```
 
-### Compliance Features
+## Compliance Features
 
 #### GDPR Compliance
 ```python
@@ -823,7 +823,7 @@ server {
 }
 ```
 
-#### 2. Redis Cluster Setup
+## 2. Redis Cluster Setup
 ```yaml
 # redis-cluster.yml
 version: '3.8'
@@ -875,7 +875,7 @@ cluster-node-timeout 5000
 appendonly yes
 ```
 
-### Performance Optimization
+## Performance Optimization
 
 #### 1. Caching Strategy
 ```python
@@ -949,7 +949,7 @@ async def cached_test_execution(test_config: dict):
     return result
 ```
 
-#### 2. Connection Pool Management
+## 2. Connection Pool Management
 ```python
 # app/database/pool.py
 import asyncpg
@@ -1055,7 +1055,7 @@ async def run_exploratory_test(url: str):
     pass
 ```
 
-### Grafana Dashboard Configuration
+## Grafana Dashboard Configuration
 
 ```json
 {
@@ -1228,7 +1228,7 @@ roles:
     description: 'Read-only access'
 ```
 
-### Team Collaboration Features
+## Team Collaboration Features
 
 - Shared test suites and resources
 - Real-time collaboration on test creation
@@ -1258,7 +1258,7 @@ jobs:
           test-suite: 'regression'
 ```
 
-### Third-Party Integrations
+## Third-Party Integrations
 
 - Slack notifications
 - Jira issue creation

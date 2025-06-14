@@ -122,7 +122,7 @@ async def exploratory_test_flow(url: str):
 - Docker Compose
 ```
 
-### Development Environment
+## Development Environment
 
 ```bash
 # 1. Clone repository
@@ -144,7 +144,7 @@ cp .env.example .env
 # Edit .env with your configuration
 ```
 
-### Development Configuration
+## Development Configuration
 
 Create `config/development.json`:
 ```json
@@ -311,7 +311,7 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-### JavaScript/TypeScript SDK
+## JavaScript/TypeScript SDK
 
 ```typescript
 // tinaa-client.ts
@@ -722,7 +722,7 @@ if __name__ == "__main__":
     register_resource("advanced-form-tester.json")
 ```
 
-### Testing Custom Resources
+## Testing Custom Resources
 
 ```python
 # test_custom_resource.py
@@ -924,7 +924,7 @@ describe('Generated unit test', () => {{
         pass
 ```
 
-### Plugin Manager
+## Plugin Manager
 
 ```python
 # plugin_manager.py
@@ -1097,7 +1097,7 @@ class TestTinaaCore:
         assert "tools" in data["categories"]
 ```
 
-### Integration Testing
+## Integration Testing
 
 ```python
 # tests/integration/test_full_workflow.py
@@ -1194,7 +1194,7 @@ class TestFullWorkflow:
         assert len(result["results"]) == 2
 ```
 
-### Performance Testing
+## Performance Testing
 
 ```python
 # tests/performance/test_load.py
@@ -1261,7 +1261,7 @@ class TestPerformance:
         assert memory_increase < 100 * 1024 * 1024
 ```
 
-### End-to-End Testing
+## End-to-End Testing
 
 ```python
 # tests/e2e/test_real_world_scenarios.py
@@ -1412,7 +1412,7 @@ async def cached_resource_load(resource_path: str) -> Dict:
     return await cache.get_or_compute(cache_key, load_resource, ttl=3600)  # 1 hour
 ```
 
-### Connection Pooling
+## Connection Pooling
 
 ```python
 # app/connection_pool.py
@@ -1496,7 +1496,7 @@ class OptimizedPlaywrightController:
             await page.close()
 ```
 
-### Asynchronous Processing
+## Asynchronous Processing
 
 ```python
 # app/async_processor.py
@@ -1660,7 +1660,7 @@ async def exploratory_test(
     pass
 ```
 
-### Input Validation & Sanitization
+## Input Validation & Sanitization
 
 ```python
 # app/validation.py
@@ -1771,7 +1771,7 @@ def validate_selector(selector: str) -> bool:
     return True
 ```
 
-### Rate Limiting
+## Rate Limiting
 
 ```python
 # app/rate_limiter.py
@@ -1855,7 +1855,7 @@ docker-compose -f docker-compose.dev.yml up
 python app/http_server.py --reload --debug
 ```
 
-### Staging Deployment
+## Staging Deployment
 
 ```yaml
 # docker-compose.staging.yml
@@ -1870,7 +1870,7 @@ services:
       - ./config/staging:/app/config
 ```
 
-### Production Deployment
+## Production Deployment
 
 See the [Enterprise Guide](ENTERPRISE_GUIDE.md) for comprehensive production deployment strategies including:
 - Kubernetes deployment

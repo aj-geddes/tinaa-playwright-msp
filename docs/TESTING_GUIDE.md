@@ -74,7 +74,7 @@ response = requests.post(
 )
 ```
 
-### 2. Accessibility Testing
+## 2. Accessibility Testing
 
 Tests websites against WCAG (Web Content Accessibility Guidelines) standards.
 

@@ -119,7 +119,7 @@ docker ps
 curl http://localhost:8765/health
 ```
 
-#### Option 2: Local Python Installation
+## Option 2: Local Python Installation
 
 **Advantages**: Direct access to source, customizable
 
@@ -138,7 +138,7 @@ playwright install chromium
 python app/http_server.py
 ```
 
-#### Option 3: Claude Desktop Integration
+## Option 3: Claude Desktop Integration
 
 **Advantages**: Direct AI assistant integration
 
@@ -182,7 +182,7 @@ curl -X POST http://localhost:8765/test/connectivity
 # Response: {"success": true, "result": "Browser started successfully."}
 ```
 
-#### Step 2: Navigate to Your App
+## Step 2: Navigate to Your App
 
 ```bash
 curl -X POST http://localhost:8765/navigate \
@@ -345,7 +345,7 @@ prompt_template = response.json()["content"]["prompts"]["generate_from_requireme
 # Use the prompt with your AI assistant or automation
 ```
 
-#### Form-Specific Test Generation
+## Form-Specific Test Generation
 
 **Use Case**: Comprehensive form testing
 
@@ -533,7 +533,7 @@ curl -X POST http://localhost:8765/test/visual \
   }'
 ```
 
-### Multi-Device Testing
+## Multi-Device Testing
 
 Test responsive designs across devices:
 
@@ -641,7 +641,7 @@ jobs:
           accessibility-results.json
 ```
 
-#### Jenkins Pipeline
+## Jenkins Pipeline
 
 ```groovy
 pipeline {
@@ -796,7 +796,7 @@ git remote add origin https://github.com/company/tinaa-configs.git
 git push -u origin main
 ```
 
-#### Test Result Dashboard
+## Test Result Dashboard
 
 Create a simple dashboard for team visibility:
 
@@ -843,7 +843,7 @@ Create a simple dashboard for team visibility:
 ### Test Organization
 
 #### Project Structure
-```
+```javascript
 your-project/
 ├── tests/
 │   ├── tinaa-generated/      # AI-generated tests
@@ -969,7 +969,7 @@ curl -X POST http://localhost:8765/test/accessibility \
   -d '{"action": "accessibility", "parameters": {"standard": "WCAG2.2-AA"}}'
 ```
 
-#### Version Control Integration
+## Version Control Integration
 ```bash
 # Track TINAA configurations
 git add tinaa-configs/
@@ -1007,7 +1007,7 @@ docker run -e LOG_LEVEL=DEBUG tinaa-playwright-msp
 docker exec -it tinaa-container playwright install --dry-run
 ```
 
-#### 2. Selector Not Found
+## 2. Selector Not Found
 
 **Symptoms**:
 ```json
@@ -1025,7 +1025,7 @@ curl -X POST http://localhost:8765/debug/selectors \
   -d '{"selector": "[data-testid=submit]", "url": "https://your-app.com"}'
 ```
 
-#### 3. Timeout Errors
+## 3. Timeout Errors
 
 **Symptoms**:
 ```json
@@ -1043,7 +1043,7 @@ curl -X POST http://localhost:8765/test/performance \
   -d '{"url": "https://your-app.com"}'
 ```
 
-#### 4. Memory Issues
+## 4. Memory Issues
 
 **Symptoms**:
 ```json
@@ -1060,7 +1060,7 @@ curl -X POST http://localhost:8765/configure \
   -d '{"memory_optimization": true, "max_concurrent_tests": 1}'
 ```
 
-### Debug Mode
+## Debug Mode
 
 Enable comprehensive debugging:
 
@@ -1073,7 +1073,7 @@ curl -X POST http://localhost:8765/test/exploratory \
   -d '{"action": "exploratory", "parameters": {"url": "https://your-app.com", "debug": true}}'
 ```
 
-### Performance Monitoring
+## Performance Monitoring
 
 Monitor TINAA performance:
 
@@ -1088,7 +1088,7 @@ curl http://localhost:8765/test/metrics
 curl http://localhost:8765/traces/latest
 ```
 
-### Getting Help
+## Getting Help
 
 #### Community Resources
 - **GitHub Issues**: [Report bugs and request features](https://github.com/aj-geddes/tinaa-playwright-msp/issues)
@@ -1124,7 +1124,7 @@ curl -X POST http://localhost:8765/test/accessibility -d '{}'
 curl -X POST http://localhost:8765/screenshot -d '{"parameters": {"full_page": true}}'
 ```
 
-#### Advanced Operations
+## Advanced Operations
 ```bash
 # Execute playbook
 curl -X POST http://localhost:8765/playbook/execute -d @playbook.json
@@ -1136,7 +1136,7 @@ curl -X POST http://localhost:8765/test/security -d '{"parameters": {"url": "URL
 curl -X POST http://localhost:8765/test/visual -d '{"parameters": {"baseline": "URL1", "comparison": "URL2"}}'
 ```
 
-### Environment Variables
+## Environment Variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|

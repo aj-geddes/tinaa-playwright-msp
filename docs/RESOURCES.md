@@ -168,7 +168,7 @@ curl http://localhost:8765/resources/tools/cli/install.json
 curl http://localhost:8765/resources/prompts/test-generator.json
 ```
 
-### Resource Structure
+## Resource Structure
 
 Each resource follows a consistent JSON structure:
 
@@ -200,7 +200,7 @@ for command in installer["content"]["commands"]:
     subprocess.run(command, shell=True)
 ```
 
-#### Using Test Generation Prompts
+## Using Test Generation Prompts
 ```python
 # Get test generator prompt
 prompt_resource = requests.get("http://localhost:8765/resources/prompts/test-generator.json").json()
@@ -210,7 +210,7 @@ test_prompt = prompt_resource["content"]["prompts"]["generate_from_requirements"
 # Feed to AI with your requirements
 ```
 
-#### Using Examples as Templates
+## Using Examples as Templates
 ```python
 # Get login example
 login_example = requests.get("http://localhost:8765/resources/examples/login/standard-login.json").json()

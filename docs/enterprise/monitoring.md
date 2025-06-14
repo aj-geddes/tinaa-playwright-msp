@@ -19,7 +19,7 @@ scrape_configs:
     metrics_path: '/metrics'
 ```
 
-### Key Metrics
+## Key Metrics
 
 ```javascript
 // Custom metrics
@@ -90,7 +90,7 @@ groups:
           summary: "High test failure rate detected"
 ```
 
-### Notification Channels
+## Notification Channels
 
 - PagerDuty for critical alerts
 - Slack for warnings

@@ -24,7 +24,7 @@ spec:
             cpu: "1000m"
 ```
 
-### Vertical Scaling
+## Vertical Scaling
 
 Recommended specifications by workload:
 - **Small** (< 100 tests/day): 2 CPU, 4GB RAM

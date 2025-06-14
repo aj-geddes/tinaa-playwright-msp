@@ -248,7 +248,7 @@ class NewTestType:
         pass
 ```
 
-### 4. Adding Resources
+## 4. Adding Resources
 
 Create new JSON resource in `resources/`:
 
@@ -286,7 +286,7 @@ pytest -v
 pytest tests/unit/test_mcp.py::test_navigate_to_url
 ```
 
-### Test Structure
+## Test Structure
 
 ```mermaid
 %%{init: {

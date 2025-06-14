@@ -45,7 +45,7 @@ git push origin main
 # Go to Actions tab → Deploy MkDocs Documentation → Run workflow
 ```
 
-### 5. Access Your Documentation
+## 5. Access Your Documentation
 
 After the workflow completes (usually 2-3 minutes):
 

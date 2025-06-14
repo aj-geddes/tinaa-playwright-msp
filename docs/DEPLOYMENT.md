@@ -78,7 +78,7 @@ docker-compose -f docker-compose.http.yml up -d
 # Access at http://localhost:8765
 ```
 
-### Configuration Files
+## Configuration Files
 
 **docker-compose.yml** (MCP mode):
 ```yaml
@@ -572,7 +572,7 @@ spec:
         averageUtilization: 80
 ```
 
-### Resource Requirements
+## Resource Requirements
 
 | Component | Minimum | Recommended | Notes |
 |-----------|---------|-------------|--------|

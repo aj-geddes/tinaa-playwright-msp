@@ -102,7 +102,7 @@ tinaa security audit
 npm audit
 ```
 
-### Update Policy
+## Update Policy
 
 - Security patches within 24 hours
 - Regular dependency updates

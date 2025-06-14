@@ -487,7 +487,7 @@ result = await run_exploratory_test(
 )
 ```
 
-### Using HTTP API with Python
+## Using HTTP API with Python
 
 ```python
 import requests
@@ -515,7 +515,7 @@ for event in client.events():
     print(f"Progress: {data['message']}")
 ```
 
-### Using WebSocket with JavaScript
+## Using WebSocket with JavaScript
 
 ```javascript
 const ws = new WebSocket('ws://localhost:8765/ws/client123');

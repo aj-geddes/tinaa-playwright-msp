@@ -86,7 +86,7 @@ tinaa run --debug
 tinaa run --trace
 ```
 
-### What if AI generation produces incorrect tests?
+## What if AI generation produces incorrect tests?
 
 1. Improve your prompts with more specific instructions
 2. Provide example tests for better context

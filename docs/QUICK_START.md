@@ -19,7 +19,7 @@ curl http://localhost:8765/health
 # ✅ {"status":"healthy","timestamp":"2024-01-01T00:00:00Z"}
 ```
 
-### Option 2: Local Python
+## Option 2: Local Python
 ```bash
 # 2-minute setup
 git clone https://github.com/aj-geddes/tinaa-playwright-msp.git
@@ -55,7 +55,7 @@ curl -X POST http://localhost:8765/test/exploratory \
 - ✅ Identifies test scenarios
 - ✅ Provides actionable insights
 
-### Example for GitHub
+## Example for GitHub
 ```bash
 curl -X POST http://localhost:8765/test/exploratory \
   -H "Content-Type: application/json" \
@@ -202,7 +202,7 @@ curl -X POST http://localhost:8765/playbook/execute \
   }'
 ```
 
-### Real-Time Progress Tracking
+## Real-Time Progress Tracking
 ```javascript
 // WebSocket for live updates
 const ws = new WebSocket('ws://localhost:8765/ws/client-123');
@@ -288,7 +288,7 @@ curl http://localhost:8765/health
 # Expected: {"status":"healthy","timestamp":"..."}
 ```
 
-### Container Issues
+## Container Issues
 ```bash
 # Check Docker status
 docker ps | grep tinaa
@@ -300,7 +300,7 @@ docker logs tinaa-container
 docker-compose restart
 ```
 
-### Browser Problems
+## Browser Problems
 ```bash
 # Test browser connectivity
 curl -X POST http://localhost:8765/test/connectivity \
@@ -326,7 +326,7 @@ curl -X POST http://localhost:8765/test/accessibility -d '{}'
 curl -X POST http://localhost:8765/test/responsive -d '{"parameters": {"url": "http://localhost:3000"}}'
 ```
 
-### CI/CD Integration
+## CI/CD Integration
 ```yaml
 # .github/workflows/tinaa-tests.yml
 - name: Run TINAA Tests
@@ -336,7 +336,7 @@ curl -X POST http://localhost:8765/test/responsive -d '{"parameters": {"url": "h
       > tinaa-results.json
 ```
 
-### Pre-Production Checklist
+## Pre-Production Checklist
 ```bash
 # Complete pre-production test suite
 for test_type in exploratory accessibility security responsive; do
@@ -387,7 +387,7 @@ curl -X POST http://localhost:8765/test/accessibility -d '{}'
 curl -X POST http://localhost:8765/screenshot -d '{"parameters": {"full_page": true}}'
 ```
 
-### Resources
+## Resources
 - **Full Documentation**: [USER_GUIDE.md](USER_GUIDE.md)
 - **Developer Guide**: [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)
 - **API Reference**: [API.md](API.md)

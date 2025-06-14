@@ -19,7 +19,7 @@ curl http://localhost:8765/health
 curl http://localhost:8765/test/connectivity
 ```
 
-### Common Status Indicators
+## Common Status Indicators
 
 | Status | Meaning | Action Required |
 |--------|---------|-----------------|
@@ -70,7 +70,7 @@ docker stats
 docker-compose build --no-cache
 ```
 
-#### Problem: Browser Installation Failed
+## Problem: Browser Installation Failed
 ```bash
 # Check browser installation
 docker exec -it tinaa-container playwright install --dry-run
@@ -79,7 +79,7 @@ docker exec -it tinaa-container playwright install --dry-run
 docker exec -it tinaa-container playwright install chromium
 ```
 
-### Local Python Installation Issues
+## Local Python Installation Issues
 
 #### Problem: Import Errors
 ```python
@@ -91,7 +91,7 @@ pip install -r requirements.txt
 playwright install chromium
 ```
 
-#### Problem: Permission Errors
+## Problem: Permission Errors
 ```bash
 # Linux/Mac permission fix
 sudo chown -R $USER:$USER ~/.cache/ms-playwright
@@ -101,7 +101,7 @@ mkdir -p logs
 chmod 755 logs
 ```
 
-#### Problem: Port Already in Use
+## Problem: Port Already in Use
 ```python
 # Error: Address already in use
 OSError: [Errno 98] Address already in use
@@ -152,7 +152,7 @@ docker run --shm-size=2g tinaa-playwright-msp
 --no-sandbox --disable-dev-shm-usage
 ```
 
-#### Problem: Timeout Errors
+## Problem: Timeout Errors
 ```json
 {"error": "Timeout 30000ms exceeded", "code": "TIMEOUT_ERROR"}
 ```
@@ -171,7 +171,7 @@ curl -I https://example.com
 echo "nameserver 8.8.8.8" >> /etc/resolv.conf
 ```
 
-### Selector Issues
+## Selector Issues
 
 #### Problem: Element Not Found
 ```json
@@ -209,7 +209,7 @@ document.querySelector('button[type="submit"]')
 document.querySelector('button:contains("Submit")')
 ```
 
-### Performance Issues
+## Performance Issues
 
 #### Problem: Slow Test Execution
 ```bash
@@ -268,7 +268,7 @@ curl -X POST http://localhost:8765/navigate \
   -d '{"action": "navigate", "parameters": {"url": "not-a-url"}}'
 ```
 
-#### Problem: 429 Rate Limited
+## Problem: 429 Rate Limited
 ```json
 {"detail": "Rate limit exceeded. Try again in 45.2 seconds"}
 ```
@@ -287,7 +287,7 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \
   http://localhost:8765/test/exploratory
 ```
 
-### WebSocket Issues
+## WebSocket Issues
 
 #### Problem: WebSocket Connection Failed
 ```javascript
@@ -395,7 +395,7 @@ curl -X POST http://localhost:8765/configure \
   }'
 ```
 
-#### Problem: Poor Quality Tests Generated
+## Problem: Poor Quality Tests Generated
 ```bash
 # Enable debug mode for better insights
 curl -X POST http://localhost:8765/test/exploratory \
@@ -419,7 +419,7 @@ curl -X POST http://localhost:8765/test/exploratory \
   }'
 ```
 
-### Accessibility Testing Issues
+## Accessibility Testing Issues
 
 #### Problem: Accessibility Test Fails
 ```json
@@ -464,7 +464,7 @@ docker run -m 8g tinaa-playwright-msp
 watch 'docker stats --no-stream tinaa-container'
 ```
 
-#### Problem: File Permissions in Container
+## Problem: File Permissions in Container
 ```bash
 # Fix permission issues
 docker exec -it tinaa-container chown -R playwright:playwright /app
@@ -475,7 +475,7 @@ docker exec -it tinaa-container whoami
 docker exec -it tinaa-container id
 ```
 
-### Kubernetes Deployment
+## Kubernetes Deployment
 
 #### Problem: Pod Crashes
 ```bash
@@ -492,7 +492,7 @@ kubectl describe pod POD_NAME -n tinaa-production
 kubectl top pods -n tinaa-production
 ```
 
-#### Problem: Service Discovery Issues
+## Problem: Service Discovery Issues
 ```bash
 # Test service connectivity
 kubectl exec -it POD_NAME -n tinaa-production -- curl http://tinaa-service/health
@@ -504,7 +504,7 @@ kubectl get endpoints tinaa-service -n tinaa-production
 kubectl exec -it POD_NAME -n tinaa-production -- nslookup tinaa-service
 ```
 
-### Cloud Provider Issues
+## Cloud Provider Issues
 
 #### AWS-Specific Issues
 ```bash
@@ -518,7 +518,7 @@ aws elbv2 describe-target-health --target-group-arn TARGET_GROUP_ARN
 aws logs get-log-events --log-group-name /aws/ecs/tinaa
 ```
 
-#### Azure-Specific Issues
+## Azure-Specific Issues
 ```bash
 # Container instance status
 az container show --resource-group rg-tinaa --name tinaa-container
@@ -546,7 +546,7 @@ curl -X POST http://localhost:8765/test/exploratory \
   -d '{"parameters": {"url": "URL", "memory_profile": true}}'
 ```
 
-#### Browser Memory Issues
+## Browser Memory Issues
 ```python
 # app/debug/memory_monitor.py
 import psutil
@@ -596,7 +596,7 @@ async def memory_monitoring_middleware(request: Request, call_next):
     return response
 ```
 
-### CPU Performance
+## CPU Performance
 
 #### High CPU Usage
 ```bash
@@ -611,7 +611,7 @@ curl -X POST http://localhost:8765/debug/cpu-profile \
 iostat -x 1 5
 ```
 
-### Network Performance
+## Network Performance
 
 #### Slow Response Times
 ```bash
@@ -650,7 +650,7 @@ curl -X POST http://localhost:8765/configure \
   -d '{"debug": {"requests": true, "responses": true}}'
 ```
 
-### Log Analysis
+## Log Analysis
 
 ```bash
 # Real-time log monitoring
@@ -666,7 +666,7 @@ grep "2024-01-01" logs/tinaa.log
 awk '/POST/ {print $7}' logs/access.log | sort | uniq -c | sort -nr
 ```
 
-### Advanced Debugging
+## Advanced Debugging
 
 #### Enable Trace Recording
 ```python
@@ -817,7 +817,7 @@ async def resilient_exploratory_test(request: TestRequest):
     return await recovery.with_retry(execute_exploratory_test, request)
 ```
 
-### Health Check Recovery
+## Health Check Recovery
 
 ```bash
 # Automated health monitoring script
@@ -891,7 +891,7 @@ curl -s http://localhost:8765/system/config
 echo ""
 ```
 
-### Support Channels
+## Support Channels
 
 1. **GitHub Issues**: [Report bugs](https://github.com/aj-geddes/tinaa-playwright-msp/issues)
 2. **Documentation**: [Complete guides](https://github.com/aj-geddes/tinaa-playwright-msp/docs)
@@ -925,12 +925,12 @@ What actually happens
 **Error Messages:**
 ```
 Paste error messages here
-```
+```text
 
 **Diagnostic Information:**
 ```
 Paste output from collect_diagnostics.sh
-```
+```text
 
 **Additional Context:**
 Any other relevant information
