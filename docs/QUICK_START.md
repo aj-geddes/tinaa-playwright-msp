@@ -7,9 +7,20 @@
 
 ## 🚀 Instant Setup
 
-### Option 1: Docker (Fastest)
+### Option 1: Pre-built Docker Image (Fastest - 30 seconds)
 ```bash
-# Get TINAA running in 30 seconds
+# Get TINAA running with pre-built image
+curl -O https://raw.githubusercontent.com/aj-geddes/tinaa-playwright-msp/main/docker-compose.prod.yml
+docker-compose -f docker-compose.prod.yml up -d
+
+# Verify it's working
+curl http://localhost:8765/health
+# ✅ {"status":"healthy","timestamp":"2024-01-01T00:00:00Z"}
+```
+
+### Option 2: Build from Source with Docker
+```bash
+# Build and run from source code
 git clone https://github.com/aj-geddes/tinaa-playwright-msp.git
 cd tinaa-playwright-msp
 docker-compose up -d
@@ -19,9 +30,9 @@ curl http://localhost:8765/health
 # ✅ {"status":"healthy","timestamp":"2024-01-01T00:00:00Z"}
 ```
 
-## Option 2: Local Python
+### Option 3: Local Python
 ```bash
-# 2-minute setup
+# Manual setup with Python
 git clone https://github.com/aj-geddes/tinaa-playwright-msp.git
 cd tinaa-playwright-msp
 pip install -r requirements.txt
@@ -293,10 +304,16 @@ curl http://localhost:8765/health
 # Check Docker status
 docker ps | grep tinaa
 
-# View logs
+# View logs (pre-built image)
+docker logs tinaa-playwright-msp-http
+
+# View logs (build from source)
 docker logs tinaa-container
 
-# Restart if needed
+# Restart if needed (pre-built)
+docker-compose -f docker-compose.prod.yml restart
+
+# Restart if needed (build from source)
 docker-compose restart
 ```
 

@@ -113,6 +113,7 @@ nav:
   - Enterprise:
     - Overview: ENTERPRISE_GUIDE.md
     - Deployment: DEPLOYMENT.md
+    - Docker Images: DOCKER_IMAGE.md
     - Security: enterprise/security.md
     - Scaling: enterprise/scaling.md
     - Monitoring: enterprise/monitoring.md

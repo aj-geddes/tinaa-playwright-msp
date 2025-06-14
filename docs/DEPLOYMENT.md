@@ -54,9 +54,24 @@ flowchart TD
 
 ## Local Development
 
-### Using Docker Compose
+### Using Pre-built Docker Images (Recommended)
 
-The simplest deployment method for local development.
+The fastest deployment method using pre-built images from GitHub Container Registry.
+
+**HTTP Mode** (for API access):
+```bash
+# Download production docker-compose file
+curl -O https://raw.githubusercontent.com/aj-geddes/tinaa-playwright-msp/main/docker-compose.prod.yml
+
+# Start with pre-built image
+docker-compose -f docker-compose.prod.yml up -d
+
+# Access at http://localhost:8765
+```
+
+### Building from Source
+
+For development and customization.
 
 **MCP Mode** (for Claude Desktop):
 ```bash
@@ -80,7 +95,28 @@ docker-compose -f docker-compose.http.yml up -d
 
 ## Configuration Files
 
-**docker-compose.yml** (MCP mode):
+**docker-compose.prod.yml** (Pre-built image - Recommended):
+```yaml
+version: '3.8'
+
+services:
+  tinaa-http:
+    image: ghcr.io/aj-geddes/tinaa-playwright-msp:latest
+    container_name: tinaa-playwright-msp-http
+    command: ["python", "/app/app/http_server.py"]
+    ports:
+      - "8765:8765"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+      - TINAA_MODE=http
+    volumes:
+      - ./logs:/app/logs
+      - ${PWD}:/mnt/workspace
+    restart: unless-stopped
+```
+
+**docker-compose.yml** (Build from source - MCP mode):
 ```yaml
 version: '3.8'
 
@@ -101,7 +137,7 @@ services:
     tty: true
 ```
 
-**docker-compose.http.yml** (HTTP mode):
+**docker-compose.http.yml** (Build from source - HTTP mode):
 ```yaml
 version: '3.8'
 
@@ -126,9 +162,25 @@ services:
 
 ## Production Deployment
 
+### Using Pre-built Images in Production
+
+Pre-built images from GitHub Container Registry are recommended for production deployments as they are:
+- Tested and verified
+- Consistently built
+- Easy to deploy and update
+- Available for specific versions/tags
+
+```bash
+# Pull latest stable version
+docker pull ghcr.io/aj-geddes/tinaa-playwright-msp:latest
+
+# Or pull a specific version
+docker pull ghcr.io/aj-geddes/tinaa-playwright-msp:v1.0.0
+```
+
 ### Kubernetes Deployment
 
-For scalable production deployments.
+For scalable production deployments using pre-built images.
 
 ```mermaid
 %%{init: {
@@ -192,7 +244,7 @@ spec:
     spec:
       containers:
       - name: tinaa
-        image: tinaa-playwright-msp:latest
+        image: ghcr.io/aj-geddes/tinaa-playwright-msp:latest
         command: ["python", "/app/app/http_server.py"]
         ports:
         - containerPort: 8765
@@ -249,7 +301,7 @@ version: '3.8'
 
 services:
   tinaa:
-    image: tinaa-playwright-msp:latest
+    image: ghcr.io/aj-geddes/tinaa-playwright-msp:latest
     deploy:
       replicas: 3
       restart_policy:
@@ -294,7 +346,7 @@ networks:
   "containerDefinitions": [
     {
       "name": "tinaa",
-      "image": "tinaa-playwright-msp:latest",
+      "image": "ghcr.io/aj-geddes/tinaa-playwright-msp:latest",
       "cpu": 1024,
       "memory": 2048,
       "essential": true,
@@ -370,7 +422,7 @@ properties:
   containers:
   - name: tinaa
     properties:
-      image: tinaa-playwright-msp:latest
+      image: ghcr.io/aj-geddes/tinaa-playwright-msp:latest
       resources:
         requests:
           cpu: 1.0
@@ -636,10 +688,10 @@ flowchart TD
 1. **Rolling Updates**
    ```bash
    # Kubernetes
-   kubectl set image deployment/tinaa-http tinaa=tinaa-playwright-msp:v2.0
+   kubectl set image deployment/tinaa-http tinaa=ghcr.io/aj-geddes/tinaa-playwright-msp:v2.0
 
    # Docker Swarm
-   docker service update --image tinaa-playwright-msp:v2.0 tinaa
+   docker service update --image ghcr.io/aj-geddes/tinaa-playwright-msp:v2.0 tinaa
    ```
 
 2. **Blue-Green Deployment**

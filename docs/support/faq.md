@@ -40,12 +40,25 @@ Basic features work offline, but AI-powered test generation requires internet co
 ### How do I upgrade TINAA?
 
 ```bash
-# npm installation
-npm update -g @tinaa/cli
+# Pre-built Docker image
+docker pull ghcr.io/aj-geddes/tinaa-playwright-msp:latest
+docker-compose -f docker-compose.prod.yml down
+docker-compose -f docker-compose.prod.yml up -d
 
-# Docker installation
-docker pull tinaa/tinaa:latest
+# Build from source
+git pull origin main
+docker-compose down
+docker-compose build --no-cache
+docker-compose up -d
 ```
+
+### Where can I find pre-built Docker images?
+
+Pre-built images are available on GitHub Container Registry:
+- Latest: `ghcr.io/aj-geddes/tinaa-playwright-msp:latest`
+- Specific version: `ghcr.io/aj-geddes/tinaa-playwright-msp:v1.0.0`
+
+See the [Docker Image Guide](../DOCKER_IMAGE.md) for detailed usage instructions.
 
 ## Test Generation
 
@@ -126,6 +139,31 @@ TINAA is available under MIT license for open-source use and commercial licenses
 ### Can I contribute to TINAA?
 
 Yes! See our [Contributing Guide](../DEVELOPMENT.md) for details.
+
+## Docker & Deployment
+
+### What's the difference between pre-built and source images?
+
+**Pre-built images** (`ghcr.io/aj-geddes/tinaa-playwright-msp`):
+- Ready to use immediately
+- Optimized for production
+- Multi-architecture support (amd64, arm64)
+- Regular security updates
+
+**Build from source**:
+- Latest development features
+- Ability to customize
+- Local modifications
+
+### How much disk space does TINAA require?
+
+- Docker image: ~2GB
+- With browsers installed: ~3.5GB
+- Logs and workspace: Variable
+
+### Can I run TINAA on Apple Silicon (M1/M2)?
+
+Yes! Pre-built images support both amd64 and arm64 architectures.
 
 ## Performance
 

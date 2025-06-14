@@ -29,10 +29,9 @@ TINAA (Testing Intelligence Network Automation Assistant) is an AI-powered Playw
 ### 5-Minute Setup
 
 ```bash
-# 1. Clone and start TINAA
-git clone https://github.com/aj-geddes/tinaa-playwright-msp.git
-cd tinaa-playwright-msp
-docker-compose up -d
+# 1. Start TINAA with pre-built image
+curl -O https://raw.githubusercontent.com/aj-geddes/tinaa-playwright-msp/main/docker-compose.prod.yml
+docker-compose -f docker-compose.prod.yml up -d
 
 # 2. Verify it's running
 curl http://localhost:8765/health
@@ -102,16 +101,34 @@ flowchart LR
 
 ### Installation Options
 
-#### Option 1: Docker (Recommended)
+#### Option 1: Pre-built Docker Image (Recommended)
 
-**Advantages**: No dependency management, works everywhere, enterprise-ready
+**Advantages**: Fastest setup, no building required, production-ready
+
+```bash
+# Download production docker-compose file
+curl -O https://raw.githubusercontent.com/aj-geddes/tinaa-playwright-msp/main/docker-compose.prod.yml
+
+# Start TINAA with pre-built image from GitHub Container Registry
+docker-compose -f docker-compose.prod.yml up -d
+
+# Verify installation
+docker ps
+curl http://localhost:8765/health
+```
+
+The pre-built image is automatically pulled from `ghcr.io/aj-geddes/tinaa-playwright-msp:latest`.
+
+#### Option 2: Build from Source with Docker
+
+**Advantages**: Latest development version, customizable
 
 ```bash
 # Clone repository
 git clone https://github.com/aj-geddes/tinaa-playwright-msp.git
 cd tinaa-playwright-msp
 
-# Start TINAA with all services
+# Build and start TINAA
 docker-compose up -d
 
 # Verify installation
@@ -119,9 +136,9 @@ docker ps
 curl http://localhost:8765/health
 ```
 
-## Option 2: Local Python Installation
+#### Option 3: Local Python Installation
 
-**Advantages**: Direct access to source, customizable
+**Advantages**: Direct access to source, development flexibility
 
 ```bash
 # Clone repository
@@ -138,7 +155,7 @@ playwright install chromium
 python app/http_server.py
 ```
 
-## Option 3: Claude Desktop Integration
+#### Option 4: Claude Desktop Integration
 
 **Advantages**: Direct AI assistant integration
 
@@ -148,7 +165,7 @@ Add to Claude Desktop settings:
   "mcpServers": {
     "tinaa-playwright": {
       "command": "docker",
-      "args": ["run", "--rm", "-i", "tinaa-playwright-msp:latest"]
+      "args": ["run", "--rm", "-i", "ghcr.io/aj-geddes/tinaa-playwright-msp:latest"]
     }
   }
 }
@@ -607,7 +624,7 @@ jobs:
         docker run -d --name tinaa \
           -p 8765:8765 \
           -e TINAA_MODE=http \
-          tinaa-playwright-msp:latest
+          ghcr.io/aj-geddes/tinaa-playwright-msp:latest
 
     - name: Wait for TINAA
       run: |
@@ -657,7 +674,7 @@ pipeline {
                 sh '''
                     docker run -d --name tinaa-${BUILD_NUMBER} \
                       -p 8765:8765 \
-                      tinaa-playwright-msp:latest
+                      ghcr.io/aj-geddes/tinaa-playwright-msp:latest
                 '''
             }
         }

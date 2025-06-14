@@ -50,6 +50,7 @@ Welcome to the comprehensive documentation center for TINAA (Testing Intelligenc
 ### Advanced Topics
 - **[Architecture Overview](ARCHITECTURE.md)** - System design and patterns
 - **[Enterprise Deployment](DEPLOYMENT.md)** - Production deployment strategies
+- **[Docker Images](DOCKER_IMAGE.md)** - Pre-built Docker image usage
 - **[Security & Compliance](enterprise/security.md)** - Security implementation guide
 - **[Performance & Scaling](enterprise/scaling.md)** - Optimization and scaling
 
@@ -80,6 +81,7 @@ Welcome to the comprehensive documentation center for TINAA (Testing Intelligenc
 - **AI Test Generation** → [User Guide](USER_GUIDE.md#test-generation)
 - **API Integration** → [API Reference](API.md)
 - **Docker Deployment** → [Deployment Guide](DEPLOYMENT.md#local-development)
+- **Pre-built Images** → [Docker Image Guide](DOCKER_IMAGE.md)
 - **Kubernetes Setup** → [Enterprise Guide](ENTERPRISE_GUIDE.md#production-deployment)
 - **Security Configuration** → [Security Guide](enterprise/security.md)
 

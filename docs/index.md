@@ -174,10 +174,21 @@ See TINAA in action with this simple example:
 
 Choose the installation method that works best for you:
 
-=== "Docker (Recommended)"
+=== "Pre-built Docker Image (Recommended)"
 
     ```bash
-    # Clone and start TINAA
+    # Download and start TINAA with pre-built image
+    curl -O https://raw.githubusercontent.com/aj-geddes/tinaa-playwright-msp/main/docker-compose.prod.yml
+    docker-compose -f docker-compose.prod.yml up -d
+
+    # Verify installation
+    curl http://localhost:8765/health
+    ```
+
+=== "Build from Source"
+
+    ```bash
+    # Clone and build TINAA from source
     git clone https://github.com/aj-geddes/tinaa-playwright-msp.git
     cd tinaa-playwright-msp
     docker-compose up -d
@@ -203,12 +214,10 @@ Choose the installation method that works best for you:
 === "Kubernetes"
 
     ```bash
-    # Apply Kubernetes manifests
-    kubectl apply -f k8s/namespace.yaml
-    kubectl apply -f k8s/configmap.yaml
-    kubectl apply -f k8s/deployment.yaml
-    kubectl apply -f k8s/service.yaml
-    kubectl apply -f k8s/ingress.yaml
+    # Deploy using pre-built image
+    kubectl create deployment tinaa --image=ghcr.io/aj-geddes/tinaa-playwright-msp:latest
+    kubectl expose deployment tinaa --port=8765 --type=LoadBalancer
+    kubectl set env deployment/tinaa TINAA_MODE=http
     ```
 
 ---
