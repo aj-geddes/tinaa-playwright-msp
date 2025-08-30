@@ -9,7 +9,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any
+from typing import Optional, Any
 
 logger = logging.getLogger("tinaa-progress")
 
@@ -27,7 +27,7 @@ class ProgressUpdate:
     message: str
     level: ProgressLevel = ProgressLevel.INFO
     timestamp: datetime = field(default_factory=datetime.now)
-    progress: float | None = None  # 0-100
+    progress: Optional[float ] = None  # 0-100
     metadata: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -44,7 +44,7 @@ class ProgressUpdate:
 
 
 class ProgressTracker:
-    def __init__(self, callback: Callable | None = None):
+    def __init__(self, callback: Optional[Callable ] = None):
         self.callback = callback
         self.updates: list[ProgressUpdate] = []
         self.start_time = time.time()
@@ -56,7 +56,7 @@ class ProgressTracker:
         self,
         message: str,
         level: ProgressLevel = ProgressLevel.INFO,
-        progress: float | None = None,
+        progress: Optional[float ] = None,
         **metadata,
     ):
         """Send a progress update"""
@@ -77,7 +77,7 @@ class ProgressTracker:
             + (f" ({progress}%)" if progress is not None else ""),
         )
 
-    async def start_phase(self, phase_name: str, total_phases: int | None = None):
+    async def start_phase(self, phase_name: str, total_phases: Optional[int ] = None):
         """Start a new phase of operation"""
         self.current_phase = phase_name
         if total_phases:
@@ -124,7 +124,7 @@ class ProgressTracker:
         """Report a success"""
         await self.update(message, ProgressLevel.SUCCESS, **metadata)
 
-    async def info(self, message: str, progress: float | None = None, **metadata):
+    async def info(self, message: str, progress: Optional[float ] = None, **metadata):
         """Report an info message"""
         await self.update(message, ProgressLevel.INFO, progress, **metadata)
 
@@ -150,7 +150,7 @@ class ProgressContext:
         self,
         tracker: ProgressTracker,
         operation_name: str,
-        total_steps: int | None = None,
+        total_steps: Optional[int ] = None,
     ):
         self.tracker = tracker
         self.operation_name = operation_name

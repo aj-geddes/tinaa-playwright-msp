@@ -7,7 +7,7 @@ import json
 import logging
 import uuid
 from datetime import datetime
-from typing import Any
+from typing import Optional, Any
 
 import uvicorn
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
@@ -132,15 +132,15 @@ def get_workspace_manager():
 class TestRequest(BaseModel):
     action: str
     parameters: dict[str, Any]
-    client_id: str | None = None
+    client_id: Optional[str ] = None
 
 
 class PlaybookStep(BaseModel):
     id: str
     action: str
     parameters: dict[str, Any]
-    description: str | None = None
-    expected_outcome: str | None = None
+    description: Optional[str ] = None
+    expected_outcome: Optional[str ] = None
 
 
 class PlaybookRequest(BaseModel):
@@ -154,12 +154,12 @@ class ProjectCreateRequest(BaseModel):
     name: str
     description: str = ""
     template: str = "basic-web-testing"
-    repository_url: str | None = None
+    repository_url: Optional[str ] = None
 
 
 class UrlProjectRequest(BaseModel):
     url: str
-    name: str | None = None
+    name: Optional[str ] = None
 
 
 # Progress tracking decorator

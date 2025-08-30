@@ -7,7 +7,7 @@ Handles Kubernetes secret creation and validation.
 """
 
 import logging
-from typing import Any
+from typing import Optional, Any
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -29,39 +29,39 @@ git_authenticator = GitAuthenticator()
 
 class AIProviderConfig(BaseModel):
     enabled: bool = False
-    apiKey: str | None = None
-    baseUrl: str | None = None
-    defaultModel: str | None = None
+    apiKey: Optional[str ] = None
+    baseUrl: Optional[str ] = None
+    defaultModel: Optional[str ] = None
 
 
 class GitPATConfig(BaseModel):
     enabled: bool = False
-    token: str | None = None
+    token: Optional[str ] = None
     username: str = "git"
 
 
 class GitHubAppConfig(BaseModel):
     enabled: bool = False
-    appId: str | None = None
-    installationId: str | None = None
-    privateKey: str | None = None
+    appId: Optional[str ] = None
+    installationId: Optional[str ] = None
+    privateKey: Optional[str ] = None
 
 
 class GitConfig(BaseModel):
-    pat: GitPATConfig | None = None
-    githubApp: GitHubAppConfig | None = None
+    pat: Optional[GitPATConfig ] = None
+    githubApp: Optional[GitHubAppConfig ] = None
 
 
 class CredentialConfig(BaseModel):
-    openai: AIProviderConfig | None = None
-    anthropic: AIProviderConfig | None = None
-    ollama: AIProviderConfig | None = None
-    git: GitConfig | None = None
+    openai: Optional[AIProviderConfig ] = None
+    anthropic: Optional[AIProviderConfig ] = None
+    ollama: Optional[AIProviderConfig ] = None
+    git: Optional[GitConfig ] = None
 
 
 class TestCredentialRequest(BaseModel):
     provider: str
-    credType: str | None = None
+    credType: Optional[str ] = None
     config: dict[str, Any]
 
 

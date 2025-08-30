@@ -12,7 +12,7 @@ import base64
 import logging
 import os
 from pathlib import Path
-from typing import Any
+from typing import Optional, Any
 
 logger = logging.getLogger("tinaa.secrets_manager")
 
@@ -31,7 +31,7 @@ class SecretsManager:
             or os.getenv("KUBERNETES_SERVICE_HOST") is not None
         )
 
-    async def get_secret(self, secret_name: str, key: str) -> str | None:
+    async def get_secret(self, secret_name: str, key: str) -> Optional[str ]:
         """
         Get a secret value by name and key
 
@@ -66,7 +66,7 @@ class SecretsManager:
 
         return secret_value
 
-    async def _get_kubernetes_secret(self, secret_name: str, key: str) -> str | None:
+    async def _get_kubernetes_secret(self, secret_name: str, key: str) -> Optional[str ]:
         """Get secret from Kubernetes secrets"""
         try:
             # Kubernetes mounts secrets as files in /var/run/secrets/
@@ -99,7 +99,7 @@ class SecretsManager:
 
     async def _get_secret_via_kubernetes_api(
         self, secret_name: str, key: str
-    ) -> str | None:
+    ) -> Optional[str ]:
         """Get secret via Kubernetes API (requires appropriate RBAC)"""
         try:
 
@@ -150,7 +150,7 @@ class SecretsManager:
 
         return None
 
-    def _get_environment_secret(self, secret_name: str, key: str) -> str | None:
+    def _get_environment_secret(self, secret_name: str, key: str) -> Optional[str ]:
         """Get secret from environment variables"""
 
         # Map secret names and keys to Vault environment variable patterns
@@ -367,7 +367,7 @@ class SecretsManager:
 
         return config
 
-    async def _get_git_pat_config(self) -> dict[str, Any] | None:
+    async def _get_git_pat_config(self) -> Optional[dict[str, Any] ]:
         """Get Personal Access Token configuration"""
         # Try to get PAT from secrets
         pat_token = await self.get_secret("tinaa-git-secret", "pat-token")
@@ -388,7 +388,7 @@ class SecretsManager:
 
         return None
 
-    async def _get_github_app_config(self) -> dict[str, Any] | None:
+    async def _get_github_app_config(self) -> Optional[dict[str, Any] ]:
         """Get GitHub App authentication configuration"""
         app_id = await self.get_secret("tinaa-github-app-secret", "app-id")
         private_key = await self.get_secret("tinaa-github-app-secret", "private-key")

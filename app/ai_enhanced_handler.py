@@ -7,7 +7,7 @@ Adds AI capabilities to existing handlers using the AI integration module.
 
 import json
 import logging
-from typing import Any
+from typing import Optional, Any
 
 try:
     from app.ai_integration import AIManager
@@ -27,7 +27,7 @@ except ImportError:
 logger = logging.getLogger("tinaa.ai_enhanced_handler")
 
 # Global AI manager instance
-ai_manager: AIManager | None = None
+ai_manager: Optional[AIManager ] = None
 
 
 async def get_ai_manager() -> AIManager:
@@ -48,9 +48,9 @@ async def get_ai_manager() -> AIManager:
 async def generate_exploratory_insights(
     url: str,
     title: str,
-    screenshot_data: str | None = None,
+    screenshot_data: Optional[str ] = None,
     focus_area: str = "general",
-    page_content: str | None = None,
+    page_content: Optional[str ] = None,
 ) -> dict[str, Any]:
     """
     Generate AI insights for exploratory testing

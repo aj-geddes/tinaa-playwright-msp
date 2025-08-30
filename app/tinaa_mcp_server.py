@@ -13,7 +13,7 @@ import logging
 # Import collaborative prompts
 import sys
 from datetime import datetime
-from typing import Any
+from typing import Optional, Any
 
 from fastmcp import Context, FastMCP
 
@@ -49,7 +49,7 @@ class CollaborativeSession:
         }
         self.created_at = datetime.now()
 
-    def add_interaction(self, source: str, message: str, data: dict | None = None):
+    def add_interaction(self, source: str, message: str, data: Optional[dict ] = None):
         """Add an interaction to the session history"""
         self.conversation_history.append(
             {
@@ -100,8 +100,8 @@ async def initialize_global_components():
 async def start_collaborative_session(
     project_name: str,
     project_description: str = "",
-    target_url: str | None = None,
-    existing_code_context: str | None = None,
+    target_url: Optional[str ] = None,
+    existing_code_context: Optional[str ] = None,
     ctx: Context = None,
 ) -> dict[str, Any]:
     """
@@ -248,7 +248,7 @@ async def answer_discovery_questions(
 async def refine_test_scenarios(
     session_id: str,
     scenario_feedback: dict[str, str],
-    additional_requirements: str | None = None,
+    additional_requirements: Optional[str ] = None,
     ctx: Context = None,
 ) -> dict[str, Any]:
     """
@@ -321,7 +321,7 @@ async def refine_test_scenarios(
 @tinaa_mcp.tool()
 async def create_comprehensive_playbook(
     session_id: str,
-    playbook_preferences: dict[str, Any] | None = None,
+    playbook_preferences: Optional[dict[str, Any] ] = None,
     ctx: Context = None,
 ) -> dict[str, Any]:
     """
@@ -455,8 +455,8 @@ async def get_session_status(session_id: str, ctx: Context = None) -> dict[str, 
 @tinaa_mcp.tool()
 async def internal_problem_solving(
     problem_description: str,
-    context: dict[str, Any] | None = None,
-    session_id: str | None = None,
+    context: Optional[dict[str, Any] ] = None,
+    session_id: Optional[str ] = None,
     ctx: Context = None,
 ) -> dict[str, Any]:
     """
@@ -542,7 +542,7 @@ async def internal_problem_solving(
 async def collaborative_code_review(
     code: str,
     review_focus: str = "general",
-    session_id: str | None = None,
+    session_id: Optional[str ] = None,
     ctx: Context = None,
 ) -> dict[str, Any]:
     """
@@ -990,7 +990,7 @@ async def _generate_test_scenarios(
 async def _refine_scenarios_with_ai(
     session: CollaborativeSession,
     feedback: dict[str, str],
-    additional_requirements: str | None,
+    additional_requirements: Optional[str ],
 ) -> list[dict[str, Any]]:
     """Refine scenarios based on feedback using collaborative prompts"""
     await initialize_global_components()

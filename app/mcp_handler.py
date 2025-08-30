@@ -5,7 +5,7 @@ This module connects MCP functions with the Playwright controller
 """
 
 import logging
-from typing import Any
+from typing import Optional, Any
 
 # Import from fastmcp 2.8.0
 # Using the decorator pattern from FastMCP
@@ -21,7 +21,7 @@ from resources import get_resource_loader
 logger = logging.getLogger("tinaa-playwright-msp.mcp-handler")
 
 # Global controller instance
-controller: PlaywrightController | None = None
+controller: Optional[PlaywrightController ] = None
 
 async def get_controller() -> PlaywrightController:
     """Get or create a Playwright controller instance"""

@@ -12,7 +12,7 @@ import shutil
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Optional, Any
 from urllib.parse import urlparse
 
 import aiofiles
@@ -54,7 +54,7 @@ class WorkspaceManager:
         name: str,
         description: str = "",
         template: str = "basic-web-testing",
-        repository_url: str | None = None,
+        repository_url: Optional[str ] = None,
     ) -> dict[str, Any]:
         """
         Create a new project in the workspace
@@ -122,7 +122,7 @@ class WorkspaceManager:
             return {"success": False, "error": str(e)}
 
     async def create_project_from_url(
-        self, url: str, name: str | None = None
+        self, url: str, name: Optional[str ] = None
     ) -> dict[str, Any]:
         """
         Create a project by analyzing a URL and generating appropriate test structure
@@ -434,7 +434,7 @@ test.describe('{analysis["domain"]} - Automated Tests', () => {{
 
         return projects
 
-    async def get_project(self, project_id: str) -> dict[str, Any] | None:
+    async def get_project(self, project_id: str) -> Optional[dict[str, Any] ]:
         """Get project information by ID"""
         project_path = self.projects_path / project_id
         config_path = project_path / ".tinaa" / "config.json"
