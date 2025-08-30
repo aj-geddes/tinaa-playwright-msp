@@ -6,17 +6,18 @@ Handles project creation, repository cloning, and workspace management
 for multiple Playwright testing projects.
 """
 
+import asyncio
+import json
+import logging
 import os
 import shutil
 import subprocess
-import json
 import uuid
-import logging
 from datetime import datetime
-from typing import Dict, List, Optional, Any
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 from urllib.parse import urlparse
-import asyncio
+
 import aiofiles
 import git
 from git.exc import GitCommandError
@@ -25,18 +26,19 @@ from app.git_auth import git_authenticator
 
 logger = logging.getLogger("tinaa.workspace_manager")
 
+
 class WorkspaceManager:
     """Manages TINAA workspace with multiple projects"""
-    
+
     def __init__(self, workspace_path: str = "/mnt/workspace"):
         self.workspace_path = Path(workspace_path)
         self.projects_path = self.workspace_path / "projects"
         self.templates_path = self.workspace_path / "templates"
         self.shared_path = self.workspace_path / "shared"
-        
+
         # Ensure workspace structure exists
         self._initialize_workspace()
-    
+
     def _initialize_workspace(self):
         """Initialize the workspace directory structure"""
         directories = [
@@ -45,46 +47,46 @@ class WorkspaceManager:
             self.shared_path,
             self.shared_path / "utilities",
             self.shared_path / "fixtures",
-            self.shared_path / "resources"
+            self.shared_path / "resources",
         ]
-        
+
         for directory in directories:
             directory.mkdir(parents=True, exist_ok=True)
             logger.info(f"Ensured directory exists: {directory}")
-    
+
     async def create_project(
-        self, 
-        name: str, 
+        self,
+        name: str,
         description: str = "",
         template: str = "basic-web-testing",
-        repository_url: Optional[str] = None
+        repository_url: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Create a new project in the workspace
-        
+
         Args:
             name: Project name
             description: Project description
             template: Template to use for project structure
             repository_url: Optional repository to clone
-            
+
         Returns:
             Project information dictionary
         """
         project_id = str(uuid.uuid4())
         project_path = self.projects_path / project_id
-        
+
         try:
             # Create project directory
             project_path.mkdir(parents=True, exist_ok=True)
-            
+
             # If repository URL provided, clone it
             if repository_url:
                 await self._clone_repository(repository_url, project_path)
             else:
                 # Use template to create project structure
                 await self._create_from_template(template, project_path)
-            
+
             # Create TINAA-specific configuration
             tinaa_config = {
                 "id": project_id,
@@ -97,104 +99,92 @@ class WorkspaceManager:
                 "ai_context": {
                     "project_type": "web-testing",
                     "test_patterns": [],
-                    "insights": []
-                }
+                    "insights": [],
+                },
             }
-            
+
             await self._save_project_config(project_path, tinaa_config)
-            
+
             # Initialize project structure
             await self._initialize_project_structure(project_path, tinaa_config)
-            
+
             logger.info(f"Created project {name} with ID {project_id}")
-            
+
             return {
                 "success": True,
                 "project_id": project_id,
                 "name": name,
                 "path": str(project_path),
-                "config": tinaa_config
+                "config": tinaa_config,
             }
-            
+
         except Exception as e:
             logger.error(f"Failed to create project {name}: {str(e)}")
             # Cleanup on failure
             if project_path.exists():
                 shutil.rmtree(project_path, ignore_errors=True)
-            
-            return {
-                "success": False,
-                "error": str(e)
-            }
-    
+
+            return {"success": False, "error": str(e)}
+
     async def create_project_from_url(
-        self, 
-        url: str, 
-        name: Optional[str] = None
+        self, url: str, name: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         Create a project by analyzing a URL and generating appropriate test structure
-        
+
         Args:
             url: URL to analyze and create tests for
             name: Optional project name (will be generated from URL if not provided)
-            
+
         Returns:
             Project information dictionary
         """
         try:
             # Parse URL to generate project name
             parsed_url = urlparse(url)
-            domain = parsed_url.netloc.replace('www.', '')
-            
+            domain = parsed_url.netloc.replace("www.", "")
+
             if not name:
                 name = f"tests-{domain.replace('.', '-')}"
-            
+
             # Create project with URL-specific template
             project_result = await self.create_project(
                 name=name,
                 description=f"Auto-generated tests for {url}",
-                template="url-based-testing"
+                template="url-based-testing",
             )
-            
+
             if not project_result["success"]:
                 return project_result
-            
+
             project_path = Path(project_result["path"])
-            
+
             # Analyze URL and generate initial test structure
             url_analysis = await self._analyze_url(url)
-            
+
             # Generate initial test files based on URL analysis
             await self._generate_url_tests(project_path, url, url_analysis)
-            
+
             # Update project config with URL analysis
             config_path = project_path / ".tinaa" / "config.json"
-            async with aiofiles.open(config_path, 'r') as f:
+            async with aiofiles.open(config_path, "r") as f:
                 config = json.loads(await f.read())
-            
+
             config["target_url"] = url
             config["url_analysis"] = url_analysis
             config["ai_context"]["project_type"] = "url-testing"
-            
-            async with aiofiles.open(config_path, 'w') as f:
+
+            async with aiofiles.open(config_path, "w") as f:
                 await f.write(json.dumps(config, indent=2))
-            
+
             logger.info(f"Created URL-based project for {url}")
-            
-            return {
-                **project_result,
-                "target_url": url,
-                "url_analysis": url_analysis
-            }
-            
+
+            return {**project_result, "target_url": url, "url_analysis": url_analysis}
+
         except Exception as e:
             logger.error(f"Failed to create project from URL {url}: {str(e)}")
-            return {
-                "success": False,
-                "error": str(e)
-            }
-    
+            return {"success": False, "error": str(e)}
+
     async def _clone_repository(self, repository_url: str, project_path: Path):
         """Clone a git repository to the project path using authenticated git"""
         try:
@@ -202,21 +192,25 @@ class WorkspaceManager:
             clone_result = await git_authenticator.clone_repository(
                 repository_url=repository_url,
                 destination_path=str(project_path),
-                auth_type="auto"  # Auto-detect available authentication
+                auth_type="auto",  # Auto-detect available authentication
             )
-            
+
             if not clone_result.get("success"):
-                raise Exception(f"Git clone failed: {clone_result.get('error', 'Unknown error')}")
-            
-            logger.info(f"Successfully cloned repository {repository_url} using {clone_result.get('auth_method', 'unknown')} authentication")
-            
+                raise Exception(
+                    f"Git clone failed: {clone_result.get('error', 'Unknown error')}"
+                )
+
+            logger.info(
+                f"Successfully cloned repository {repository_url} using {clone_result.get('auth_method', 'unknown')} authentication"
+            )
+
             # Return clone information for potential use in project config
             return clone_result
-            
+
         except Exception as e:
             logger.error(f"Failed to clone repository {repository_url}: {str(e)}")
             raise
-    
+
     async def _create_from_template(self, template: str, project_path: Path):
         """Create project structure from template"""
         template_configs = {
@@ -228,7 +222,7 @@ class WorkspaceManager:
                     "tests/fixtures",
                     "tests/utils",
                     "reports",
-                    "screenshots"
+                    "screenshots",
                 ],
                 "files": {
                     "package.json": self._get_package_json_template(),
@@ -236,8 +230,8 @@ class WorkspaceManager:
                     "tests/example.spec.ts": self._get_example_test_template(),
                     "tests/pages/base.page.ts": self._get_base_page_template(),
                     ".gitignore": self._get_gitignore_template(),
-                    "README.md": self._get_readme_template()
-                }
+                    "README.md": self._get_readme_template(),
+                },
             },
             "url-based-testing": {
                 "directories": [
@@ -247,7 +241,7 @@ class WorkspaceManager:
                     "tests/scenarios",
                     "tests/utils",
                     "reports",
-                    "screenshots"
+                    "screenshots",
                 ],
                 "files": {
                     "package.json": self._get_package_json_template(),
@@ -255,8 +249,8 @@ class WorkspaceManager:
                     "tests/utils/url-analyzer.ts": self._get_url_analyzer_template(),
                     "tests/pages/analyzed.page.ts": self._get_analyzed_page_template(),
                     ".gitignore": self._get_gitignore_template(),
-                    "README.md": self._get_url_readme_template()
-                }
+                    "README.md": self._get_url_readme_template(),
+                },
             },
             "e2e-workflow": {
                 "directories": [
@@ -268,42 +262,44 @@ class WorkspaceManager:
                     "tests/fixtures",
                     "tests/utils",
                     "workflows",
-                    "reports"
+                    "reports",
                 ],
                 "files": {
                     "package.json": self._get_package_json_template(),
                     "playwright.config.ts": self._get_playwright_config_template(),
                     "tests/e2e/user-journey.spec.ts": self._get_user_journey_template(),
                     ".gitignore": self._get_gitignore_template(),
-                    "README.md": self._get_e2e_readme_template()
-                }
-            }
+                    "README.md": self._get_e2e_readme_template(),
+                },
+            },
         }
-        
+
         config = template_configs.get(template, template_configs["basic-web-testing"])
-        
+
         # Create directories
         for directory in config["directories"]:
             (project_path / directory).mkdir(parents=True, exist_ok=True)
-        
+
         # Create files
         for file_path, content in config["files"].items():
             file_full_path = project_path / file_path
             file_full_path.parent.mkdir(parents=True, exist_ok=True)
-            
-            async with aiofiles.open(file_full_path, 'w') as f:
+
+            async with aiofiles.open(file_full_path, "w") as f:
                 await f.write(content)
-    
-    async def _initialize_project_structure(self, project_path: Path, config: Dict[str, Any]):
+
+    async def _initialize_project_structure(
+        self, project_path: Path, config: Dict[str, Any]
+    ):
         """Initialize TINAA-specific project structure"""
         tinaa_dir = project_path / ".tinaa"
         tinaa_dir.mkdir(exist_ok=True)
-        
+
         # Create subdirectories
         subdirs = ["playbooks", "reports", "ai-context", "templates"]
         for subdir in subdirs:
             (tinaa_dir / subdir).mkdir(exist_ok=True)
-        
+
         # Create initial playbook
         initial_playbook = {
             "id": str(uuid.uuid4()),
@@ -314,39 +310,39 @@ class WorkspaceManager:
                     "id": "setup-1",
                     "action": "navigate",
                     "parameters": {"url": "https://example.com"},
-                    "description": "Navigate to target URL"
+                    "description": "Navigate to target URL",
                 },
                 {
                     "id": "setup-2",
                     "action": "screenshot",
                     "parameters": {"full_page": True},
-                    "description": "Take initial screenshot"
-                }
+                    "description": "Take initial screenshot",
+                },
             ],
             "created_at": datetime.now().isoformat(),
-            "status": "draft"
+            "status": "draft",
         }
-        
+
         playbook_path = tinaa_dir / "playbooks" / "initial-setup.json"
-        async with aiofiles.open(playbook_path, 'w') as f:
+        async with aiofiles.open(playbook_path, "w") as f:
             await f.write(json.dumps(initial_playbook, indent=2))
-    
+
     async def _save_project_config(self, project_path: Path, config: Dict[str, Any]):
         """Save project configuration to .tinaa/config.json"""
         tinaa_dir = project_path / ".tinaa"
         tinaa_dir.mkdir(exist_ok=True)
-        
+
         config_path = tinaa_dir / "config.json"
-        async with aiofiles.open(config_path, 'w') as f:
+        async with aiofiles.open(config_path, "w") as f:
             await f.write(json.dumps(config, indent=2))
-    
+
     async def _analyze_url(self, url: str) -> Dict[str, Any]:
         """Analyze a URL to determine testing approach"""
         # This would integrate with AI in the future for intelligent analysis
         # For now, provide basic analysis
-        
+
         parsed_url = urlparse(url)
-        
+
         analysis = {
             "domain": parsed_url.netloc,
             "protocol": parsed_url.scheme,
@@ -355,29 +351,28 @@ class WorkspaceManager:
                 "page_load_test",
                 "navigation_test",
                 "form_interaction_test",
-                "responsive_design_test"
+                "responsive_design_test",
             ],
             "estimated_complexity": "medium",
-            "recommended_patterns": [
-                "page_object_model",
-                "data_driven_testing"
-            ],
+            "recommended_patterns": ["page_object_model", "data_driven_testing"],
             "potential_elements": [
                 "navigation_menu",
                 "forms",
                 "buttons",
                 "links",
-                "images"
-            ]
+                "images",
+            ],
         }
-        
+
         return analysis
-    
-    async def _generate_url_tests(self, project_path: Path, url: str, analysis: Dict[str, Any]):
+
+    async def _generate_url_tests(
+        self, project_path: Path, url: str, analysis: Dict[str, Any]
+    ):
         """Generate initial test files based on URL analysis"""
-        
+
         # Generate main test file
-        main_test_content = f'''
+        main_test_content = f"""
 import {{ test, expect }} from '@playwright/test';
 
 test.describe('{analysis["domain"]} - Automated Tests', () => {{
@@ -416,54 +411,56 @@ test.describe('{analysis["domain"]} - Automated Tests', () => {{
     await page.screenshot({{ path: 'screenshots/desktop-view.png' }});
   }});
 }});
-'''
-        
-        test_file_path = project_path / "tests" / f"{analysis['domain'].replace('.', '-')}.spec.ts"
-        async with aiofiles.open(test_file_path, 'w') as f:
+"""
+
+        test_file_path = (
+            project_path / "tests" / f"{analysis['domain'].replace('.', '-')}.spec.ts"
+        )
+        async with aiofiles.open(test_file_path, "w") as f:
             await f.write(main_test_content)
-    
+
     async def list_projects(self) -> List[Dict[str, Any]]:
         """List all projects in the workspace"""
         projects = []
-        
+
         if not self.projects_path.exists():
             return projects
-        
+
         for project_dir in self.projects_path.iterdir():
             if project_dir.is_dir():
                 config_path = project_dir / ".tinaa" / "config.json"
                 if config_path.exists():
                     try:
-                        async with aiofiles.open(config_path, 'r') as f:
+                        async with aiofiles.open(config_path, "r") as f:
                             config = json.loads(await f.read())
                             projects.append(config)
                     except Exception as e:
                         logger.warning(f"Failed to read config for {project_dir}: {e}")
-        
+
         return projects
-    
+
     async def get_project(self, project_id: str) -> Optional[Dict[str, Any]]:
         """Get project information by ID"""
         project_path = self.projects_path / project_id
         config_path = project_path / ".tinaa" / "config.json"
-        
+
         if not config_path.exists():
             return None
-        
+
         try:
-            async with aiofiles.open(config_path, 'r') as f:
+            async with aiofiles.open(config_path, "r") as f:
                 return json.loads(await f.read())
         except Exception as e:
             logger.error(f"Failed to read project {project_id}: {e}")
             return None
-    
+
     async def delete_project(self, project_id: str) -> bool:
         """Delete a project from the workspace"""
         project_path = self.projects_path / project_id
-        
+
         if not project_path.exists():
             return False
-        
+
         try:
             shutil.rmtree(project_path)
             logger.info(f"Deleted project {project_id}")
@@ -471,10 +468,10 @@ test.describe('{analysis["domain"]} - Automated Tests', () => {{
         except Exception as e:
             logger.error(f"Failed to delete project {project_id}: {e}")
             return False
-    
+
     # Template methods for file generation
     def _get_package_json_template(self) -> str:
-        return '''{{
+        return """{{
   "name": "tinaa-playwright-project",
   "version": "1.0.0",
   "description": "TINAA generated Playwright testing project",
@@ -492,10 +489,10 @@ test.describe('{analysis["domain"]} - Automated Tests', () => {{
   }},
   "author": "TINAA",
   "license": "MIT"
-}}'''
+}}"""
 
     def _get_playwright_config_template(self) -> str:
-        return '''import {{ defineConfig, devices }} from '@playwright/test';
+        return """import {{ defineConfig, devices }} from '@playwright/test';
 
 export default defineConfig({{
   testDir: './tests',
@@ -530,10 +527,10 @@ export default defineConfig({{
       use: {{ ...devices['Pixel 5'] }},
     }},
   ],
-}});'''
+}});"""
 
     def _get_example_test_template(self) -> str:
-        return '''import {{ test, expect }} from '@playwright/test';
+        return """import {{ test, expect }} from '@playwright/test';
 
 test('basic example test', async ({{ page }}) => {{
   await page.goto('https://example.com');
@@ -541,10 +538,10 @@ test('basic example test', async ({{ page }}) => {{
   
   // Take a screenshot
   await page.screenshot({{ path: 'screenshots/example.png' }});
-}});'''
+}});"""
 
     def _get_base_page_template(self) -> str:
-        return '''import {{ Page }} from '@playwright/test';
+        return """import {{ Page }} from '@playwright/test';
 
 export class BasePage {{
   constructor(public readonly page: Page) {{}}
@@ -559,10 +556,10 @@ export class BasePage {{
       fullPage: true 
     }});
   }}
-}}'''
+}}"""
 
     def _get_gitignore_template(self) -> str:
-        return '''# Dependencies
+        return """# Dependencies
 node_modules/
 
 # Test results
@@ -585,10 +582,10 @@ reports/
 
 # OS generated files
 .DS_Store
-Thumbs.db'''
+Thumbs.db"""
 
     def _get_readme_template(self) -> str:
-        return '''# TINAA Playwright Project
+        return """# TINAA Playwright Project
 
 This project was generated by TINAA (Testing Intelligence Network Automation Assistant).
 
@@ -633,10 +630,10 @@ This project includes TINAA-specific configuration in the `.tinaa/` directory:
 - `npm run test:headed` - Run tests in headed mode
 - `npm run test:debug` - Run tests in debug mode
 - `npm run test:ui` - Open Playwright UI
-- `npm run report` - Show test report'''
+- `npm run report` - Show test report"""
 
     def _get_url_analyzer_template(self) -> str:
-        return '''import {{ Page }} from '@playwright/test';
+        return """import {{ Page }} from '@playwright/test';
 
 export class UrlAnalyzer {{
   constructor(private page: Page) {{}}
@@ -657,10 +654,10 @@ export class UrlAnalyzer {{
   private async countElements(selector: string): Promise<number> {{
     return await this.page.locator(selector).count();
   }}
-}}'''
+}}"""
 
     def _get_analyzed_page_template(self) -> str:
-        return '''import {{ Page }} from '@playwright/test';
+        return """import {{ Page }} from '@playwright/test';
 import {{ BasePage }} from './base.page';
 
 export class AnalyzedPage extends BasePage {{
@@ -688,10 +685,10 @@ export class AnalyzedPage extends BasePage {{
       url: this.page.url()
     }};
   }}
-}}'''
+}}"""
 
     def _get_url_readme_template(self) -> str:
-        return '''# URL-Based Testing Project
+        return """# URL-Based Testing Project
 
 This project was automatically generated by TINAA to test a specific URL.
 
@@ -715,10 +712,10 @@ The project includes:
 1. Review the generated tests in `tests/`
 2. Customize tests based on your specific requirements
 3. Add more detailed test scenarios using TINAA's playbook builder
-4. Use TINAA's AI assistant for test optimization'''
+4. Use TINAA's AI assistant for test optimization"""
 
     def _get_user_journey_template(self) -> str:
-        return '''import {{ test, expect }} from '@playwright/test';
+        return """import {{ test, expect }} from '@playwright/test';
 
 test.describe('User Journey Tests', () => {{
   test('complete user workflow', async ({{ page }}) => {{
@@ -736,10 +733,10 @@ test.describe('User Journey Tests', () => {{
     // 4. Verify results
     // 5. Logout
   }});
-}});'''
+}});"""
 
     def _get_e2e_readme_template(self) -> str:
-        return '''# E2E Workflow Testing Project
+        return """# E2E Workflow Testing Project
 
 This project is set up for comprehensive end-to-end workflow testing.
 
@@ -756,4 +753,4 @@ This project includes templates for:
 - User journey testing
 - Cross-browser compatibility
 - Integration testing
-- Performance testing'''
+- Performance testing"""
