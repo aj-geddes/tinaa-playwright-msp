@@ -4,9 +4,10 @@ Script to configure Anthropic API credentials for TINAA
 """
 
 import asyncio
-import httpx
 import getpass
 import sys
+
+import httpx
 
 BASE_URL = "http://localhost:8080"
 

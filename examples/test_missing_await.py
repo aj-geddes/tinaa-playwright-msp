@@ -3,6 +3,7 @@ Example Playwright test script with intentional issues for testing the analyzer.
 """
 from playwright.sync_api import Page
 
+
 async def test_missing_await(page: Page):
     # This will be detected as missing await
     page.goto("https://example.com")

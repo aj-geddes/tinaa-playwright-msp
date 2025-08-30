@@ -1,6 +1,7 @@
 # Regex-based version of diagnostics.py for JavaScript
 import re
 
+
 def find_missing_awaits(code):
     """Find missing await keywords in Playwright test code using regex"""
     diagnostics = []

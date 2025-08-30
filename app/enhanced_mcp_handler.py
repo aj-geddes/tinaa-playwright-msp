@@ -8,13 +8,6 @@ import logging
 from datetime import datetime
 from typing import Any, Callable, Dict, Optional
 
-from app.progress_tracker import (
-    AccessibilityTestProgress,
-    ExploratoryTestProgress,
-    ProgressContext,
-    ProgressTracker,
-)
-
 # Import original handlers
 from app.mcp_handler import detect_form_fields as _detect_forms
 from app.mcp_handler import fill_form_fields as _fill_forms
@@ -31,6 +24,12 @@ from app.mcp_handler import run_responsive_test as _responsive_test
 from app.mcp_handler import run_security_test as _security_test
 from app.mcp_handler import take_element_screenshot as _element_screenshot
 from app.mcp_handler import take_page_screenshot as _screenshot
+from app.progress_tracker import (
+    AccessibilityTestProgress,
+    ExploratoryTestProgress,
+    ProgressContext,
+    ProgressTracker,
+)
 
 logger = logging.getLogger("tinaa-enhanced")
 

@@ -16,11 +16,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from app.ai_integration import AIManager
 from fastmcp import Context, FastMCP
-from app.workspace_manager import WorkspaceManager
 
+from app.ai_integration import AIManager
 from app.mcp_handler import get_controller
+from app.workspace_manager import WorkspaceManager
 
 sys.path.append("/mnt/c/Users/Munso/tinaa-playwright-msp/prompts")
 from collaborative_prompts import CollaborativePrompts, PromptTemplates
@@ -630,7 +630,9 @@ from app.workspace_mcp_tools import (
 from app.workspace_mcp_tools import delete_project as workspace_delete_project
 from app.workspace_mcp_tools import get_project as workspace_get_project
 from app.workspace_mcp_tools import get_repository_info as workspace_get_repository_info
-from app.workspace_mcp_tools import get_workspace_status as workspace_get_workspace_status
+from app.workspace_mcp_tools import (
+    get_workspace_status as workspace_get_workspace_status,
+)
 from app.workspace_mcp_tools import list_projects as workspace_list_projects
 
 # Note: Workspace tools are already registered with their own MCP instance

@@ -2,8 +2,10 @@
 Accessibility Tool - Checks web page accessibility
 """
 
-from typing import Dict, Any, List
+from typing import Any, Dict, List
+
 from .tool_loader import PlaywrightTool
+
 
 class AccessibilityTool(PlaywrightTool):
     """Tool for checking web page accessibility"""

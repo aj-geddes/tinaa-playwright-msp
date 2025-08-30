@@ -1,5 +1,6 @@
 import re
 
+
 # Extract the current word/token at the cursor position
 def get_word_at_position(params):
     document = params.textDocument.uri

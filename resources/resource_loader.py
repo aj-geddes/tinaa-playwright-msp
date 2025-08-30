@@ -4,11 +4,11 @@ Resource loader for Tinaa Playwright MSP
 This module loads resources for QA testing
 """
 
-import os
 import json
 import logging
-from typing import Dict, List, Any, Optional
+import os
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger("tinaa-playwright-msp.resources")
 

@@ -2,13 +2,13 @@
 """
 Minimalist MCP server runner script with proper signal handling
 """
-import sys
-import os
 import logging
+import os
 import signal
+import sys
+import threading
 import time
 import traceback
-import threading
 
 # Configure logging to use a file instead of stderr/stdout to avoid breaking MCP
 os.makedirs("logs", exist_ok=True)

@@ -2,8 +2,10 @@
 Screenshot Tool - Takes screenshots of web pages
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
+
 from .tool_loader import PlaywrightTool
+
 
 class ScreenshotTool(PlaywrightTool):
     """Tool for taking screenshots of web pages"""

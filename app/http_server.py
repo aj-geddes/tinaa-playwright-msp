@@ -39,8 +39,6 @@ from app.ai_enhanced_handler import (
     generate_security_insights,
     generate_test_report_summary,
 )
-from app.settings_api import setup_settings_api
-from app.workspace_manager import WorkspaceManager
 from app.mcp_handler import detect_form_fields as handle_detect_form_fields
 from app.mcp_handler import fill_form_fields as handle_fill_form_fields
 from app.mcp_handler import fill_login_form as handle_fill_login_form
@@ -56,6 +54,8 @@ from app.mcp_handler import run_responsive_test as handle_run_responsive_test
 from app.mcp_handler import run_security_test as handle_run_security_test
 from app.mcp_handler import take_element_screenshot as handle_take_element_screenshot
 from app.mcp_handler import take_page_screenshot as handle_take_page_screenshot
+from app.settings_api import setup_settings_api
+from app.workspace_manager import WorkspaceManager
 
 # FastAPI app
 app = FastAPI(

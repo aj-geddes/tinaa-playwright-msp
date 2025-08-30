@@ -4,6 +4,7 @@ This file demonstrates how TINAA LSP would provide assistance.
 """
 from playwright.sync_api import Page
 
+
 async def test_example(page: Page):
     # LSP will provide completion for 'goto'
     await page.goto("https://example.com")

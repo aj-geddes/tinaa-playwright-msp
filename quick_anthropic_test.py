@@ -3,8 +3,8 @@
 Quick test to verify TINAA can access Anthropic API key in pod
 """
 import asyncio
-import sys
 import os
+import sys
 
 # Add TINAA app directory to path
 sys.path.insert(0, '/app')

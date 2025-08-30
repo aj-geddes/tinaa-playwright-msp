@@ -9,6 +9,7 @@ import logging
 from typing import Any, Dict, List, Optional
 
 from fastmcp import Context, FastMCP
+
 from app.git_auth import git_authenticator
 from app.workspace_manager import WorkspaceManager
 

@@ -6,9 +6,10 @@ Intelligent prompts for guided testing playbook generation and
 collaborative design between TINAA and IDE LLMs.
 """
 
-from typing import Dict, List, Optional, Any
-from datetime import datetime
 import json
+from datetime import datetime
+from typing import Any, Dict, List, Optional
+
 
 class CollaborativePrompts:
     """Prompts for collaborative test design sessions"""

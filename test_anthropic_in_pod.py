@@ -3,8 +3,10 @@
 Test TINAA's Anthropic integration when API key is already in the pod
 """
 import asyncio
-import httpx
 import json
+
+import httpx
+
 
 async def test_anthropic_in_pod():
     """Test that TINAA can use Anthropic with existing pod credentials"""

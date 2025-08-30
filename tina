@@ -3,9 +3,10 @@
 TINA CLI - Command-line interface for the TINA MCP tool
 """
 import argparse
+import os
 import subprocess
 import sys
-import os
+
 
 def main():
     """Main entry point for the TINA CLI"""
@@ -39,8 +40,9 @@ def main():
             server.start_io()
     elif args.command == "analyze":
         # Analyze a script
-        from app.main import analyze_script
         import asyncio
+
+        from app.main import analyze_script
         
         result = asyncio.run(analyze_script(args.script))
         print(f"Analysis results for {result['script_path']}:")

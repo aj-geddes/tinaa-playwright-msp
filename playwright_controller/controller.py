@@ -5,13 +5,19 @@ This module provides a controller for interacting with Playwright
 """
 
 import asyncio
-import logging
-import json
-from typing import Dict, List, Any, Optional, Union
-from pathlib import Path
 import base64
+import json
+import logging
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
-from playwright.async_api import async_playwright, Browser, BrowserContext, Page, Playwright
+from playwright.async_api import (
+    Browser,
+    BrowserContext,
+    Page,
+    Playwright,
+    async_playwright,
+)
 
 logger = logging.getLogger("tinaa-playwright-msp.playwright-controller")
 

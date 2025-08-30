@@ -1,6 +1,7 @@
 # Simple version of diagnostics.py that doesn't depend on pygls
 import ast
 
+
 # Visitor class to find Playwright calls missing 'await'
 class AwaitVisitor(ast.NodeVisitor):
     def __init__(self):

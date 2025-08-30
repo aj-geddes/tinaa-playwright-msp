@@ -5,25 +5,25 @@ This module connects MCP functions with the Playwright controller
 """
 
 import asyncio
-import logging
 import json
-from typing import Dict, List, Any, Optional, Union
+import logging
 from datetime import datetime
+from typing import Any, Dict, List, Optional, Union
 
 # Import from fastmcp 2.8.0
 # Using the decorator pattern from FastMCP
-from fastmcp import FastMCP, Context
+from fastmcp import Context, FastMCP
 
 from playwright_controller import PlaywrightController
-from resources import get_resource_loader
 from prompts import (
-    EXPLORATORY_TEST_PROMPT,
     ACCESSIBILITY_TEST_PROMPT,
-    RESPONSIVE_TEST_PROMPT,
+    EXPLORATORY_TEST_PROMPT,
     FORM_TEST_PROMPT,
+    RESPONSIVE_TEST_PROMPT,
     SECURITY_TEST_BASIC_PROMPT,
-    TEST_REPORT_TEMPLATE
+    TEST_REPORT_TEMPLATE,
 )
+from resources import get_resource_loader
 
 logger = logging.getLogger("tinaa-playwright-msp.mcp-handler")
 

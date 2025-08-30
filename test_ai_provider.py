@@ -2,9 +2,11 @@
 """
 Test which AI provider TINAA is using
 """
-import httpx
-import json
 import asyncio
+import json
+
+import httpx
+
 
 async def test_ai_provider():
     base_url = "http://localhost:8765"

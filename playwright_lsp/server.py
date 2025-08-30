@@ -1,8 +1,9 @@
 # Simple version of server.py that doesn't depend on pygls
 
 from playwright_lsp.handlers.completion import get_playwright_completions
-from playwright_lsp.handlers.hover import get_hover_response
 from playwright_lsp.handlers.diagnostics import find_missing_awaits
+from playwright_lsp.handlers.hover import get_hover_response
+
 
 # Simple server object
 class SimpleServer:

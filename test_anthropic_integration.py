@@ -6,8 +6,9 @@ Tests the settings API, AI manager, and internal problem solving endpoint
 
 import asyncio
 import json
-import httpx
 from datetime import datetime
+
+import httpx
 
 # Base URL for TINAA API
 BASE_URL = "http://localhost:8080"

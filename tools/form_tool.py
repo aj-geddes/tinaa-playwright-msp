@@ -2,8 +2,10 @@
 Form Tool - Interacts with forms on web pages
 """
 
-from typing import Dict, Any, List, Optional
+from typing import Any, Dict, List, Optional
+
 from .tool_loader import PlaywrightTool
+
 
 class FormTool(PlaywrightTool):
     """Tool for interacting with forms on web pages"""

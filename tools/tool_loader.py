@@ -4,12 +4,12 @@ Tool loader for Tinaa Playwright MSP
 This module loads all tools from the tools directory
 """
 
-import os
 import importlib
 import inspect
-from typing import Dict, List, Any, Callable, Optional
 import logging
+import os
 from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional
 
 logger = logging.getLogger("tinaa-playwright-msp.tools")
 
