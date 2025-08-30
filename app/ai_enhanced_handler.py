@@ -9,10 +9,16 @@ import logging
 import json
 from typing import Dict, Any, Optional
 try:
-    from ai_integration import AIManager
+    from app.ai_integration import AIManager
 except ImportError:
     # Use simplified version if full module not available
-    from ai_integration_simple import AIManager
+    try:
+        from app.ai_integration_simple import AIManager
+    except ImportError:
+        # Create a mock AIManager if neither is available
+        class AIManager:
+            def __init__(self, *args, **kwargs):
+                pass
 # from secrets_manager import SecretsManager  # Not needed for simplified version
 
 logger = logging.getLogger("tinaa.ai_enhanced_handler")

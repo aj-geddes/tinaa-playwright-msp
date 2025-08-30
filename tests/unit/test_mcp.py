@@ -17,7 +17,6 @@ async def test_mcp_connection():
     
     try:
         # Import the MCP instance
-        sys.path.insert(0, '/app')
         from app.main import mcp
         
         print(f"✓ Successfully imported MCP server: {mcp.name}")
