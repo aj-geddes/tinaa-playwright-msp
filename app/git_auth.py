@@ -19,7 +19,7 @@ from pathlib import Path
 import git
 from git.exc import GitCommandError
 
-from secrets_manager import secrets_manager
+from app.secrets_manager import secrets_manager
 
 logger = logging.getLogger("tinaa.git_auth")
 

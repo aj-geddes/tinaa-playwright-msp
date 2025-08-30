@@ -258,7 +258,7 @@ class AIManager:
     
     async def initialize_from_secrets(self):
         """Initialize AI providers using secrets manager"""
-        from secrets_manager import secrets_manager
+        from app.secrets_manager import secrets_manager
         
         # Validate available secrets
         validation_results = await secrets_manager.validate_secrets()

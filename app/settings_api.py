@@ -12,9 +12,9 @@ import base64
 from typing import Dict, Any, Optional
 from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel, Field
-from secrets_manager import SecretsManager
-from ai_integration import AIManager
-from git_auth import GitAuthenticator
+from app.secrets_manager import SecretsManager
+from app.ai_integration import AIManager
+from app.git_auth import GitAuthenticator
 import asyncio
 
 logger = logging.getLogger("tinaa.settings_api")
