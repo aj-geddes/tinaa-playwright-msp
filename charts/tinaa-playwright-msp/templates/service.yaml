@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "tinaa-playwright-msp.fullname" . }}
+  labels:
+    {{- include "tinaa-playwright-msp.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "tinaa-playwright-msp.selectorLabels" . | nindent 4 }}

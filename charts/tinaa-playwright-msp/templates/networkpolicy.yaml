@@ -1,0 +1,38 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "tinaa-playwright-msp.fullname" . }}
+  labels:
+    {{- include "tinaa-playwright-msp.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "tinaa-playwright-msp.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    {{- with .Values.networkPolicy.ingress }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  egress:
+    # Allow DNS resolution
+    - to:
+      - namespaceSelector: {}
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+      ports:
+      - protocol: UDP
+        port: 53
+    # Allow outbound HTTP/HTTPS for browser automation
+    - to:
+      - ipBlock:
+          cidr: 0.0.0.0/0
+      ports:
+      - protocol: TCP
+        port: 80
+      - protocol: TCP
+        port: 443
+{{- end }}

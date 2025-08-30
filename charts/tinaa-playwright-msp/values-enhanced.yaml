@@ -1,0 +1,237 @@
+# Enhanced values for TINAA with AI integration and expanded workspace
+# This file extends the base values.yaml with configurations for:
+# - Larger workspace storage for multiple Playwright projects
+# - AI cache for model responses and context
+# - Project templates storage
+# - AI provider configurations
+
+# Increased resources for AI workloads
+replicaCount: 1
+
+resources:
+  limits:
+    cpu: 4
+    memory: 8Gi
+  requests:
+    cpu: 1
+    memory: 4Gi
+
+# Enhanced TINAA configuration
+tinaa:
+  mode: "enhanced"  # Options: mcp, http, enhanced
+  logLevel: "INFO"
+  
+  # Enhanced environment variables
+  env:
+    - name: PYTHONUNBUFFERED
+      value: "1"
+    - name: PYTHONPATH
+      value: "/app"
+    - name: PLAYWRIGHT_BROWSERS_PATH
+      value: "/ms-playwright"
+    - name: TINAA_MODE
+      value: "enhanced"
+    - name: WORKSPACE_PATH
+      value: "/mnt/workspace"
+    - name: AI_CACHE_PATH
+      value: "/app/ai-cache"
+    - name: TEMPLATES_PATH
+      value: "/app/templates"
+    - name: ENABLE_AI_FEATURES
+      value: "true"
+    - name: ENABLE_PROJECT_MANAGEMENT
+      value: "true"
+    - name: ENABLE_FRONTEND
+      value: "true"
+
+  # AI Provider Configuration
+  aiProviders:
+    openai:
+      enabled: true
+      existingSecret: "tinaa-openai-secret"
+      apiKey: ""  # Set via secret
+      baseUrl: "https://api.openai.com/v1"
+      defaultModel: "gpt-4"
+      maxTokens: 4096
+      temperature: 0.1
+    
+    anthropic:
+      enabled: true
+      existingSecret: "tinaa-anthropic-secret"
+      apiKey: ""  # Set via secret
+      baseUrl: "https://api.anthropic.com"
+      defaultModel: "claude-3-sonnet-20240229"
+      maxTokens: 4096
+      temperature: 0.1
+    
+    ollama:
+      enabled: false
+      baseUrl: "http://ollama:11434"
+      defaultModel: "codellama"
+  
+  # Git Configuration for Repository Access
+  git:
+    pat:
+      enabled: true
+      existingSecret: "tinaa-git-secret"
+      token: ""  # Set via secret
+      username: "git"
+    
+    githubApp:
+      enabled: false
+      existingSecret: "tinaa-github-app-secret"
+      appId: ""  # Set via secret
+      installationId: ""  # Set via secret
+      privateKey: ""  # Set via secret
+  
+  # Secrets Management
+  secrets:
+    createSecrets: false  # Secrets should be created externally for security
+    mountPath: "/var/run/secrets"
+
+  # Database configuration for metadata storage
+  database:
+    enabled: true
+    type: "sqlite"
+    sqlite:
+      path: "/mnt/workspace/tinaa.db"
+
+  # Enhanced persistence configuration
+  persistence:
+    logs:
+      enabled: true
+      storageClass: ""
+      accessMode: ReadWriteOnce
+      size: 10Gi
+      existingClaim: ""
+    
+    workspace:
+      enabled: true
+      storageClass: ""
+      accessMode: ReadWriteOnce
+      size: 200Gi  # Large workspace for multiple projects
+      existingClaim: ""
+      mountPath: "/mnt/workspace"
+    
+    # AI cache for model responses and context
+    aiCache:
+      enabled: true
+      storageClass: ""
+      accessMode: ReadWriteOnce
+      size: 50Gi  # Cache for AI responses and embeddings
+      existingClaim: ""
+      mountPath: "/app/ai-cache"
+    
+    # Project templates and resources
+    projectTemplates:
+      enabled: true
+      storageClass: ""
+      accessMode: ReadWriteOnce
+      size: 20Gi  # Templates and shared resources
+      existingClaim: ""
+      mountPath: "/app/templates"
+
+# Service configuration for frontend
+service:
+  type: ClusterIP
+  port: 8765
+  targetPort: 8765
+  annotations: {}
+  # Additional port for frontend (if served separately)
+  frontend:
+    enabled: true
+    port: 3000
+    targetPort: 3000
+
+# Ingress for both backend and frontend
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  hosts:
+    - host: tinaa.local
+      paths:
+        - path: /api
+          pathType: Prefix
+          backend:
+            port: 8765
+        - path: /
+          pathType: Prefix
+          backend:
+            port: 3000
+  tls: []
+
+# Network policy for enhanced security
+networkPolicy:
+  enabled: true
+  ingress:
+    # Allow frontend access
+    - from:
+      - namespaceSelector: {}
+      ports:
+      - protocol: TCP
+        port: 3000
+    # Allow API access
+    - from:
+      - namespaceSelector: {}
+      ports:
+      - protocol: TCP
+        port: 8765
+  egress:
+    # Allow DNS resolution
+    - to:
+      - namespaceSelector: {}
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+      ports:
+      - protocol: UDP
+        port: 53
+    # Allow HTTP/HTTPS for browser automation and AI APIs
+    - to:
+      - ipBlock:
+          cidr: 0.0.0.0/0
+      ports:
+      - protocol: TCP
+        port: 80
+      - protocol: TCP
+        port: 443
+
+# Pod annotations for monitoring
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8765"
+  prometheus.io/path: "/metrics"
+
+# Labels for enhanced deployment
+podLabels:
+  version: "enhanced"
+  component: "ai-testing-platform"
+
+# Node selection for GPU nodes (if available for AI workloads)
+nodeSelector:
+  # kubernetes.io/arch: amd64
+  # accelerator: nvidia-tesla-k80  # Uncomment if GPU acceleration needed
+
+# Tolerations for dedicated AI nodes
+tolerations: []
+  # - key: "ai-workload"
+  #   operator: "Equal"
+  #   value: "true"
+  #   effect: "NoSchedule"
+
+# Affinity for pod placement
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app.kubernetes.io/name
+            operator: In
+            values:
+            - tinaa-playwright-msp
+        topologyKey: kubernetes.io/hostname

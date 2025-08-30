@@ -45,6 +45,17 @@ from mcp_handler import (
     get_controller
 )
 
+from ai_enhanced_handler import (
+    generate_exploratory_insights,
+    analyze_form_fields,
+    generate_accessibility_insights,
+    generate_security_insights,
+    generate_test_report_summary
+)
+
+from workspace_manager import WorkspaceManager
+from settings_api import setup_settings_api
+
 # FastAPI app
 app = FastAPI(title="TINAA - Testing Intelligence Network Automation Assistant", version="2.0.0")
 
@@ -101,6 +112,11 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
+# Initialize workspace manager
+workspace_manager = WorkspaceManager(
+    workspace_path=os.getenv("WORKSPACE_PATH", "/mnt/workspace")
+)
+
 # Request models
 class TestRequest(BaseModel):
     action: str
@@ -118,6 +134,17 @@ class PlaybookRequest(BaseModel):
     name: str
     steps: List[PlaybookStep]
     client_id: str
+
+# Workspace request models
+class ProjectCreateRequest(BaseModel):
+    name: str
+    description: str = ""
+    template: str = "basic-web-testing"
+    repository_url: Optional[str] = None
+
+class UrlProjectRequest(BaseModel):
+    url: str
+    name: Optional[str] = None
 
 # Progress tracking decorator
 def track_progress(action_name: str):
@@ -148,6 +175,105 @@ async def root():
 @app.get("/health")
 async def health_check():
     return {"status": "healthy", "timestamp": datetime.now().isoformat()}
+
+# Workspace Management Endpoints
+
+@app.post("/api/workspace/projects")
+async def create_project(request: ProjectCreateRequest):
+    """Create a new project in the workspace"""
+    try:
+        result = await workspace_manager.create_project(
+            name=request.name,
+            description=request.description,
+            template=request.template,
+            repository_url=request.repository_url
+        )
+        return JSONResponse(content=result)
+    except Exception as e:
+        logger.error(f"Failed to create project: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/workspace/projects/from-url")
+async def create_project_from_url(request: UrlProjectRequest):
+    """Create a project by analyzing a URL"""
+    try:
+        result = await workspace_manager.create_project_from_url(
+            url=request.url,
+            name=request.name
+        )
+        return JSONResponse(content=result)
+    except Exception as e:
+        logger.error(f"Failed to create project from URL: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/workspace/projects")
+async def list_projects():
+    """List all projects in the workspace"""
+    try:
+        projects = await workspace_manager.list_projects()
+        return JSONResponse(content={"projects": projects})
+    except Exception as e:
+        logger.error(f"Failed to list projects: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/workspace/projects/{project_id}")
+async def get_project(project_id: str):
+    """Get project information by ID"""
+    try:
+        project = await workspace_manager.get_project(project_id)
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        return JSONResponse(content=project)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get project {project_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/workspace/projects/{project_id}")
+async def delete_project(project_id: str):
+    """Delete a project from the workspace"""
+    try:
+        success = await workspace_manager.delete_project(project_id)
+        if not success:
+            raise HTTPException(status_code=404, detail="Project not found")
+        return JSONResponse(content={"success": True, "message": "Project deleted"})
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to delete project {project_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/workspace/status")
+async def workspace_status():
+    """Get workspace status and statistics"""
+    try:
+        projects = await workspace_manager.list_projects()
+        
+        # Calculate workspace statistics
+        total_projects = len(projects)
+        active_projects = len([p for p in projects if p.get("status") != "archived"])
+        
+        workspace_info = {
+            "workspace_path": str(workspace_manager.workspace_path),
+            "total_projects": total_projects,
+            "active_projects": active_projects,
+            "available_templates": [
+                "basic-web-testing",
+                "url-based-testing", 
+                "e2e-workflow"
+            ],
+            "recent_projects": sorted(
+                projects, 
+                key=lambda x: x.get("created_at", ""), 
+                reverse=True
+            )[:5]
+        }
+        
+        return JSONResponse(content=workspace_info)
+    except Exception as e:
+        logger.error(f"Failed to get workspace status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/test/connectivity")
 @track_progress("Browser Connectivity Test")
@@ -209,6 +335,28 @@ async def exploratory_test(request: TestRequest):
         result = await handle_run_exploratory_test(url, focus_area, ctx=None)
         
         if client_id:
+            await manager.send_progress(client_id, {"phase": "analyzing", "progress": 50})
+            await manager.send_message(client_id, "Generating AI insights...", "info")
+        
+        # Generate AI insights if the test was successful
+        if result.get("success") and not result.get("error"):
+            ai_insights = await generate_exploratory_insights(
+                url=url,
+                title=result.get("title", ""),
+                screenshot_data=result.get("initial_screenshot"),
+                focus_area=focus_area
+            )
+            
+            # Add AI insights to the result
+            result["ai_insights"] = ai_insights
+            
+            if client_id:
+                if ai_insights.get("insights"):
+                    await manager.send_message(client_id, "AI insights generated successfully", "success")
+                else:
+                    await manager.send_message(client_id, "AI insights not available", "warning")
+        
+        if client_id:
             await manager.send_progress(client_id, {"phase": "complete", "progress": 100})
         
         yield json.dumps({"success": True, "result": result}).encode()
@@ -218,6 +366,7 @@ async def exploratory_test(request: TestRequest):
 @app.post("/test/accessibility")
 async def accessibility_test(request: TestRequest):
     client_id = request.client_id
+    url = request.parameters.get("url", "")
     
     async def stream_test():
         if client_id:
@@ -225,8 +374,52 @@ async def accessibility_test(request: TestRequest):
         
         result = await handle_run_accessibility_test(ctx=None)
         
+        # Generate AI insights if the test was successful
+        if result.get("success") and not result.get("error"):
+            if client_id:
+                await manager.send_message(client_id, "Generating AI analysis...", "info")
+            
+            ai_analysis = await generate_accessibility_insights(
+                accessibility_results=result.get("results", {}),
+                url=url or "current page"
+            )
+            
+            # Add AI analysis to the result
+            result["ai_analysis"] = ai_analysis
+        
         if client_id:
             await manager.send_message(client_id, "Accessibility test completed", "success")
+        
+        yield json.dumps({"success": True, "result": result}).encode()
+    
+    return StreamingResponse(stream_test(), media_type="application/json")
+
+@app.post("/test/security")
+async def security_test(request: TestRequest):
+    client_id = request.client_id
+    url = request.parameters.get("url", "")
+    
+    async def stream_test():
+        if client_id:
+            await manager.send_message(client_id, "Starting security test...", "info")
+        
+        result = await handle_run_security_test(ctx=None)
+        
+        # Generate AI insights if the test was successful
+        if result.get("success") and not result.get("error"):
+            if client_id:
+                await manager.send_message(client_id, "Generating AI security analysis...", "info")
+            
+            ai_analysis = await generate_security_insights(
+                security_observations=result.get("results", {}),
+                url=url or "current page"
+            )
+            
+            # Add AI analysis to the result
+            result["ai_analysis"] = ai_analysis
+        
+        if client_id:
+            await manager.send_message(client_id, "Security test completed", "success")
         
         yield json.dumps({"success": True, "result": result}).encode()
     
@@ -353,6 +546,12 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                     result = await navigate(request)
                 elif data["action"] == "screenshot":
                     result = await screenshot(request)
+                elif data["action"] == "test_exploratory":
+                    result = await exploratory_test(request)
+                elif data["action"] == "test_accessibility":
+                    result = await accessibility_test(request)
+                elif data["action"] == "test_security":
+                    result = await security_test(request)
                 # Add more action handlers as needed
                 
                 await websocket.send_json({
@@ -428,6 +627,9 @@ async def get_playbook_suggestions(client_id: str) -> List[Dict]:
             ]
     
     return suggestions
+
+# Setup settings API routes
+setup_settings_api(app)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8765)

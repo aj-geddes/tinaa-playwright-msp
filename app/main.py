@@ -30,15 +30,28 @@ mcp = FastMCP("TINAA - Testing Intelligence Network Automation Assistant")
 @mcp.tool()
 async def start_lsp_server(tcp: bool = False, port: int = 8765, ctx: Context = None) -> str:
     """
-    Start the Playwright LSP server.
+    Start TINAA's Playwright Language Server Protocol (LSP) server for IDE integration.
+    
+    Launches a Playwright LSP server that provides intelligent code completion, diagnostics,
+    and hover information for Playwright test code directly in your IDE.
     
     Args:
-        tcp: Whether to use TCP mode instead of stdio
-        port: Port number for TCP mode
-        ctx: The execution context
+        tcp: Whether to use TCP mode (True) instead of stdio mode (False). TCP mode is recommended for MCP integration
+        port: Port number for TCP mode server (default: 8765)
+        ctx: Execution context (automatically provided by FastMCP)
     
     Returns:
-        Status message
+        Status message indicating success or failure of server startup
+        
+    Note:
+        - TCP mode is required for MCP integration with IDEs
+        - The LSP server provides Playwright-specific IntelliSense and error detection
+        - Server runs in a background thread to avoid blocking MCP operations
+        
+    Example:
+        >>> result = await start_lsp_server(tcp=True, port=8765)
+        >>> print(result)
+        "LSP server started successfully"
     """
     if ctx:
         await ctx.info("Starting Playwright LSP server...")
@@ -83,14 +96,36 @@ async def start_lsp_server(tcp: bool = False, port: int = 8765, ctx: Context = N
 @mcp.tool()
 async def test_browser_connectivity(url: str = "https://example.com", ctx: Context = None) -> Dict[str, Any]:
     """
-    Test browser connectivity by visiting a URL
+    Test TINAA's browser automation capabilities by visiting a URL and capturing basic information.
+    
+    Verifies that Playwright browser automation is working correctly by navigating to a URL,
+    capturing the page title, taking a screenshot, and reporting the results.
     
     Args:
-        url: The URL to visit for testing
-        ctx: The execution context
+        url: The URL to visit for testing browser connectivity (default: "https://example.com")
+        ctx: Execution context (automatically provided by FastMCP)
         
     Returns:
-        Dictionary with test results
+        Dictionary containing:
+        - success: Boolean indicating if the test passed
+        - url: The URL that was tested
+        - title: Page title from the visited URL
+        - status: HTTP status code of the response
+        - screenshot: Base64-encoded screenshot of the page
+        - error: Error message if the test failed
+        
+    This tool is useful for:
+        - Verifying TINAA's browser automation setup
+        - Testing network connectivity and proxy settings
+        - Validating that Playwright can launch browsers successfully
+        - Getting a quick visual confirmation of a webpage
+        
+    Example:
+        >>> result = await test_browser_connectivity("https://playwright.dev")
+        >>> print(f"Page title: {result['title']}")
+        "Page title: Playwright"
+        >>> print(f"Success: {result['success']}")
+        "Success: True"
     """
     if ctx:
         await ctx.info(f"Testing browser connectivity to {url}...")
@@ -149,14 +184,40 @@ async def test_browser_connectivity(url: str = "https://example.com", ctx: Conte
 @mcp.tool()
 async def analyze_script(script_path: str, ctx: Context = None) -> dict:
     """
-    Analyze a Playwright test script for issues.
+    Analyze a Playwright test script for common issues, errors, and improvement opportunities.
+    
+    Performs static analysis on your Playwright test code to identify missing await statements,
+    syntax issues, and potential improvements. Uses TINAA's built-in diagnostics engine.
     
     Args:
-        script_path: Path to the Playwright test script
-        ctx: The execution context
+        script_path: Absolute path to the Playwright test script file to analyze (e.g., "/path/to/test.spec.ts")
+        ctx: Execution context (automatically provided by FastMCP)
         
     Returns:
-        Analysis results
+        Dictionary containing:
+        - script_path: The path to the analyzed script
+        - issues_found: Number of issues detected
+        - diagnostics: List of specific issues with details including:
+          - message: Description of the issue
+          - line: Line number where the issue occurs
+          - character: Character position on the line
+          - severity: Issue severity level ("Warning", "Error", "Info")
+        - suggestions: Recommended fixes for identified issues
+        
+    Common issues detected:
+        - Missing await statements for async Playwright operations
+        - Incorrect selector usage
+        - Potential timing issues
+        - Best practice violations
+        
+    Example:
+        >>> analysis = await analyze_script("/workspace/tests/login.spec.ts")
+        >>> print(f"Found {analysis['issues_found']} issues")
+        "Found 3 issues"
+        >>> for issue in analysis['diagnostics']:
+        ...     print(f"Line {issue['line']}: {issue['message']}")
+        "Line 15: Missing await before page.click()"
+        "Line 22: Consider using page.waitForSelector()"
     """
     if ctx:
         await ctx.info(f"Analyzing script: {script_path}")
