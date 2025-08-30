@@ -21,7 +21,7 @@ import aiofiles
 import git
 from git.exc import GitCommandError
 
-from git_auth import git_authenticator
+from app.git_auth import git_authenticator
 
 logger = logging.getLogger("tinaa.workspace_manager")
 

@@ -45,7 +45,7 @@ from mcp_handler import (
     get_controller
 )
 
-from ai_enhanced_handler import (
+from app.ai_enhanced_handler import (
     generate_exploratory_insights,
     analyze_form_fields,
     generate_accessibility_insights,
@@ -53,8 +53,8 @@ from ai_enhanced_handler import (
     generate_test_report_summary
 )
 
-from workspace_manager import WorkspaceManager
-from settings_api import setup_settings_api
+from app.workspace_manager import WorkspaceManager
+from app.settings_api import setup_settings_api
 
 # FastAPI app
 app = FastAPI(title="TINAA - Testing Intelligence Network Automation Assistant", version="2.0.0")
