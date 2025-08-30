@@ -7,7 +7,7 @@ Adds AI capabilities to existing handlers using the AI integration module.
 
 import json
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 try:
     from app.ai_integration import AIManager
@@ -27,7 +27,7 @@ except ImportError:
 logger = logging.getLogger("tinaa.ai_enhanced_handler")
 
 # Global AI manager instance
-ai_manager: Optional[AIManager] = None
+ai_manager: AIManager | None = None
 
 
 async def get_ai_manager() -> AIManager:
@@ -48,10 +48,10 @@ async def get_ai_manager() -> AIManager:
 async def generate_exploratory_insights(
     url: str,
     title: str,
-    screenshot_data: Optional[str] = None,
+    screenshot_data: str | None = None,
     focus_area: str = "general",
-    page_content: Optional[str] = None,
-) -> Dict[str, Any]:
+    page_content: str | None = None,
+) -> dict[str, Any]:
     """
     Generate AI insights for exploratory testing
 
@@ -114,7 +114,7 @@ Format your response as a structured analysis that will help guide exploratory t
         return {"insights": None, "error": str(e)}
 
 
-async def analyze_form_fields(form_fields: list) -> Dict[str, Any]:
+async def analyze_form_fields(form_fields: list) -> dict[str, Any]:
     """
     Use AI to analyze form fields and suggest test data
 
@@ -159,8 +159,8 @@ Format as JSON with field names as keys and test suggestions as values."""
 
 
 async def generate_accessibility_insights(
-    accessibility_results: Dict[str, Any], url: str
-) -> Dict[str, Any]:
+    accessibility_results: dict[str, Any], url: str
+) -> dict[str, Any]:
     """
     Generate AI insights for accessibility testing results
 
@@ -205,8 +205,8 @@ Please provide:
 
 
 async def generate_security_insights(
-    security_observations: Dict[str, Any], url: str
-) -> Dict[str, Any]:
+    security_observations: dict[str, Any], url: str
+) -> dict[str, Any]:
     """
     Generate AI insights for security testing
 
@@ -250,7 +250,7 @@ Please provide:
         return {"analysis": None, "error": str(e)}
 
 
-async def generate_test_report_summary(report_data: Dict[str, Any]) -> Dict[str, Any]:
+async def generate_test_report_summary(report_data: dict[str, Any]) -> dict[str, Any]:
     """
     Generate an AI-powered executive summary for test reports
 

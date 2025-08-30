@@ -5,10 +5,11 @@ Progress tracking system for TINAA operations
 import asyncio
 import logging
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger("tinaa-progress")
 
@@ -26,10 +27,10 @@ class ProgressUpdate:
     message: str
     level: ProgressLevel = ProgressLevel.INFO
     timestamp: datetime = field(default_factory=datetime.now)
-    progress: Optional[float] = None  # 0-100
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    progress: float | None = None  # 0-100
+    metadata: dict[str, Any] = field(default_factory=dict)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         result = {
             "message": self.message,
             "level": self.level.value,
@@ -43,9 +44,9 @@ class ProgressUpdate:
 
 
 class ProgressTracker:
-    def __init__(self, callback: Optional[Callable] = None):
+    def __init__(self, callback: Callable | None = None):
         self.callback = callback
-        self.updates: List[ProgressUpdate] = []
+        self.updates: list[ProgressUpdate] = []
         self.start_time = time.time()
         self.current_phase = None
         self.phases_completed = 0
@@ -55,7 +56,7 @@ class ProgressTracker:
         self,
         message: str,
         level: ProgressLevel = ProgressLevel.INFO,
-        progress: Optional[float] = None,
+        progress: float | None = None,
         **metadata,
     ):
         """Send a progress update"""
@@ -76,7 +77,7 @@ class ProgressTracker:
             + (f" ({progress}%)" if progress is not None else ""),
         )
 
-    async def start_phase(self, phase_name: str, total_phases: Optional[int] = None):
+    async def start_phase(self, phase_name: str, total_phases: int | None = None):
         """Start a new phase of operation"""
         self.current_phase = phase_name
         if total_phases:
@@ -123,7 +124,7 @@ class ProgressTracker:
         """Report a success"""
         await self.update(message, ProgressLevel.SUCCESS, **metadata)
 
-    async def info(self, message: str, progress: Optional[float] = None, **metadata):
+    async def info(self, message: str, progress: float | None = None, **metadata):
         """Report an info message"""
         await self.update(message, ProgressLevel.INFO, progress, **metadata)
 
@@ -131,7 +132,7 @@ class ProgressTracker:
         """Get elapsed time since tracker was created"""
         return time.time() - self.start_time
 
-    def get_summary(self) -> Dict[str, Any]:
+    def get_summary(self) -> dict[str, Any]:
         """Get a summary of all progress updates"""
         return {
             "total_updates": len(self.updates),
@@ -149,7 +150,7 @@ class ProgressContext:
         self,
         tracker: ProgressTracker,
         operation_name: str,
-        total_steps: Optional[int] = None,
+        total_steps: int | None = None,
     ):
         self.tracker = tracker
         self.operation_name = operation_name

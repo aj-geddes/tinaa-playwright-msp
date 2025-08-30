@@ -4,7 +4,6 @@ Comprehensive MCP server test suite
 """
 import asyncio
 import base64
-import json
 import sys
 
 sys.path.insert(0, "/app")
@@ -21,9 +20,8 @@ async def test_navigation():
         print(f"✓ Successfully navigated to {result['url']}")
         print(f"  Load time: {result.get('load_time')}ms")
         return True
-    else:
-        print(f"✗ Navigation failed: {result.get('error')}")
-        return False
+    print(f"✗ Navigation failed: {result.get('error')}")
+    return False
 
 
 async def test_screenshot():
@@ -38,7 +36,7 @@ async def test_screenshot():
     result = await take_page_screenshot(full_page=False)
 
     if result.get("success"):
-        print(f"✓ Screenshot captured successfully")
+        print("✓ Screenshot captured successfully")
         print(f"  Format: {result.get('format', 'png')}")
         print(f"  Size: {len(result.get('screenshot', ''))} bytes")
 
@@ -53,9 +51,8 @@ async def test_screenshot():
                 pass
 
         return True
-    else:
-        print(f"✗ Screenshot failed: {result.get('error')}")
-        return False
+    print(f"✗ Screenshot failed: {result.get('error')}")
+    return False
 
 
 async def test_form_detection():
@@ -71,7 +68,7 @@ async def test_form_detection():
 
     if result.get("success"):
         forms = result.get("forms", [])
-        print(f"✓ Form detection completed")
+        print("✓ Form detection completed")
         print(f"  Found {len(forms)} form(s)")
 
         for i, form in enumerate(forms):
@@ -80,9 +77,8 @@ async def test_form_detection():
                 print(f"    - {field.get('name')} ({field.get('type')})")
 
         return True
-    else:
-        print(f"✗ Form detection failed: {result.get('error')}")
-        return False
+    print(f"✗ Form detection failed: {result.get('error')}")
+    return False
 
 
 async def test_accessibility():
@@ -97,7 +93,7 @@ async def test_accessibility():
     result = await run_accessibility_test()
 
     if "error" not in result:
-        print(f"✓ Accessibility test completed")
+        print("✓ Accessibility test completed")
         print(f"  Score: {result.get('score', 'N/A')}")
         print(f"  Issues found: {result.get('total_issues', 0)}")
 
@@ -106,9 +102,8 @@ async def test_accessibility():
                 print(f"    {severity}: {count}")
 
         return True
-    else:
-        print(f"✗ Accessibility test failed: {result.get('error')}")
-        return False
+    print(f"✗ Accessibility test failed: {result.get('error')}")
+    return False
 
 
 async def test_responsive():
@@ -123,16 +118,15 @@ async def test_responsive():
     result = await run_responsive_test()
 
     if "error" not in result:
-        print(f"✓ Responsive test completed")
+        print("✓ Responsive test completed")
         print(f"  Tested viewports: {len(result.get('results', []))}")
 
         for viewport in result.get("results", []):
             print(f"  {viewport['viewport']}: {viewport.get('status', 'tested')}")
 
         return True
-    else:
-        print(f"✗ Responsive test failed: {result.get('error')}")
-        return False
+    print(f"✗ Responsive test failed: {result.get('error')}")
+    return False
 
 
 async def test_lsp_server():
@@ -156,11 +150,10 @@ async def test_browser_connectivity():
             print("✓ Browser connectivity test passed")
             print("  Browser is initialized and ready")
             return True
-        else:
-            print("✗ Browser not initialized")
-            return False
+        print("✗ Browser not initialized")
+        return False
     except Exception as e:
-        print(f"✗ Browser connectivity failed: {str(e)}")
+        print(f"✗ Browser connectivity failed: {e!s}")
         return False
 
 

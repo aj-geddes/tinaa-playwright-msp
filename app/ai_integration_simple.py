@@ -5,12 +5,9 @@ TINAA AI Integration Module (Simplified)
 Provides AI-powered features using Anthropic Claude API.
 """
 
-import asyncio
-import json
 import logging
 import os
-from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 try:
     import anthropic
@@ -62,10 +59,10 @@ class AIManager:
     async def chat_completion(
         self,
         prompt: str,
-        system_prompt: Optional[str] = None,
+        system_prompt: str | None = None,
         max_tokens: int = 4000,
         temperature: float = 0.7,
-    ) -> Optional[str]:
+    ) -> str | None:
         """Generate a chat completion using the active provider"""
 
         if not self.active_provider:
@@ -101,7 +98,7 @@ class AIManager:
             )
             return None
 
-    def get_active_provider_info(self) -> Dict[str, Any]:
+    def get_active_provider_info(self) -> dict[str, Any]:
         """Get information about the active provider"""
         if not self.active_provider:
             return {"active": False}

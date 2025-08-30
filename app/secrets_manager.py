@@ -9,11 +9,10 @@ Handles secure retrieval of API keys and sensitive configuration from:
 """
 
 import base64
-import json
 import logging
 import os
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 logger = logging.getLogger("tinaa.secrets_manager")
 
@@ -23,7 +22,7 @@ class SecretsManager:
 
     def __init__(self):
         self.is_kubernetes = self._detect_kubernetes_environment()
-        self.secrets_cache: Dict[str, str] = {}
+        self.secrets_cache: dict[str, str] = {}
 
     def _detect_kubernetes_environment(self) -> bool:
         """Detect if running in Kubernetes environment"""
@@ -32,7 +31,7 @@ class SecretsManager:
             or os.getenv("KUBERNETES_SERVICE_HOST") is not None
         )
 
-    async def get_secret(self, secret_name: str, key: str) -> Optional[str]:
+    async def get_secret(self, secret_name: str, key: str) -> str | None:
         """
         Get a secret value by name and key
 
@@ -67,14 +66,14 @@ class SecretsManager:
 
         return secret_value
 
-    async def _get_kubernetes_secret(self, secret_name: str, key: str) -> Optional[str]:
+    async def _get_kubernetes_secret(self, secret_name: str, key: str) -> str | None:
         """Get secret from Kubernetes secrets"""
         try:
             # Kubernetes mounts secrets as files in /var/run/secrets/
             secret_path = Path(f"/var/run/secrets/{secret_name}/{key}")
 
             if secret_path.exists():
-                with open(secret_path, "r") as f:
+                with open(secret_path) as f:
                     return f.read().strip()
 
             # Alternative: try mounted secrets in common locations
@@ -86,7 +85,7 @@ class SecretsManager:
 
             for alt_path in alt_paths:
                 if alt_path.exists():
-                    with open(alt_path, "r") as f:
+                    with open(alt_path) as f:
                         return f.read().strip()
 
             # If direct file access fails, try kubectl approach (requires service account)
@@ -94,16 +93,15 @@ class SecretsManager:
 
         except Exception as e:
             logger.error(
-                f"Failed to get Kubernetes secret {secret_name}:{key}: {str(e)}"
+                f"Failed to get Kubernetes secret {secret_name}:{key}: {e!s}"
             )
             return None
 
     async def _get_secret_via_kubernetes_api(
         self, secret_name: str, key: str
-    ) -> Optional[str]:
+    ) -> str | None:
         """Get secret via Kubernetes API (requires appropriate RBAC)"""
         try:
-            import asyncio
 
             import aiohttp
 
@@ -112,13 +110,13 @@ class SecretsManager:
             if not os.path.exists(token_path):
                 return None
 
-            with open(token_path, "r") as f:
+            with open(token_path) as f:
                 token = f.read().strip()
 
             # Get namespace
             namespace_path = "/var/run/secrets/kubernetes.io/serviceaccount/namespace"
             if os.path.exists(namespace_path):
-                with open(namespace_path, "r") as f:
+                with open(namespace_path) as f:
                     namespace = f.read().strip()
             else:
                 namespace = os.getenv("KUBERNETES_NAMESPACE", "default")
@@ -147,12 +145,12 @@ class SecretsManager:
 
         except Exception as e:
             logger.error(
-                f"Failed to get secret via K8s API {secret_name}:{key}: {str(e)}"
+                f"Failed to get secret via K8s API {secret_name}:{key}: {e!s}"
             )
 
         return None
 
-    def _get_environment_secret(self, secret_name: str, key: str) -> Optional[str]:
+    def _get_environment_secret(self, secret_name: str, key: str) -> str | None:
         """Get secret from environment variables"""
 
         # Map secret names and keys to Vault environment variable patterns
@@ -201,7 +199,7 @@ class SecretsManager:
 
         return None
 
-    async def get_ai_provider_config(self, provider_name: str) -> Dict[str, Any]:
+    async def get_ai_provider_config(self, provider_name: str) -> dict[str, Any]:
         """
         Get AI provider configuration with secrets
 
@@ -282,7 +280,7 @@ class SecretsManager:
 
         return config
 
-    async def validate_secrets(self) -> Dict[str, bool]:
+    async def validate_secrets(self) -> dict[str, bool]:
         """
         Validate that required secrets are available
 
@@ -306,7 +304,7 @@ class SecretsManager:
         logger.info(f"Secret validation results: {validation_results}")
         return validation_results
 
-    def get_database_config(self) -> Dict[str, Any]:
+    def get_database_config(self) -> dict[str, Any]:
         """Get database configuration from environment/secrets"""
         db_type = os.getenv("TINAA_DB_TYPE", "sqlite")
 
@@ -315,7 +313,7 @@ class SecretsManager:
                 "type": "sqlite",
                 "path": os.getenv("TINAA_DB_PATH", "/mnt/workspace/tinaa.db"),
             }
-        elif db_type == "postgresql":
+        if db_type == "postgresql":
             return {
                 "type": "postgresql",
                 "host": os.getenv("POSTGRES_HOST", "localhost"),
@@ -333,7 +331,7 @@ class SecretsManager:
         self.secrets_cache.clear()
         logger.info("Secrets cache cleared")
 
-    async def get_git_config(self, auth_type: str = "auto") -> Dict[str, Any]:
+    async def get_git_config(self, auth_type: str = "auto") -> dict[str, Any]:
         """
         Get git configuration with credentials
 
@@ -369,7 +367,7 @@ class SecretsManager:
 
         return config
 
-    async def _get_git_pat_config(self) -> Optional[Dict[str, Any]]:
+    async def _get_git_pat_config(self) -> dict[str, Any] | None:
         """Get Personal Access Token configuration"""
         # Try to get PAT from secrets
         pat_token = await self.get_secret("tinaa-git-secret", "pat-token")
@@ -390,7 +388,7 @@ class SecretsManager:
 
         return None
 
-    async def _get_github_app_config(self) -> Optional[Dict[str, Any]]:
+    async def _get_github_app_config(self) -> dict[str, Any] | None:
         """Get GitHub App authentication configuration"""
         app_id = await self.get_secret("tinaa-github-app-secret", "app-id")
         private_key = await self.get_secret("tinaa-github-app-secret", "private-key")
@@ -435,7 +433,7 @@ class SecretsManager:
         return secret_value is not None
 
     async def create_or_update_secret(
-        self, secret_name: str, data: Dict[str, str]
+        self, secret_name: str, data: dict[str, str]
     ) -> bool:
         """
         Create or update a Kubernetes secret
@@ -450,20 +448,19 @@ class SecretsManager:
         try:
             if self.is_kubernetes:
                 return await self._create_kubernetes_secret(secret_name, data)
-            else:
-                # In non-Kubernetes environments, store as environment variables
-                for key, value in data.items():
-                    env_name = f"{secret_name.upper().replace('-', '_')}_{key.upper().replace('-', '_')}"
-                    os.environ[env_name] = value
-                    logger.info(f"Set environment variable: {env_name}")
-                return True
+            # In non-Kubernetes environments, store as environment variables
+            for key, value in data.items():
+                env_name = f"{secret_name.upper().replace('-', '_')}_{key.upper().replace('-', '_')}"
+                os.environ[env_name] = value
+                logger.info(f"Set environment variable: {env_name}")
+            return True
 
         except Exception as e:
-            logger.error(f"Failed to create/update secret {secret_name}: {str(e)}")
+            logger.error(f"Failed to create/update secret {secret_name}: {e!s}")
             return False
 
     async def _create_kubernetes_secret(
-        self, secret_name: str, data: Dict[str, str]
+        self, secret_name: str, data: dict[str, str]
     ) -> bool:
         """Create or update a Kubernetes secret via API"""
         try:
@@ -475,13 +472,13 @@ class SecretsManager:
                 logger.error("Service account token not found")
                 return False
 
-            with open(token_path, "r") as f:
+            with open(token_path) as f:
                 token = f.read().strip()
 
             # Get namespace
             namespace_path = "/var/run/secrets/kubernetes.io/serviceaccount/namespace"
             if os.path.exists(namespace_path):
-                with open(namespace_path, "r") as f:
+                with open(namespace_path) as f:
                     namespace = f.read().strip()
             else:
                 namespace = os.getenv("KUBERNETES_NAMESPACE", "default")
@@ -543,7 +540,7 @@ class SecretsManager:
                         for k in keys_to_remove:
                             del self.secrets_cache[k]
                         return True
-                    elif response.status == 404:
+                    if response.status == 404:
                         # Secret doesn't exist, create it
                         create_url = f"https://{k8s_host}:{k8s_port}/api/v1/namespaces/{namespace}/secrets"
                         async with session.post(
@@ -554,12 +551,11 @@ class SecretsManager:
                                     f"Successfully created Kubernetes secret: {secret_name}"
                                 )
                                 return True
-                            else:
-                                error_text = await create_response.text()
-                                logger.error(
-                                    f"Failed to create secret {secret_name}: {create_response.status} - {error_text}"
-                                )
-                                return False
+                            error_text = await create_response.text()
+                            logger.error(
+                                f"Failed to create secret {secret_name}: {create_response.status} - {error_text}"
+                            )
+                            return False
                     else:
                         error_text = await response.text()
                         logger.error(
@@ -569,11 +565,11 @@ class SecretsManager:
 
         except Exception as e:
             logger.error(
-                f"Exception creating Kubernetes secret {secret_name}: {str(e)}"
+                f"Exception creating Kubernetes secret {secret_name}: {e!s}"
             )
             return False
 
-    async def validate_git_access(self) -> Dict[str, Any]:
+    async def validate_git_access(self) -> dict[str, Any]:
         """
         Validate git access with available credentials
 
@@ -605,7 +601,7 @@ class SecretsManager:
         logger.info(f"Git access validation: {validation_results}")
         return validation_results
 
-    def get_environment_info(self) -> Dict[str, Any]:
+    def get_environment_info(self) -> dict[str, Any]:
         """Get information about the current environment"""
         return {
             "is_kubernetes": self.is_kubernetes,
@@ -629,16 +625,16 @@ secrets_manager = SecretsManager()
 
 
 # Convenience functions
-async def get_openai_config() -> Dict[str, Any]:
+async def get_openai_config() -> dict[str, Any]:
     """Get OpenAI configuration with API key"""
     return await secrets_manager.get_ai_provider_config("openai")
 
 
-async def get_anthropic_config() -> Dict[str, Any]:
+async def get_anthropic_config() -> dict[str, Any]:
     """Get Anthropic configuration with API key"""
     return await secrets_manager.get_ai_provider_config("anthropic")
 
 
-async def get_ollama_config() -> Dict[str, Any]:
+async def get_ollama_config() -> dict[str, Any]:
     """Get Ollama configuration"""
     return await secrets_manager.get_ai_provider_config("ollama")

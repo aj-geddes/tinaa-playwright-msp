@@ -13,17 +13,15 @@ import logging
 # Import collaborative prompts
 import sys
 from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 from fastmcp import Context, FastMCP
 
 from app.ai_integration import AIManager
-from app.mcp_handler import get_controller
 from app.workspace_manager import WorkspaceManager
 
 sys.path.append("/mnt/c/Users/Munso/tinaa-playwright-msp/prompts")
-from collaborative_prompts import CollaborativePrompts, PromptTemplates
+from collaborative_prompts import CollaborativePrompts
 
 logger = logging.getLogger("tinaa.mcp_server")
 
@@ -38,11 +36,11 @@ workspace_manager = None
 class CollaborativeSession:
     """Manages collaborative test design sessions between TINAA and IDE"""
 
-    def __init__(self, session_id: str, project_context: Dict[str, Any]):
+    def __init__(self, session_id: str, project_context: dict[str, Any]):
         self.session_id = session_id
         self.project_context = project_context
-        self.conversation_history: List[Dict[str, Any]] = []
-        self.test_design: Dict[str, Any] = {
+        self.conversation_history: list[dict[str, Any]] = []
+        self.test_design: dict[str, Any] = {
             "requirements": {},
             "test_scenarios": [],
             "current_playbook": None,
@@ -51,7 +49,7 @@ class CollaborativeSession:
         }
         self.created_at = datetime.now()
 
-    def add_interaction(self, source: str, message: str, data: Optional[Dict] = None):
+    def add_interaction(self, source: str, message: str, data: dict | None = None):
         """Add an interaction to the session history"""
         self.conversation_history.append(
             {
@@ -79,7 +77,7 @@ Current Status: {"Active" if len(self.conversation_history) > 0 else "Initialize
 
 
 # Session storage
-active_sessions: Dict[str, CollaborativeSession] = {}
+active_sessions: dict[str, CollaborativeSession] = {}
 
 
 async def initialize_global_components():
@@ -102,10 +100,10 @@ async def initialize_global_components():
 async def start_collaborative_session(
     project_name: str,
     project_description: str = "",
-    target_url: Optional[str] = None,
-    existing_code_context: Optional[str] = None,
+    target_url: str | None = None,
+    existing_code_context: str | None = None,
     ctx: Context = None,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Start a collaborative test design session between TINAA and your IDE for intelligent test planning.
 
@@ -174,8 +172,8 @@ async def start_collaborative_session(
 
 @tinaa_mcp.tool()
 async def answer_discovery_questions(
-    session_id: str, answers: Dict[str, str], ctx: Context = None
-) -> Dict[str, Any]:
+    session_id: str, answers: dict[str, str], ctx: Context = None
+) -> dict[str, Any]:
     """
     Process discovery question answers and generate intelligent test requirements and scenarios.
 
@@ -249,10 +247,10 @@ async def answer_discovery_questions(
 @tinaa_mcp.tool()
 async def refine_test_scenarios(
     session_id: str,
-    scenario_feedback: Dict[str, str],
-    additional_requirements: Optional[str] = None,
+    scenario_feedback: dict[str, str],
+    additional_requirements: str | None = None,
     ctx: Context = None,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Refine and improve test scenarios based on collaborative feedback from you and your IDE.
 
@@ -323,9 +321,9 @@ async def refine_test_scenarios(
 @tinaa_mcp.tool()
 async def create_comprehensive_playbook(
     session_id: str,
-    playbook_preferences: Optional[Dict[str, Any]] = None,
+    playbook_preferences: dict[str, Any] | None = None,
     ctx: Context = None,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Generate a comprehensive, executable test playbook from your collaborative design session.
 
@@ -410,7 +408,7 @@ async def create_comprehensive_playbook(
 
 
 @tinaa_mcp.tool()
-async def get_session_status(session_id: str, ctx: Context = None) -> Dict[str, Any]:
+async def get_session_status(session_id: str, ctx: Context = None) -> dict[str, Any]:
     """
     Retrieve comprehensive status and progress information for a collaborative session.
 
@@ -457,10 +455,10 @@ async def get_session_status(session_id: str, ctx: Context = None) -> Dict[str, 
 @tinaa_mcp.tool()
 async def internal_problem_solving(
     problem_description: str,
-    context: Optional[Dict[str, Any]] = None,
-    session_id: Optional[str] = None,
+    context: dict[str, Any] | None = None,
+    session_id: str | None = None,
     ctx: Context = None,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get intelligent AI assistance for solving testing challenges and automation problems.
 
@@ -544,9 +542,9 @@ async def internal_problem_solving(
 async def collaborative_code_review(
     code: str,
     review_focus: str = "general",
-    session_id: Optional[str] = None,
+    session_id: str | None = None,
     ctx: Context = None,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get comprehensive AI-powered code review for your Playwright test code with collaborative insights.
 
@@ -622,18 +620,6 @@ async def collaborative_code_review(
 
 
 # Import and register workspace management tools
-from app.workspace_mcp_tools import clone_repository as workspace_clone_repository
-from app.workspace_mcp_tools import create_project as workspace_create_project
-from app.workspace_mcp_tools import (
-    create_project_from_url as workspace_create_project_from_url,
-)
-from app.workspace_mcp_tools import delete_project as workspace_delete_project
-from app.workspace_mcp_tools import get_project as workspace_get_project
-from app.workspace_mcp_tools import get_repository_info as workspace_get_repository_info
-from app.workspace_mcp_tools import (
-    get_workspace_status as workspace_get_workspace_status,
-)
-from app.workspace_mcp_tools import list_projects as workspace_list_projects
 
 # Note: Workspace tools are already registered with their own MCP instance
 # They don't need to be re-registered with tinaa_mcp
@@ -865,8 +851,8 @@ This comprehensive guide provides structured approaches to common testing challe
 
 
 async def _generate_discovery_questions(
-    project_context: Dict[str, Any],
-) -> List[Dict[str, str]]:
+    project_context: dict[str, Any],
+) -> list[dict[str, str]]:
     """Generate intelligent discovery questions based on project context"""
     await initialize_global_components()
 
@@ -920,8 +906,8 @@ async def _generate_discovery_questions(
 
 
 async def _analyze_answers_and_generate_requirements(
-    session: CollaborativeSession, answers: Dict[str, str]
-) -> Dict[str, Any]:
+    session: CollaborativeSession, answers: dict[str, str]
+) -> dict[str, Any]:
     """Analyze discovery answers and generate test requirements using collaborative prompts"""
     await initialize_global_components()
 
@@ -954,8 +940,8 @@ async def _analyze_answers_and_generate_requirements(
 
 
 async def _generate_test_scenarios(
-    session: CollaborativeSession, requirements: Dict[str, Any]
-) -> List[Dict[str, Any]]:
+    session: CollaborativeSession, requirements: dict[str, Any]
+) -> list[dict[str, Any]]:
     """Generate test scenarios based on requirements using collaborative prompts"""
     await initialize_global_components()
 
@@ -1003,9 +989,9 @@ async def _generate_test_scenarios(
 
 async def _refine_scenarios_with_ai(
     session: CollaborativeSession,
-    feedback: Dict[str, str],
-    additional_requirements: Optional[str],
-) -> List[Dict[str, Any]]:
+    feedback: dict[str, str],
+    additional_requirements: str | None,
+) -> list[dict[str, Any]]:
     """Refine scenarios based on feedback using collaborative prompts"""
     await initialize_global_components()
 

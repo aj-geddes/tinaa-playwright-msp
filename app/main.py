@@ -5,10 +5,9 @@ TINAA - Testing Intelligence Network Automation Assistant - MCP Integration with
 import io
 import logging
 import os
-import sys
 import threading
 from contextlib import redirect_stderr, redirect_stdout
-from typing import Any, Dict, Optional
+from typing import Any
 
 from fastmcp import Context, FastMCP
 
@@ -85,15 +84,14 @@ async def start_lsp_server(
                 thread = threading.Thread(target=start_server, daemon=True)
                 thread.start()
 
-                logger.info(f"LSP server started in background thread")
+                logger.info("LSP server started in background thread")
                 return "LSP server started successfully"
-            else:
-                if ctx:
-                    await ctx.info("Using standard IO mode")
-                # We can't really use this mode from MCP
-                return "Standard IO mode not supported for MCP integration. Use TCP mode instead."
+            if ctx:
+                await ctx.info("Using standard IO mode")
+            # We can't really use this mode from MCP
+            return "Standard IO mode not supported for MCP integration. Use TCP mode instead."
         except Exception as e:
-            error_msg = f"Failed to start LSP server: {str(e)}"
+            error_msg = f"Failed to start LSP server: {e!s}"
             logger.error(error_msg)
             if ctx:
                 await ctx.error(error_msg)
@@ -103,7 +101,7 @@ async def start_lsp_server(
 @mcp.tool()
 async def test_browser_connectivity(
     url: str = "https://example.com", ctx: Context = None
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Test TINAA's browser automation capabilities by visiting a URL and capturing basic information.
 
@@ -181,7 +179,7 @@ async def test_browser_connectivity(
             return result
 
     except Exception as e:
-        error_msg = f"Browser connectivity test failed: {str(e)}"
+        error_msg = f"Browser connectivity test failed: {e!s}"
         logger.error(error_msg)
 
         if ctx:
@@ -234,7 +232,7 @@ async def analyze_script(script_path: str, ctx: Context = None) -> dict:
     logger.info(f"Analyzing script: {script_path}")
 
     try:
-        with open(script_path, "r") as f:
+        with open(script_path) as f:
             content = f.read()
 
         # Use regex-based diagnostics
@@ -262,7 +260,7 @@ async def analyze_script(script_path: str, ctx: Context = None) -> dict:
 
         return result
     except Exception as e:
-        error_msg = f"Failed to analyze script: {str(e)}"
+        error_msg = f"Failed to analyze script: {e!s}"
         logger.error(f"Error: {error_msg}")
         if ctx:
             await ctx.error(error_msg)

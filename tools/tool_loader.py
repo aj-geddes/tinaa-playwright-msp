@@ -9,7 +9,7 @@ import inspect
 import logging
 import os
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger("tinaa-playwright-msp.tools")
 
@@ -20,11 +20,11 @@ class PlaywrightTool:
     description: str = "Base tool class"
     
     @classmethod
-    async def execute(cls, browser, page, params: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(cls, browser, page, params: dict[str, Any]) -> dict[str, Any]:
         """Execute the tool with Playwright browser and page"""
         raise NotImplementedError("Tool must implement execute method")
 
-def load_tools() -> Dict[str, PlaywrightTool]:
+def load_tools() -> dict[str, PlaywrightTool]:
     """Load all tools from the tools directory"""
     tools = {}
     tools_dir = Path(__file__).parent

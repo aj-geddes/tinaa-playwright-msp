@@ -3,10 +3,7 @@
 Test script for MCP server functionality
 """
 import asyncio
-import json
 import sys
-
-from fastmcp import FastMCP
 
 
 async def test_mcp_connection():
@@ -137,7 +134,7 @@ async def test_screenshot_function():
             screenshot_result = await take_page_screenshot()
 
             if screenshot_result.get("success"):
-                print(f"✓ Screenshot captured successfully")
+                print("✓ Screenshot captured successfully")
                 print(f"  Format: {screenshot_result.get('format')}")
                 print(f"  Path: {screenshot_result.get('path')}")
                 print(f"  Size: {len(screenshot_result.get('screenshot', ''))} bytes")
@@ -145,9 +142,8 @@ async def test_screenshot_function():
                 print(f"✗ Screenshot failed: {screenshot_result.get('error')}")
 
             return screenshot_result.get("success", False)
-        else:
-            print("✗ Could not navigate to page for screenshot")
-            return False
+        print("✗ Could not navigate to page for screenshot")
+        return False
 
     except Exception as e:
         print(f"✗ Error taking screenshot: {e}")

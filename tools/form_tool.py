@@ -2,7 +2,7 @@
 Form Tool - Interacts with forms on web pages
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from .tool_loader import PlaywrightTool
 
@@ -14,7 +14,7 @@ class FormTool(PlaywrightTool):
     description = "Fills and submits forms on web pages"
     
     @classmethod
-    async def execute(cls, browser, page, params: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(cls, browser, page, params: dict[str, Any]) -> dict[str, Any]:
         """
         Fill and optionally submit a form
         
@@ -72,7 +72,7 @@ class FormTool(PlaywrightTool):
                 except Exception as e:
                     return {
                         "status": "error",
-                        "message": f"Failed to click submit button: {str(e)}",
+                        "message": f"Failed to click submit button: {e!s}",
                         "filled_fields": filled_fields,
                         "failed_fields": failed_fields
                     }
@@ -85,17 +85,16 @@ class FormTool(PlaywrightTool):
                 
                 if submit_button:
                     await submit_button.click()
+                # Try to submit the form via JavaScript
+                elif form_selector:
+                    await page.evaluate(f"document.querySelector('{form_selector}').submit()")
                 else:
-                    # Try to submit the form via JavaScript
-                    if form_selector:
-                        await page.evaluate(f"document.querySelector('{form_selector}').submit()")
-                    else:
-                        return {
-                            "status": "error",
-                            "message": "Could not find a way to submit the form",
-                            "filled_fields": filled_fields,
-                            "failed_fields": failed_fields
-                        }
+                    return {
+                        "status": "error",
+                        "message": "Could not find a way to submit the form",
+                        "filled_fields": filled_fields,
+                        "failed_fields": failed_fields
+                    }
         
         return {
             "status": "success",

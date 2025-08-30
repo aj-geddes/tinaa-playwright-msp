@@ -4,7 +4,6 @@ Direct test of MCP server via stdio protocol
 """
 import json
 import subprocess
-import time
 
 
 def send_mcp_request(request):
@@ -108,7 +107,7 @@ def test_direct_navigation():
         result = asyncio.run(run_nav())
 
         if result and result.get("success"):
-            print(f"✓ Navigation successful")
+            print("✓ Navigation successful")
             print(f"  URL: {result.get('url')}")
             print(f"  Title: {result.get('title')}")
             assert True
@@ -118,7 +117,7 @@ def test_direct_navigation():
 
     except Exception as e:
         print(f"✗ Error: {e}")
-        assert False, f"Error during navigation: {str(e)}"
+        assert False, f"Error during navigation: {e!s}"
 
 
 def main():

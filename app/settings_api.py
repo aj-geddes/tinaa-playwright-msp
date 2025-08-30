@@ -6,14 +6,11 @@ Secure API endpoints for managing user credentials and configuration.
 Handles Kubernetes secret creation and validation.
 """
 
-import asyncio
-import base64
-import json
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import BaseModel, Field
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 
 from app.ai_integration import AIManager
 from app.git_auth import GitAuthenticator
@@ -32,44 +29,44 @@ git_authenticator = GitAuthenticator()
 
 class AIProviderConfig(BaseModel):
     enabled: bool = False
-    apiKey: Optional[str] = None
-    baseUrl: Optional[str] = None
-    defaultModel: Optional[str] = None
+    apiKey: str | None = None
+    baseUrl: str | None = None
+    defaultModel: str | None = None
 
 
 class GitPATConfig(BaseModel):
     enabled: bool = False
-    token: Optional[str] = None
+    token: str | None = None
     username: str = "git"
 
 
 class GitHubAppConfig(BaseModel):
     enabled: bool = False
-    appId: Optional[str] = None
-    installationId: Optional[str] = None
-    privateKey: Optional[str] = None
+    appId: str | None = None
+    installationId: str | None = None
+    privateKey: str | None = None
 
 
 class GitConfig(BaseModel):
-    pat: Optional[GitPATConfig] = None
-    githubApp: Optional[GitHubAppConfig] = None
+    pat: GitPATConfig | None = None
+    githubApp: GitHubAppConfig | None = None
 
 
 class CredentialConfig(BaseModel):
-    openai: Optional[AIProviderConfig] = None
-    anthropic: Optional[AIProviderConfig] = None
-    ollama: Optional[AIProviderConfig] = None
-    git: Optional[GitConfig] = None
+    openai: AIProviderConfig | None = None
+    anthropic: AIProviderConfig | None = None
+    ollama: AIProviderConfig | None = None
+    git: GitConfig | None = None
 
 
 class TestCredentialRequest(BaseModel):
     provider: str
-    credType: Optional[str] = None
-    config: Dict[str, Any]
+    credType: str | None = None
+    config: dict[str, Any]
 
 
 @router.get("/credentials")
-async def get_current_credentials() -> Dict[str, Any]:
+async def get_current_credentials() -> dict[str, Any]:
     """
     Get current credential configuration (without sensitive values).
 
@@ -182,7 +179,7 @@ async def get_current_credentials() -> Dict[str, Any]:
 
 
 @router.post("/credentials")
-async def save_credentials(config: CredentialConfig) -> Dict[str, Any]:
+async def save_credentials(config: CredentialConfig) -> dict[str, Any]:
     """
     Save credential configuration to Kubernetes secrets.
 
@@ -280,12 +277,12 @@ async def save_credentials(config: CredentialConfig) -> Dict[str, Any]:
     except Exception as e:
         logger.error(f"Error saving credentials: {e}")
         raise HTTPException(
-            status_code=500, detail=f"Failed to save credentials: {str(e)}"
+            status_code=500, detail=f"Failed to save credentials: {e!s}"
         )
 
 
 @router.post("/test-credential")
-async def test_credential(request: TestCredentialRequest) -> Dict[str, Any]:
+async def test_credential(request: TestCredentialRequest) -> dict[str, Any]:
     """
     Test a credential configuration before saving.
 
@@ -299,14 +296,14 @@ async def test_credential(request: TestCredentialRequest) -> Dict[str, Any]:
 
         if provider == "openai":
             return await _test_openai_credentials(config_data)
-        elif provider == "anthropic":
+        if provider == "anthropic":
             return await _test_anthropic_credentials(config_data)
-        elif provider == "ollama":
+        if provider == "ollama":
             return await _test_ollama_credentials(config_data)
-        elif provider == "git":
+        if provider == "git":
             if cred_type == "pat":
                 return await _test_git_pat_credentials(config_data.get("pat", {}))
-            elif cred_type == "githubApp":
+            if cred_type == "githubApp":
                 return await _test_github_app_credentials(
                     config_data.get("githubApp", {})
                 )
@@ -315,10 +312,10 @@ async def test_credential(request: TestCredentialRequest) -> Dict[str, Any]:
 
     except Exception as e:
         logger.error(f"Error testing credential for {provider}: {e}")
-        return {"success": False, "message": f"Failed to test credential: {str(e)}"}
+        return {"success": False, "message": f"Failed to test credential: {e!s}"}
 
 
-async def _test_openai_credentials(config: Dict[str, Any]) -> Dict[str, Any]:
+async def _test_openai_credentials(config: dict[str, Any]) -> dict[str, Any]:
     """Test OpenAI API credentials"""
     try:
         api_key = config.get("apiKey")
@@ -339,17 +336,16 @@ async def _test_openai_credentials(config: Dict[str, Any]) -> Dict[str, Any]:
 
         if result and "OK" in result.upper():
             return {"success": True, "message": "OpenAI connection successful"}
-        else:
-            return {
-                "success": False,
-                "message": "OpenAI API responded but with unexpected result",
-            }
+        return {
+            "success": False,
+            "message": "OpenAI API responded but with unexpected result",
+        }
 
     except Exception as e:
-        return {"success": False, "message": f"OpenAI connection failed: {str(e)}"}
+        return {"success": False, "message": f"OpenAI connection failed: {e!s}"}
 
 
-async def _test_anthropic_credentials(config: Dict[str, Any]) -> Dict[str, Any]:
+async def _test_anthropic_credentials(config: dict[str, Any]) -> dict[str, Any]:
     """Test Anthropic API credentials"""
     try:
         api_key = config.get("apiKey")
@@ -370,17 +366,16 @@ async def _test_anthropic_credentials(config: Dict[str, Any]) -> Dict[str, Any]:
 
         if result and "OK" in result.upper():
             return {"success": True, "message": "Anthropic connection successful"}
-        else:
-            return {
-                "success": False,
-                "message": "Anthropic API responded but with unexpected result",
-            }
+        return {
+            "success": False,
+            "message": "Anthropic API responded but with unexpected result",
+        }
 
     except Exception as e:
-        return {"success": False, "message": f"Anthropic connection failed: {str(e)}"}
+        return {"success": False, "message": f"Anthropic connection failed: {e!s}"}
 
 
-async def _test_ollama_credentials(config: Dict[str, Any]) -> Dict[str, Any]:
+async def _test_ollama_credentials(config: dict[str, Any]) -> dict[str, Any]:
     """Test Ollama connection"""
     try:
         base_url = config.get("baseUrl", "http://ollama:11434")
@@ -404,17 +399,16 @@ async def _test_ollama_credentials(config: Dict[str, Any]) -> Dict[str, Any]:
                     "success": True,
                     "message": f"Ollama connection successful, {len(models)} models available",
                 }
-            else:
-                return {
-                    "success": False,
-                    "message": f"Ollama returned status {response.status_code}",
-                }
+            return {
+                "success": False,
+                "message": f"Ollama returned status {response.status_code}",
+            }
 
     except Exception as e:
-        return {"success": False, "message": f"Ollama connection failed: {str(e)}"}
+        return {"success": False, "message": f"Ollama connection failed: {e!s}"}
 
 
-async def _test_git_pat_credentials(config: Dict[str, Any]) -> Dict[str, Any]:
+async def _test_git_pat_credentials(config: dict[str, Any]) -> dict[str, Any]:
     """Test Git PAT credentials"""
     try:
         token = config.get("token")
@@ -441,19 +435,18 @@ async def _test_git_pat_credentials(config: Dict[str, Any]) -> Dict[str, Any]:
                     "success": True,
                     "message": f"GitHub PAT valid for user: {user_data.get('login', 'unknown')}",
                 }
-            elif response.status_code == 401:
+            if response.status_code == 401:
                 return {"success": False, "message": "Invalid GitHub PAT token"}
-            else:
-                return {
-                    "success": False,
-                    "message": f"GitHub API returned status {response.status_code}",
-                }
+            return {
+                "success": False,
+                "message": f"GitHub API returned status {response.status_code}",
+            }
 
     except Exception as e:
-        return {"success": False, "message": f"GitHub PAT test failed: {str(e)}"}
+        return {"success": False, "message": f"GitHub PAT test failed: {e!s}"}
 
 
-async def _test_github_app_credentials(config: Dict[str, Any]) -> Dict[str, Any]:
+async def _test_github_app_credentials(config: dict[str, Any]) -> dict[str, Any]:
     """Test GitHub App credentials"""
     try:
         app_id = config.get("appId")
@@ -476,18 +469,17 @@ async def _test_github_app_credentials(config: Dict[str, Any]) -> Dict[str, Any]
 
         if result.get("success"):
             return {"success": True, "message": "GitHub App credentials valid"}
-        else:
-            return {
-                "success": False,
-                "message": result.get("error", "GitHub App authentication failed"),
-            }
+        return {
+            "success": False,
+            "message": result.get("error", "GitHub App authentication failed"),
+        }
 
     except Exception as e:
-        return {"success": False, "message": f"GitHub App test failed: {str(e)}"}
+        return {"success": False, "message": f"GitHub App test failed: {e!s}"}
 
 
 @router.get("/provider-status")
-async def get_provider_status() -> Dict[str, Any]:
+async def get_provider_status() -> dict[str, Any]:
     """
     Get the current status of all configured providers.
 

@@ -10,13 +10,11 @@ Provides AI-powered features including:
 - Test optimization recommendations
 """
 
-import asyncio
 import json
 import logging
-import os
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 import aiofiles
 
@@ -41,7 +39,7 @@ logger = logging.getLogger("tinaa.ai_integration")
 class AIProvider:
     """Base class for AI providers"""
 
-    def __init__(self, provider_type: str, config: Dict[str, Any]):
+    def __init__(self, provider_type: str, config: dict[str, Any]):
         self.provider_type = provider_type
         self.config = config
         self.client = None
@@ -56,7 +54,7 @@ class AIProvider:
         """Generate a text completion"""
         raise NotImplementedError
 
-    async def analyze_code(self, code: str, context: str = "") -> Dict[str, Any]:
+    async def analyze_code(self, code: str, context: str = "") -> dict[str, Any]:
         """Analyze code and provide insights"""
         raise NotImplementedError
 
@@ -64,7 +62,7 @@ class AIProvider:
 class OpenAIProvider(AIProvider):
     """OpenAI integration"""
 
-    def __init__(self, config: Dict[str, Any]):
+    def __init__(self, config: dict[str, Any]):
         super().__init__("openai", config)
 
     async def initialize(self):
@@ -98,10 +96,10 @@ class OpenAIProvider(AIProvider):
             return response.choices[0].message.content
 
         except Exception as e:
-            logger.error(f"OpenAI completion failed: {str(e)}")
+            logger.error(f"OpenAI completion failed: {e!s}")
             raise
 
-    async def analyze_code(self, code: str, context: str = "") -> Dict[str, Any]:
+    async def analyze_code(self, code: str, context: str = "") -> dict[str, Any]:
         """Analyze code using OpenAI"""
         prompt = f"""
         Analyze the following Playwright test code and provide insights:
@@ -134,7 +132,7 @@ class OpenAIProvider(AIProvider):
 class AnthropicProvider(AIProvider):
     """Anthropic Claude integration"""
 
-    def __init__(self, config: Dict[str, Any]):
+    def __init__(self, config: dict[str, Any]):
         super().__init__("anthropic", config)
 
     async def initialize(self):
@@ -167,10 +165,10 @@ class AnthropicProvider(AIProvider):
             return response.content[0].text
 
         except Exception as e:
-            logger.error(f"Anthropic completion failed: {str(e)}")
+            logger.error(f"Anthropic completion failed: {e!s}")
             raise
 
-    async def analyze_code(self, code: str, context: str = "") -> Dict[str, Any]:
+    async def analyze_code(self, code: str, context: str = "") -> dict[str, Any]:
         """Analyze code using Anthropic Claude"""
         prompt = f"""
         As an expert in Playwright testing, analyze this code:
@@ -203,7 +201,7 @@ class AnthropicProvider(AIProvider):
 class OllamaProvider(AIProvider):
     """Ollama local LLM integration"""
 
-    def __init__(self, config: Dict[str, Any]):
+    def __init__(self, config: dict[str, Any]):
         super().__init__("ollama", config)
 
     async def initialize(self):
@@ -234,7 +232,7 @@ class OllamaProvider(AIProvider):
                 return result.get("response", "")
 
         except Exception as e:
-            logger.error(f"Ollama completion failed: {str(e)}")
+            logger.error(f"Ollama completion failed: {e!s}")
             raise
 
 
@@ -243,8 +241,8 @@ class AIManager:
 
     def __init__(self, ai_cache_path: str = "/app/ai-cache"):
         self.ai_cache_path = Path(ai_cache_path)
-        self.providers: Dict[str, AIProvider] = {}
-        self.active_provider: Optional[str] = None
+        self.providers: dict[str, AIProvider] = {}
+        self.active_provider: str | None = None
 
         # Try to create cache directory, ignore if permission denied
         try:
@@ -297,7 +295,7 @@ class AIManager:
         if not self.providers:
             logger.warning("No AI providers could be initialized")
 
-    async def add_provider(self, name: str, provider_type: str, config: Dict[str, Any]):
+    async def add_provider(self, name: str, provider_type: str, config: dict[str, Any]):
         """Add and initialize an AI provider"""
         try:
             if provider_type == "openai":
@@ -319,7 +317,7 @@ class AIManager:
             logger.info(f"Added AI provider: {name} ({provider_type})")
 
         except Exception as e:
-            logger.error(f"Failed to add provider {name}: {str(e)}")
+            logger.error(f"Failed to add provider {name}: {e!s}")
             raise
 
     def set_active_provider(self, name: str):
@@ -330,8 +328,8 @@ class AIManager:
         logger.info(f"Active AI provider set to: {name}")
 
     async def generate_playbook(
-        self, project_context: Dict[str, Any], requirements: str = ""
-    ) -> Dict[str, Any]:
+        self, project_context: dict[str, Any], requirements: str = ""
+    ) -> dict[str, Any]:
         """Generate a test playbook using AI"""
         if not self.active_provider:
             raise Exception("No active AI provider configured")
@@ -385,15 +383,15 @@ class AIManager:
             return playbook
 
         except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse AI-generated playbook: {str(e)}")
+            logger.error(f"Failed to parse AI-generated playbook: {e!s}")
             raise Exception("AI generated invalid playbook format")
         except Exception as e:
-            logger.error(f"Playbook generation failed: {str(e)}")
+            logger.error(f"Playbook generation failed: {e!s}")
             raise
 
     async def troubleshoot_project(
-        self, project_id: str, error_logs: List[str], test_results: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, project_id: str, error_logs: list[str], test_results: dict[str, Any]
+    ) -> dict[str, Any]:
         """Analyze project issues and provide troubleshooting guidance"""
         if not self.active_provider:
             raise Exception("No active AI provider configured")
@@ -434,12 +432,12 @@ class AIManager:
         except json.JSONDecodeError:
             return {"analysis": response, "format": "text"}
         except Exception as e:
-            logger.error(f"Troubleshooting analysis failed: {str(e)}")
+            logger.error(f"Troubleshooting analysis failed: {e!s}")
             raise
 
     async def optimize_tests(
-        self, project_id: str, test_files: List[Dict[str, str]]
-    ) -> Dict[str, Any]:
+        self, project_id: str, test_files: list[dict[str, str]]
+    ) -> dict[str, Any]:
         """Analyze test files and provide optimization recommendations"""
         if not self.active_provider:
             raise Exception("No active AI provider configured")
@@ -493,7 +491,7 @@ class AIManager:
         return result
 
     async def chat_completion(
-        self, message: str, context: Optional[Dict[str, Any]] = None
+        self, message: str, context: dict[str, Any] | None = None
     ) -> str:
         """Handle chat-style interactions with AI"""
         if not self.active_provider:
@@ -524,7 +522,7 @@ class AIManager:
         return await provider.generate_completion(full_prompt, max_tokens=1500)
 
     async def _cache_playbook(
-        self, playbook: Dict[str, Any], project_id: Optional[str]
+        self, playbook: dict[str, Any], project_id: str | None
     ):
         """Cache generated playbook"""
         cache_file = (
@@ -534,7 +532,7 @@ class AIManager:
         async with aiofiles.open(cache_file, "w") as f:
             await f.write(json.dumps(playbook, indent=2))
 
-    async def _cache_troubleshooting(self, project_id: str, data: Dict[str, Any]):
+    async def _cache_troubleshooting(self, project_id: str, data: dict[str, Any]):
         """Cache troubleshooting results"""
         cache_file = (
             self.ai_cache_path
@@ -543,7 +541,7 @@ class AIManager:
         async with aiofiles.open(cache_file, "w") as f:
             await f.write(json.dumps(data, indent=2))
 
-    async def _cache_optimization(self, project_id: str, data: Dict[str, Any]):
+    async def _cache_optimization(self, project_id: str, data: dict[str, Any]):
         """Cache optimization results"""
         cache_file = (
             self.ai_cache_path
@@ -552,7 +550,7 @@ class AIManager:
         async with aiofiles.open(cache_file, "w") as f:
             await f.write(json.dumps(data, indent=2))
 
-    def get_provider_status(self) -> Dict[str, Any]:
+    def get_provider_status(self) -> dict[str, Any]:
         """Get status of all AI providers"""
         return {
             "providers": {

@@ -2,7 +2,7 @@
 Screenshot Tool - Takes screenshots of web pages
 """
 
-from typing import Any, Dict
+from typing import Any
 
 from .tool_loader import PlaywrightTool
 
@@ -14,7 +14,7 @@ class ScreenshotTool(PlaywrightTool):
     description = "Takes a screenshot of the current page or a specified element"
     
     @classmethod
-    async def execute(cls, browser, page, params: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(cls, browser, page, params: dict[str, Any]) -> dict[str, Any]:
         """
         Take a screenshot of the page or element
         

@@ -3,26 +3,21 @@
 Enhanced MCP handler with progress tracking integration
 """
 import asyncio
-import json
 import logging
-from datetime import datetime
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 # Import original handlers
-from app.mcp_handler import detect_form_fields as _detect_forms
 from app.mcp_handler import fill_form_fields as _fill_forms
-from app.mcp_handler import fill_login_form as _fill_login
 from app.mcp_handler import generate_test_report as _generate_report
 from app.mcp_handler import (
     get_controller,
 )
 from app.mcp_handler import navigate_to_url as _navigate
-from app.mcp_handler import prompt_for_credentials as _prompt_for_credentials
 from app.mcp_handler import run_accessibility_test as _accessibility_test
 from app.mcp_handler import run_exploratory_test as _exploratory_test
 from app.mcp_handler import run_responsive_test as _responsive_test
 from app.mcp_handler import run_security_test as _security_test
-from app.mcp_handler import take_element_screenshot as _element_screenshot
 from app.mcp_handler import take_page_screenshot as _screenshot
 from app.progress_tracker import (
     AccessibilityTestProgress,
@@ -34,7 +29,7 @@ from app.progress_tracker import (
 logger = logging.getLogger("tinaa-enhanced")
 
 # Global progress callback registry
-_progress_callbacks: Dict[str, Callable] = {}
+_progress_callbacks: dict[str, Callable] = {}
 
 
 def register_progress_callback(client_id: str, callback: Callable):
@@ -44,11 +39,10 @@ def register_progress_callback(client_id: str, callback: Callable):
 
 def unregister_progress_callback(client_id: str):
     """Unregister a progress callback for a client"""
-    if client_id in _progress_callbacks:
-        del _progress_callbacks[client_id]
+    _progress_callbacks.pop(client_id, None)
 
 
-async def get_progress_tracker(client_id: Optional[str] = None) -> ProgressTracker:
+async def get_progress_tracker(client_id: str | None = None) -> ProgressTracker:
     """Get a progress tracker with appropriate callback"""
     callback = None
     if client_id and client_id in _progress_callbacks:
@@ -59,7 +53,7 @@ async def get_progress_tracker(client_id: Optional[str] = None) -> ProgressTrack
 # Enhanced handlers with progress tracking
 
 
-async def handle_navigate_to_url(url: str, client_id: Optional[str] = None) -> str:
+async def handle_navigate_to_url(url: str, client_id: str | None = None) -> str:
     """Navigate to URL with progress tracking"""
     tracker = await get_progress_tracker(client_id)
 
@@ -74,7 +68,7 @@ async def handle_navigate_to_url(url: str, client_id: Optional[str] = None) -> s
     return result
 
 
-async def handle_run_exploratory_test(client_id: Optional[str] = None) -> str:
+async def handle_run_exploratory_test(client_id: str | None = None) -> str:
     """Run exploratory test with detailed progress tracking"""
     callback = _progress_callbacks.get(client_id) if client_id else None
     tracker = ExploratoryTestProgress(callback)
@@ -127,11 +121,11 @@ async def handle_run_exploratory_test(client_id: Optional[str] = None) -> str:
         return await progress_wrapper()
 
     except Exception as e:
-        await tracker.error(f"Exploratory test failed: {str(e)}")
+        await tracker.error(f"Exploratory test failed: {e!s}")
         raise
 
 
-async def handle_run_accessibility_test(client_id: Optional[str] = None) -> str:
+async def handle_run_accessibility_test(client_id: str | None = None) -> str:
     """Run accessibility test with detailed progress tracking"""
     callback = _progress_callbacks.get(client_id) if client_id else None
     tracker = AccessibilityTestProgress(callback)
@@ -167,11 +161,11 @@ async def handle_run_accessibility_test(client_id: Optional[str] = None) -> str:
         return result
 
     except Exception as e:
-        await tracker.error(f"Accessibility test failed: {str(e)}")
+        await tracker.error(f"Accessibility test failed: {e!s}")
         raise
 
 
-async def handle_run_responsive_test(client_id: Optional[str] = None) -> str:
+async def handle_run_responsive_test(client_id: str | None = None) -> str:
     """Run responsive test with progress tracking"""
     tracker = await get_progress_tracker(client_id)
 
@@ -190,7 +184,7 @@ async def handle_run_responsive_test(client_id: Optional[str] = None) -> str:
 
 
 async def handle_fill_form_fields(
-    fields: Dict[str, str], client_id: Optional[str] = None
+    fields: dict[str, str], client_id: str | None = None
 ) -> str:
     """Fill form fields with progress tracking"""
     tracker = await get_progress_tracker(client_id)
@@ -221,7 +215,7 @@ class PlaybookExecutor:
         self.client_id = client_id
         self.tracker = None
 
-    async def execute(self, playbook: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(self, playbook: dict[str, Any]) -> dict[str, Any]:
         """Execute a complete playbook"""
         callback = _progress_callbacks.get(self.client_id)
         self.tracker = ProgressTracker(callback)
@@ -257,7 +251,7 @@ class PlaybookExecutor:
                 await self.tracker.success(f"Step {i+1} completed successfully")
 
             except Exception as e:
-                await self.tracker.error(f"Step {i+1} failed: {str(e)}")
+                await self.tracker.error(f"Step {i+1} failed: {e!s}")
                 results.append(
                     {
                         "step_id": step_id,
@@ -281,7 +275,7 @@ class PlaybookExecutor:
             "summary": self.tracker.get_summary(),
         }
 
-    async def _execute_step(self, action: str, params: Dict[str, Any]) -> Any:
+    async def _execute_step(self, action: str, params: dict[str, Any]) -> Any:
         """Execute a single playbook step"""
         # Map actions to enhanced handlers
         action_map = {
@@ -310,7 +304,7 @@ class PlaybookExecutor:
 
 
 async def handle_take_page_screenshot(
-    full_page: bool = True, client_id: Optional[str] = None
+    full_page: bool = True, client_id: str | None = None
 ) -> str:
     """Take page screenshot with progress tracking"""
     tracker = await get_progress_tracker(client_id)
@@ -323,7 +317,7 @@ async def handle_take_page_screenshot(
     return result
 
 
-async def handle_run_security_test(client_id: Optional[str] = None) -> str:
+async def handle_run_security_test(client_id: str | None = None) -> str:
     """Run security test with progress tracking"""
     tracker = await get_progress_tracker(client_id)
 
@@ -338,7 +332,7 @@ async def handle_run_security_test(client_id: Optional[str] = None) -> str:
     return result
 
 
-async def handle_generate_test_report(client_id: Optional[str] = None) -> str:
+async def handle_generate_test_report(client_id: str | None = None) -> str:
     """Generate test report with progress tracking"""
     tracker = await get_progress_tracker(client_id)
 

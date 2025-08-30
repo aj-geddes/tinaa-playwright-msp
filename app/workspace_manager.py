@@ -6,21 +6,16 @@ Handles project creation, repository cloning, and workspace management
 for multiple Playwright testing projects.
 """
 
-import asyncio
 import json
 import logging
-import os
 import shutil
-import subprocess
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 from urllib.parse import urlparse
 
 import aiofiles
-import git
-from git.exc import GitCommandError
 
 from app.git_auth import git_authenticator
 
@@ -59,8 +54,8 @@ class WorkspaceManager:
         name: str,
         description: str = "",
         template: str = "basic-web-testing",
-        repository_url: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        repository_url: str | None = None,
+    ) -> dict[str, Any]:
         """
         Create a new project in the workspace
 
@@ -119,7 +114,7 @@ class WorkspaceManager:
             }
 
         except Exception as e:
-            logger.error(f"Failed to create project {name}: {str(e)}")
+            logger.error(f"Failed to create project {name}: {e!s}")
             # Cleanup on failure
             if project_path.exists():
                 shutil.rmtree(project_path, ignore_errors=True)
@@ -127,8 +122,8 @@ class WorkspaceManager:
             return {"success": False, "error": str(e)}
 
     async def create_project_from_url(
-        self, url: str, name: Optional[str] = None
-    ) -> Dict[str, Any]:
+        self, url: str, name: str | None = None
+    ) -> dict[str, Any]:
         """
         Create a project by analyzing a URL and generating appropriate test structure
 
@@ -167,7 +162,7 @@ class WorkspaceManager:
 
             # Update project config with URL analysis
             config_path = project_path / ".tinaa" / "config.json"
-            async with aiofiles.open(config_path, "r") as f:
+            async with aiofiles.open(config_path) as f:
                 config = json.loads(await f.read())
 
             config["target_url"] = url
@@ -182,7 +177,7 @@ class WorkspaceManager:
             return {**project_result, "target_url": url, "url_analysis": url_analysis}
 
         except Exception as e:
-            logger.error(f"Failed to create project from URL {url}: {str(e)}")
+            logger.error(f"Failed to create project from URL {url}: {e!s}")
             return {"success": False, "error": str(e)}
 
     async def _clone_repository(self, repository_url: str, project_path: Path):
@@ -208,7 +203,7 @@ class WorkspaceManager:
             return clone_result
 
         except Exception as e:
-            logger.error(f"Failed to clone repository {repository_url}: {str(e)}")
+            logger.error(f"Failed to clone repository {repository_url}: {e!s}")
             raise
 
     async def _create_from_template(self, template: str, project_path: Path):
@@ -289,7 +284,7 @@ class WorkspaceManager:
                 await f.write(content)
 
     async def _initialize_project_structure(
-        self, project_path: Path, config: Dict[str, Any]
+        self, project_path: Path, config: dict[str, Any]
     ):
         """Initialize TINAA-specific project structure"""
         tinaa_dir = project_path / ".tinaa"
@@ -327,7 +322,7 @@ class WorkspaceManager:
         async with aiofiles.open(playbook_path, "w") as f:
             await f.write(json.dumps(initial_playbook, indent=2))
 
-    async def _save_project_config(self, project_path: Path, config: Dict[str, Any]):
+    async def _save_project_config(self, project_path: Path, config: dict[str, Any]):
         """Save project configuration to .tinaa/config.json"""
         tinaa_dir = project_path / ".tinaa"
         tinaa_dir.mkdir(exist_ok=True)
@@ -336,7 +331,7 @@ class WorkspaceManager:
         async with aiofiles.open(config_path, "w") as f:
             await f.write(json.dumps(config, indent=2))
 
-    async def _analyze_url(self, url: str) -> Dict[str, Any]:
+    async def _analyze_url(self, url: str) -> dict[str, Any]:
         """Analyze a URL to determine testing approach"""
         # This would integrate with AI in the future for intelligent analysis
         # For now, provide basic analysis
@@ -367,7 +362,7 @@ class WorkspaceManager:
         return analysis
 
     async def _generate_url_tests(
-        self, project_path: Path, url: str, analysis: Dict[str, Any]
+        self, project_path: Path, url: str, analysis: dict[str, Any]
     ):
         """Generate initial test files based on URL analysis"""
 
@@ -419,7 +414,7 @@ test.describe('{analysis["domain"]} - Automated Tests', () => {{
         async with aiofiles.open(test_file_path, "w") as f:
             await f.write(main_test_content)
 
-    async def list_projects(self) -> List[Dict[str, Any]]:
+    async def list_projects(self) -> list[dict[str, Any]]:
         """List all projects in the workspace"""
         projects = []
 
@@ -431,7 +426,7 @@ test.describe('{analysis["domain"]} - Automated Tests', () => {{
                 config_path = project_dir / ".tinaa" / "config.json"
                 if config_path.exists():
                     try:
-                        async with aiofiles.open(config_path, "r") as f:
+                        async with aiofiles.open(config_path) as f:
                             config = json.loads(await f.read())
                             projects.append(config)
                     except Exception as e:
@@ -439,7 +434,7 @@ test.describe('{analysis["domain"]} - Automated Tests', () => {{
 
         return projects
 
-    async def get_project(self, project_id: str) -> Optional[Dict[str, Any]]:
+    async def get_project(self, project_id: str) -> dict[str, Any] | None:
         """Get project information by ID"""
         project_path = self.projects_path / project_id
         config_path = project_path / ".tinaa" / "config.json"
@@ -448,7 +443,7 @@ test.describe('{analysis["domain"]} - Automated Tests', () => {{
             return None
 
         try:
-            async with aiofiles.open(config_path, "r") as f:
+            async with aiofiles.open(config_path) as f:
                 return json.loads(await f.read())
         except Exception as e:
             logger.error(f"Failed to read project {project_id}: {e}")

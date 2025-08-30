@@ -4,23 +4,16 @@ MCP Function Handler for Tinaa Playwright MSP
 This module connects MCP functions with the Playwright controller
 """
 
-import asyncio
-import json
 import logging
-from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 # Import from fastmcp 2.8.0
 # Using the decorator pattern from FastMCP
-from fastmcp import Context, FastMCP
+from fastmcp import Context
 
 from playwright_controller import PlaywrightController
 from prompts import (
-    ACCESSIBILITY_TEST_PROMPT,
     EXPLORATORY_TEST_PROMPT,
-    FORM_TEST_PROMPT,
-    RESPONSIVE_TEST_PROMPT,
-    SECURITY_TEST_BASIC_PROMPT,
     TEST_REPORT_TEMPLATE,
 )
 from resources import get_resource_loader
@@ -28,7 +21,7 @@ from resources import get_resource_loader
 logger = logging.getLogger("tinaa-playwright-msp.mcp-handler")
 
 # Global controller instance
-controller: Optional[PlaywrightController] = None
+controller: PlaywrightController | None = None
 
 async def get_controller() -> PlaywrightController:
     """Get or create a Playwright controller instance"""
@@ -43,7 +36,7 @@ async def get_controller() -> PlaywrightController:
 # We'll use the main mcp instance from app.main instead of creating our own
 # This will be imported after app.main initializes it
 
-async def navigate_to_url(url: str, ctx: Context = None) -> Dict[str, Any]:
+async def navigate_to_url(url: str, ctx: Context = None) -> dict[str, Any]:
     """
     Navigate to a URL
     
@@ -77,10 +70,10 @@ async def navigate_to_url(url: str, ctx: Context = None) -> Dict[str, Any]:
     except Exception as e:
         logger.error(f"Error in navigate_to_url: {e}")
         if ctx:
-            await ctx.error(f"Error: {str(e)}")
+            await ctx.error(f"Error: {e!s}")
         return {"error": str(e)}
 
-async def take_page_screenshot(full_page: bool = False, ctx: Context = None) -> Dict[str, Any]:
+async def take_page_screenshot(full_page: bool = False, ctx: Context = None) -> dict[str, Any]:
     """
     Take a screenshot of the current page
     
@@ -115,10 +108,10 @@ async def take_page_screenshot(full_page: bool = False, ctx: Context = None) -> 
     except Exception as e:
         logger.error(f"Error in take_page_screenshot: {e}")
         if ctx:
-            await ctx.error(f"Error: {str(e)}")
+            await ctx.error(f"Error: {e!s}")
         return {"error": str(e)}
 
-async def take_element_screenshot(selector: str, ctx: Context = None) -> Dict[str, Any]:
+async def take_element_screenshot(selector: str, ctx: Context = None) -> dict[str, Any]:
     """
     Take a screenshot of a specific element
     
@@ -145,20 +138,20 @@ async def take_element_screenshot(selector: str, ctx: Context = None) -> Dict[st
         
         if ctx:
             if screenshot:
-                await ctx.success(f"Element screenshot captured successfully")
+                await ctx.success("Element screenshot captured successfully")
             else:
-                await ctx.error(f"Failed to capture element screenshot")
+                await ctx.error("Failed to capture element screenshot")
                 
         return result
     except Exception as e:
         logger.error(f"Error in take_element_screenshot: {e}")
         if ctx:
-            await ctx.error(f"Error: {str(e)}")
+            await ctx.error(f"Error: {e!s}")
         return {"error": str(e)}
 
 async def fill_login_form(username_selector: str, password_selector: str, 
                           submit_selector: str, username: str, password: str,
-                          ctx: Context = None) -> Dict[str, Any]:
+                          ctx: Context = None) -> dict[str, Any]:
     """
     Fill and submit a login form
     
@@ -196,10 +189,10 @@ async def fill_login_form(username_selector: str, password_selector: str,
     except Exception as e:
         logger.error(f"Error in fill_login_form: {e}")
         if ctx:
-            await ctx.error(f"Error: {str(e)}")
+            await ctx.error(f"Error: {e!s}")
         return {"error": str(e)}
 
-async def detect_form_fields(form_selector: str = None, ctx: Context = None) -> Dict[str, Any]:
+async def detect_form_fields(form_selector: str = None, ctx: Context = None) -> dict[str, Any]:
     """
     Detect form fields on the current page
     
@@ -234,10 +227,10 @@ async def detect_form_fields(form_selector: str = None, ctx: Context = None) -> 
     except Exception as e:
         logger.error(f"Error in detect_form_fields: {e}")
         if ctx:
-            await ctx.error(f"Error: {str(e)}")
+            await ctx.error(f"Error: {e!s}")
         return {"error": str(e)}
 
-async def fill_form_fields(fields: Dict[str, str], submit_selector: str = None, ctx: Context = None) -> Dict[str, Any]:
+async def fill_form_fields(fields: dict[str, str], submit_selector: str = None, ctx: Context = None) -> dict[str, Any]:
     """
     Fill form fields on the current page
     
@@ -272,10 +265,10 @@ async def fill_form_fields(fields: Dict[str, str], submit_selector: str = None, 
     except Exception as e:
         logger.error(f"Error in fill_form_fields: {e}")
         if ctx:
-            await ctx.error(f"Error: {str(e)}")
+            await ctx.error(f"Error: {e!s}")
         return {"error": str(e)}
 
-async def run_accessibility_test(ctx: Context = None) -> Dict[str, Any]:
+async def run_accessibility_test(ctx: Context = None) -> dict[str, Any]:
     """
     Run accessibility tests on the current page
     
@@ -318,10 +311,10 @@ async def run_accessibility_test(ctx: Context = None) -> Dict[str, Any]:
     except Exception as e:
         logger.error(f"Error in run_accessibility_test: {e}")
         if ctx:
-            await ctx.error(f"Error: {str(e)}")
+            await ctx.error(f"Error: {e!s}")
         return {"error": str(e)}
 
-async def run_responsive_test(ctx: Context = None) -> Dict[str, Any]:
+async def run_responsive_test(ctx: Context = None) -> dict[str, Any]:
     """
     Run responsive design tests on the current page
     
@@ -374,10 +367,10 @@ async def run_responsive_test(ctx: Context = None) -> Dict[str, Any]:
     except Exception as e:
         logger.error(f"Error in run_responsive_test: {e}")
         if ctx:
-            await ctx.error(f"Error: {str(e)}")
+            await ctx.error(f"Error: {e!s}")
         return {"error": str(e)}
 
-async def run_security_test(ctx: Context = None) -> Dict[str, Any]:
+async def run_security_test(ctx: Context = None) -> dict[str, Any]:
     """
     Run basic security tests on the current page
     
@@ -415,10 +408,10 @@ async def run_security_test(ctx: Context = None) -> Dict[str, Any]:
     except Exception as e:
         logger.error(f"Error in run_security_test: {e}")
         if ctx:
-            await ctx.error(f"Error: {str(e)}")
+            await ctx.error(f"Error: {e!s}")
         return {"error": str(e)}
 
-async def generate_test_report(test_type: str, url: str, ctx: Context = None) -> Dict[str, Any]:
+async def generate_test_report(test_type: str, url: str, ctx: Context = None) -> dict[str, Any]:
     """
     Generate a test report
     
@@ -470,10 +463,10 @@ async def generate_test_report(test_type: str, url: str, ctx: Context = None) ->
     except Exception as e:
         logger.error(f"Error in generate_test_report: {e}")
         if ctx:
-            await ctx.error(f"Error: {str(e)}")
+            await ctx.error(f"Error: {e!s}")
         return {"error": str(e)}
 
-async def prompt_for_credentials(site: str, username_field: str = None, password_field: str = None, ctx: Context = None) -> Dict[str, Any]:
+async def prompt_for_credentials(site: str, username_field: str = None, password_field: str = None, ctx: Context = None) -> dict[str, Any]:
     """
     Prompt the user for credentials
     
@@ -498,7 +491,7 @@ async def prompt_for_credentials(site: str, username_field: str = None, password
         }
     }
 
-async def run_exploratory_test(url: str, focus_area: str = "general", ctx: Context = None) -> Dict[str, Any]:
+async def run_exploratory_test(url: str, focus_area: str = "general", ctx: Context = None) -> dict[str, Any]:
     """
     Run an exploratory test on a website
     
@@ -554,7 +547,7 @@ async def run_exploratory_test(url: str, focus_area: str = "general", ctx: Conte
     except Exception as e:
         logger.error(f"Error in run_exploratory_test: {e}")
         if ctx:
-            await ctx.error(f"Error: {str(e)}")
+            await ctx.error(f"Error: {e!s}")
         return {"error": str(e)}
 
 # Dictionary of functions to register with the main MCP instance

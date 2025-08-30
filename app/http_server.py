@@ -7,7 +7,7 @@ import json
 import logging
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import uvicorn
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
@@ -33,21 +33,17 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.ai_enhanced_handler import (
-    analyze_form_fields,
     generate_accessibility_insights,
     generate_exploratory_insights,
     generate_security_insights,
-    generate_test_report_summary,
 )
 from app.mcp_handler import detect_form_fields as handle_detect_form_fields
 from app.mcp_handler import fill_form_fields as handle_fill_form_fields
-from app.mcp_handler import fill_login_form as handle_fill_login_form
 from app.mcp_handler import generate_test_report as handle_generate_test_report
 from app.mcp_handler import (
     get_controller,
 )
 from app.mcp_handler import navigate_to_url as handle_navigate_to_url
-from app.mcp_handler import prompt_for_credentials as handle_prompt_for_credentials
 from app.mcp_handler import run_accessibility_test as handle_run_accessibility_test
 from app.mcp_handler import run_exploratory_test as handle_run_exploratory_test
 from app.mcp_handler import run_responsive_test as handle_run_responsive_test
@@ -75,8 +71,8 @@ app.add_middleware(
 # WebSocket connection manager
 class ConnectionManager:
     def __init__(self):
-        self.active_connections: Dict[str, WebSocket] = {}
-        self.session_data: Dict[str, Dict] = {}
+        self.active_connections: dict[str, WebSocket] = {}
+        self.session_data: dict[str, dict] = {}
 
     async def connect(self, websocket: WebSocket, client_id: str):
         await websocket.accept()
@@ -95,7 +91,7 @@ class ConnectionManager:
             del self.session_data[client_id]
             logger.info(f"Client {client_id} disconnected")
 
-    async def send_progress(self, client_id: str, progress_data: Dict):
+    async def send_progress(self, client_id: str, progress_data: dict):
         if client_id in self.active_connections:
             await self.active_connections[client_id].send_json(
                 {"type": "progress", "data": progress_data}
@@ -112,7 +108,7 @@ class ConnectionManager:
             },
         )
 
-    async def broadcast(self, message: Dict):
+    async def broadcast(self, message: dict):
         for client_id, websocket in self.active_connections.items():
             await websocket.send_json(message)
 
@@ -135,21 +131,21 @@ def get_workspace_manager():
 # Request models
 class TestRequest(BaseModel):
     action: str
-    parameters: Dict[str, Any]
-    client_id: Optional[str] = None
+    parameters: dict[str, Any]
+    client_id: str | None = None
 
 
 class PlaybookStep(BaseModel):
     id: str
     action: str
-    parameters: Dict[str, Any]
-    description: Optional[str] = None
-    expected_outcome: Optional[str] = None
+    parameters: dict[str, Any]
+    description: str | None = None
+    expected_outcome: str | None = None
 
 
 class PlaybookRequest(BaseModel):
     name: str
-    steps: List[PlaybookStep]
+    steps: list[PlaybookStep]
     client_id: str
 
 
@@ -158,12 +154,12 @@ class ProjectCreateRequest(BaseModel):
     name: str
     description: str = ""
     template: str = "basic-web-testing"
-    repository_url: Optional[str] = None
+    repository_url: str | None = None
 
 
 class UrlProjectRequest(BaseModel):
     url: str
-    name: Optional[str] = None
+    name: str | None = None
 
 
 # Progress tracking decorator
@@ -186,7 +182,7 @@ def track_progress(action_name: str):
             except Exception as e:
                 if client_id:
                     await manager.send_message(
-                        client_id, f"Error in {action_name}: {str(e)}", "error"
+                        client_id, f"Error in {action_name}: {e!s}", "error"
                     )
                 raise
 
@@ -221,7 +217,7 @@ async def create_project(request: ProjectCreateRequest):
         )
         return JSONResponse(content=result)
     except Exception as e:
-        logger.error(f"Failed to create project: {str(e)}")
+        logger.error(f"Failed to create project: {e!s}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -234,7 +230,7 @@ async def create_project_from_url(request: UrlProjectRequest):
         )
         return JSONResponse(content=result)
     except Exception as e:
-        logger.error(f"Failed to create project from URL: {str(e)}")
+        logger.error(f"Failed to create project from URL: {e!s}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -245,7 +241,7 @@ async def list_projects():
         projects = await get_workspace_manager().list_projects()
         return JSONResponse(content={"projects": projects})
     except Exception as e:
-        logger.error(f"Failed to list projects: {str(e)}")
+        logger.error(f"Failed to list projects: {e!s}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -260,7 +256,7 @@ async def get_project(project_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Failed to get project {project_id}: {str(e)}")
+        logger.error(f"Failed to get project {project_id}: {e!s}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -275,7 +271,7 @@ async def delete_project(project_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Failed to delete project {project_id}: {str(e)}")
+        logger.error(f"Failed to delete project {project_id}: {e!s}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -305,7 +301,7 @@ async def workspace_status():
 
         return JSONResponse(content=workspace_info)
     except Exception as e:
-        logger.error(f"Failed to get workspace status: {str(e)}")
+        logger.error(f"Failed to get workspace status: {e!s}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -323,7 +319,7 @@ async def test_connectivity(request: TestRequest):
             controller = await asyncio.to_thread(get_controller)
             result = "Browser started successfully."
     except Exception as e:
-        result = f"Browser connectivity test failed: {str(e)}"
+        result = f"Browser connectivity test failed: {e!s}"
 
     return JSONResponse(content={"success": True, "result": result})
 
@@ -580,7 +576,7 @@ async def execute_playbook(request: PlaybookRequest):
     return StreamingResponse(stream_execution(), media_type="application/json")
 
 
-async def execute_step(step: PlaybookStep) -> Dict:
+async def execute_step(step: PlaybookStep) -> dict:
     """Execute a single playbook step"""
     action_map = {
         "navigate": lambda p: handle_navigate_to_url(p.get("url"), ctx=None),
@@ -652,7 +648,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
         manager.disconnect(client_id)
 
 
-async def handle_playbook_builder(websocket: WebSocket, client_id: str, data: Dict):
+async def handle_playbook_builder(websocket: WebSocket, client_id: str, data: dict):
     """Handle playbook builder interactions"""
     command = data.get("command")
 
@@ -685,7 +681,7 @@ async def handle_playbook_builder(websocket: WebSocket, client_id: str, data: Di
         await websocket.send_json({"type": "suggestions", "suggestions": suggestions})
 
 
-async def get_playbook_suggestions(client_id: str) -> List[Dict]:
+async def get_playbook_suggestions(client_id: str) -> list[dict]:
     """Provide intelligent suggestions for next playbook steps"""
     session = manager.session_data.get(client_id, {})
     playbook = session.get("playbook", [])

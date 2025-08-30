@@ -6,7 +6,7 @@ Comprehensive MCP tools for workspace and project management with proper FastMCP
 """
 
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from fastmcp import Context, FastMCP
 
@@ -34,9 +34,9 @@ async def create_project(
     project_name: str,
     description: str = "",
     template: str = "basic-web-testing",
-    repository_url: Optional[str] = None,
+    repository_url: str | None = None,
     ctx: Context = None,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Create a new Playwright testing project in TINAA's workspace with intelligent setup.
 
@@ -100,16 +100,16 @@ async def create_project(
         return result
 
     except Exception as e:
-        logger.error(f"Error creating project: {str(e)}")
+        logger.error(f"Error creating project: {e!s}")
         if ctx:
-            await ctx.error(f"Error creating project: {str(e)}")
+            await ctx.error(f"Error creating project: {e!s}")
         return {"success": False, "error": str(e)}
 
 
 @workspace_mcp.tool()
 async def create_project_from_url(
-    url: str, project_name: Optional[str] = None, ctx: Context = None
-) -> Dict[str, Any]:
+    url: str, project_name: str | None = None, ctx: Context = None
+) -> dict[str, Any]:
     """
     Automatically create a Playwright testing project by analyzing a target URL.
 
@@ -166,14 +166,14 @@ async def create_project_from_url(
         return result
 
     except Exception as e:
-        logger.error(f"Error creating project from URL: {str(e)}")
+        logger.error(f"Error creating project from URL: {e!s}")
         if ctx:
-            await ctx.error(f"Error creating project from URL: {str(e)}")
+            await ctx.error(f"Error creating project from URL: {e!s}")
         return {"success": False, "error": str(e)}
 
 
 @workspace_mcp.tool()
-async def list_projects(ctx: Context = None) -> List[Dict[str, Any]]:
+async def list_projects(ctx: Context = None) -> list[dict[str, Any]]:
     """
     Retrieve a list of all projects in TINAA's workspace with their status and metadata.
 
@@ -223,14 +223,14 @@ async def list_projects(ctx: Context = None) -> List[Dict[str, Any]]:
         return projects
 
     except Exception as e:
-        logger.error(f"Error listing projects: {str(e)}")
+        logger.error(f"Error listing projects: {e!s}")
         if ctx:
-            await ctx.error(f"Error listing projects: {str(e)}")
+            await ctx.error(f"Error listing projects: {e!s}")
         return []
 
 
 @workspace_mcp.tool()
-async def get_project(project_id: str, ctx: Context = None) -> Optional[Dict[str, Any]]:
+async def get_project(project_id: str, ctx: Context = None) -> dict[str, Any] | None:
     """
     Retrieve detailed information about a specific project including configuration and status.
 
@@ -281,14 +281,14 @@ async def get_project(project_id: str, ctx: Context = None) -> Optional[Dict[str
         return project
 
     except Exception as e:
-        logger.error(f"Error getting project {project_id}: {str(e)}")
+        logger.error(f"Error getting project {project_id}: {e!s}")
         if ctx:
-            await ctx.error(f"Error getting project: {str(e)}")
+            await ctx.error(f"Error getting project: {e!s}")
         return None
 
 
 @workspace_mcp.tool()
-async def delete_project(project_id: str, ctx: Context = None) -> Dict[str, Any]:
+async def delete_project(project_id: str, ctx: Context = None) -> dict[str, Any]:
     """
     Permanently delete a project and all its files from TINAA's workspace.
 
@@ -341,14 +341,14 @@ async def delete_project(project_id: str, ctx: Context = None) -> Dict[str, Any]
         return result
 
     except Exception as e:
-        logger.error(f"Error deleting project {project_id}: {str(e)}")
+        logger.error(f"Error deleting project {project_id}: {e!s}")
         if ctx:
-            await ctx.error(f"Error deleting project: {str(e)}")
+            await ctx.error(f"Error deleting project: {e!s}")
         return {"success": False, "project_id": project_id, "error": str(e)}
 
 
 @workspace_mcp.tool()
-async def get_workspace_status(ctx: Context = None) -> Dict[str, Any]:
+async def get_workspace_status(ctx: Context = None) -> dict[str, Any]:
     """
     Get comprehensive status and statistics about TINAA's workspace and all projects.
 
@@ -424,9 +424,9 @@ async def get_workspace_status(ctx: Context = None) -> Dict[str, Any]:
         return workspace_info
 
     except Exception as e:
-        logger.error(f"Error getting workspace status: {str(e)}")
+        logger.error(f"Error getting workspace status: {e!s}")
         if ctx:
-            await ctx.error(f"Error getting workspace status: {str(e)}")
+            await ctx.error(f"Error getting workspace status: {e!s}")
         return {
             "error": str(e),
             "workspace_path": str(get_workspace_manager().workspace_path),
@@ -438,11 +438,11 @@ async def get_workspace_status(ctx: Context = None) -> Dict[str, Any]:
 @workspace_mcp.tool()
 async def clone_repository(
     repository_url: str,
-    destination_name: Optional[str] = None,
-    branch: Optional[str] = None,
+    destination_name: str | None = None,
+    branch: str | None = None,
     auth_type: str = "auto",
     ctx: Context = None,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Clone a Git repository into TINAA's workspace with secure authentication.
 
@@ -513,16 +513,16 @@ async def clone_repository(
         return result
 
     except Exception as e:
-        logger.error(f"Error cloning repository: {str(e)}")
+        logger.error(f"Error cloning repository: {e!s}")
         if ctx:
-            await ctx.error(f"Error cloning repository: {str(e)}")
+            await ctx.error(f"Error cloning repository: {e!s}")
         return {"success": False, "repository_url": repository_url, "error": str(e)}
 
 
 @workspace_mcp.tool()
 async def get_repository_info(
     repository_url: str, auth_type: str = "auto", ctx: Context = None
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Fetch detailed information about a Git repository without cloning it.
 
@@ -583,7 +583,7 @@ async def get_repository_info(
         return result
 
     except Exception as e:
-        logger.error(f"Error getting repository info: {str(e)}")
+        logger.error(f"Error getting repository info: {e!s}")
         if ctx:
-            await ctx.error(f"Error getting repository info: {str(e)}")
+            await ctx.error(f"Error getting repository info: {e!s}")
         return {"success": False, "repository_url": repository_url, "error": str(e)}

@@ -2,7 +2,7 @@
 Accessibility Tool - Checks web page accessibility
 """
 
-from typing import Any, Dict, List
+from typing import Any
 
 from .tool_loader import PlaywrightTool
 
@@ -14,7 +14,7 @@ class AccessibilityTool(PlaywrightTool):
     description = "Analyzes the current page for accessibility issues"
     
     @classmethod
-    async def execute(cls, browser, page, params: Dict[str, Any]) -> Dict[str, Any]:
+    async def execute(cls, browser, page, params: dict[str, Any]) -> dict[str, Any]:
         """
         Analyze page for accessibility issues
         
@@ -52,7 +52,7 @@ class AccessibilityTool(PlaywrightTool):
         }
     
     @classmethod
-    async def _analyze_accessibility(cls, page, selector: str = None) -> List[Dict[str, Any]]:
+    async def _analyze_accessibility(cls, page, selector: str = None) -> list[dict[str, Any]]:
         """Analyze the page for common accessibility issues"""
         issues = []
         
