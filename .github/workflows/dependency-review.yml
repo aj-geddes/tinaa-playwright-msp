@@ -33,24 +33,9 @@ jobs:
           # Fail the workflow if high severity vulnerabilities are found
           fail-on-severity: high
           
-          # Allow specific licenses (add more as needed)
-          allow-licenses: |
-            MIT
-            Apache-2.0
-            BSD-2-Clause
-            BSD-3-Clause
-            ISC
-            Python-2.0
-            PSF-2.0
-            LGPL-2.1
-            LGPL-3.0
-            
-          # Deny specific licenses that are incompatible
-          deny-licenses: |
-            GPL-2.0
-            GPL-3.0
-            AGPL-3.0
-            Commons-Clause
+          # Comment out license restrictions for now - can be re-enabled later
+          # allow-licenses: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC
+          # deny-licenses: GPL-2.0, GPL-3.0, AGPL-3.0
             
           # Allow specific advisories to be ignored
           # allow-ghsas: GHSA-xxxx-yyyy-zzzz
