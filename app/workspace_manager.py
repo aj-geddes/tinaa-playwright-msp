@@ -25,7 +25,10 @@ logger = logging.getLogger("tinaa.workspace_manager")
 class WorkspaceManager:
     """Manages TINAA workspace with multiple projects"""
 
-    def __init__(self, workspace_path: str = "/mnt/workspace"):
+    def __init__(self, workspace_path: Optional[str] = None):
+        if workspace_path is None:
+            import tempfile
+            workspace_path = os.path.join(tempfile.gettempdir(), "tinaa_workspace")
         self.workspace_path = Path(workspace_path)
         self.projects_path = self.workspace_path / "projects"
         self.templates_path = self.workspace_path / "templates"

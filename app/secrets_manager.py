@@ -311,7 +311,7 @@ class SecretsManager:
         if db_type == "sqlite":
             return {
                 "type": "sqlite",
-                "path": os.getenv("TINAA_DB_PATH", "/mnt/workspace/tinaa.db"),
+                "path": os.getenv("TINAA_DB_PATH", os.path.join(tempfile.gettempdir(), "workspace", "tinaa.db")),
             }
         if db_type == "postgresql":
             return {
@@ -324,7 +324,9 @@ class SecretsManager:
                 "ssl_mode": os.getenv("POSTGRES_SSL_MODE", "prefer"),
             }
 
-        return {"type": "sqlite", "path": "/tmp/tinaa.db"}
+        import tempfile
+        import os
+        return {"type": "sqlite", "path": os.path.join(tempfile.gettempdir(), "tinaa.db")}
 
     def clear_cache(self):
         """Clear the secrets cache (for security)"""

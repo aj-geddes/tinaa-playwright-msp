@@ -20,7 +20,11 @@ from fastmcp import Context, FastMCP
 from app.ai_integration import AIManager
 from app.workspace_manager import WorkspaceManager
 
-sys.path.append("/mnt/c/Users/Munso/tinaa-playwright-msp/prompts")
+import os
+# Add prompts directory to path (relative to this file)
+prompts_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "prompts")
+if os.path.exists(prompts_dir):
+    sys.path.append(prompts_dir)
 from collaborative_prompts import CollaborativePrompts
 
 logger = logging.getLogger("tinaa.mcp_server")

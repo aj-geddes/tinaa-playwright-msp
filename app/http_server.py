@@ -122,8 +122,10 @@ def get_workspace_manager():
     """Get or create workspace manager instance"""
     global workspace_manager
     if workspace_manager is None:
+        import tempfile
+        default_workspace = os.path.join(tempfile.gettempdir(), "workspace")
         workspace_manager = WorkspaceManager(
-            workspace_path=os.getenv("WORKSPACE_PATH", "/tmp/workspace")
+            workspace_path=os.getenv("WORKSPACE_PATH", default_workspace)
         )
     return workspace_manager
 
