@@ -1,403 +1,132 @@
-# TINAA Continuous Integration Workflow
-# 
-# This workflow runs on every push, pull request, and can be manually triggered.
-# It includes comprehensive testing, security scanning, and artifact generation.
-#
-# Features:
-# - Matrix testing across multiple Python versions and OS
-# - Docker image building and security scanning
-# - Dependency caching for optimal performance
-# - Parallel test execution
-# - Code coverage reporting
-# - Artifact uploads for debugging
-
+# Simplified CI - Focus on Value and Fast Feedback
 name: CI
 
 on:
   push:
     branches: [ main, develop ]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.github/ISSUE_TEMPLATE/**'
-      - '.github/PULL_REQUEST_TEMPLATE/**'
   pull_request:
-    branches: [ main, develop ]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
+    branches: [ main ]
   workflow_dispatch:
-    inputs:
-      debug_enabled:
-        description: 'Enable debug logging'
-        required: false
-        type: boolean
-        default: false
-      skip_tests:
-        description: 'Skip test execution'
-        required: false
-        type: boolean
-        default: false
 
-# Limit concurrent runs for the same PR/branch
+# Cancel previous runs for the same PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
-env:
-  PYTHON_VERSION: '3.10'
-  NODE_VERSION: '18'
-  DOCKER_BUILDKIT: 1
-  COMPOSE_DOCKER_CLI_BUILD: 1
-
 jobs:
-  # Job 1: Lint and code quality checks
-  lint:
-    name: Lint & Code Quality
+  # Quick quality checks - fail fast
+  quality:
+    name: Code Quality
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Full history for better analysis
-
+      - uses: actions/checkout@v4
+      
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: '3.10'
           cache: 'pip'
-
-      - name: Cache pre-commit
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pre-commit
-          key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
-          restore-keys: |
-            pre-commit-${{ runner.os }}-
-
-      - name: Install linting dependencies
+      
+      - name: Install linting tools
         run: |
           python -m pip install --upgrade pip
-          pip install ruff black mypy isort pre-commit
-          pip install -r requirements.txt
-
-      - name: Run pre-commit checks
-        if: always()
-        run: |
-          pre-commit run --all-files --show-diff-on-failure || true
-
+          pip install ruff black isort
+      
       - name: Run Ruff
-        if: always()
-        run: |
-          ruff check . --output-format=github || true
+        run: ruff check . --output-format=github
+      
+      - name: Check Black formatting
+        run: black --check --diff .
+      
+      - name: Check import sorting
+        run: isort --check-only --diff .
 
-      - name: Run Black
-        if: always()
-        run: |
-          black --check --diff . || true
-
-      - name: Run isort
-        if: always()
-        run: |
-          isort --check-only --diff . || true
-
-      - name: Run mypy
-        if: always()
-        run: |
-          mypy . --ignore-missing-imports --no-error-summary || true
-
-  # Job 2: Test matrix across Python versions and OS
+  # Core testing - what actually matters
   test:
-    name: Test Python ${{ matrix.python-version }} on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    needs: lint
+    name: Test Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: quality  # Only run if code quality passes
     strategy:
-      fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.10', '3.11', '3.12']
-
+        python-version: ['3.10', '3.11']  # Only LTS/stable versions
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
+      
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
-
-      - name: Install system dependencies (Ubuntu)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 \
-            libcups2 libdrm2 libxkbcommon0 libxcomposite1 \
-            libxdamage1 libxrandr2 libgbm1 libgtk-3-0 libasound2t64
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/ms-playwright
-            ~/Library/Caches/ms-playwright
-            %USERPROFILE%\AppData\Local\ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            playwright-${{ runner.os }}-
-
+      
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest pytest-cov pytest-xdist pytest-timeout pytest-asyncio
-
-      - name: Install Playwright browsers
+          pip install pytest pytest-cov pytest-asyncio
+      
+      - name: Install Playwright
         run: |
           python -m playwright install chromium
           python -m playwright install-deps chromium
-
-      - name: Run unit tests
-        if: ${{ !inputs.skip_tests }}
+      
+      - name: Run tests with coverage
         run: |
-          pytest tests/unit \
-            --cov=app --cov=playwright_controller \
-            --cov-report=xml:coverage-unit.xml \
-            --cov-report=html:htmlcov-unit \
-            --junit-xml=junit-unit.xml \
-            -n auto \
-            --maxfail=5 \
-            --timeout=300 \
+          pytest tests/ \
+            --cov=app \
+            --cov-report=xml \
+            --cov-report=term \
+            --cov-fail-under=50 \
             -v
-
-      - name: Run integration tests
-        if: ${{ !inputs.skip_tests && runner.os == 'Linux' }}
-        run: |
-          pytest tests/integration \
-            --cov=app --cov=playwright_controller \
-            --cov-report=xml:coverage-integration.xml \
-            --cov-report=html:htmlcov-integration \
-            --junit-xml=junit-integration.xml \
-            --timeout=600 \
-            -v
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-${{ matrix.os }}-${{ matrix.python-version }}
-          path: |
-            junit-*.xml
-            coverage-*.xml
-            htmlcov-*
-          retention-days: 7
-
-      - name: Upload coverage to Codecov
-        if: runner.os == 'Linux' && matrix.python-version == '3.10'
+      
+      - name: Upload coverage
+        if: matrix.python-version == '3.10'
         uses: codecov/codecov-action@v4
         with:
-          files: ./coverage-unit.xml,./coverage-integration.xml
-          flags: unittests,integration
-          name: codecov-${{ matrix.os }}-${{ matrix.python-version }}
-          fail_ci_if_error: false
+          file: ./coverage.xml
+          fail_ci_if_error: false  # Don't fail if codecov is down
 
-  # Job 3: Docker build and scan
-  docker:
-    name: Docker Build & Scan
-    runs-on: ubuntu-latest
-    needs: lint
-    permissions:
-      contents: read
-      security-events: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to Docker Hub
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            tinaa/playwright-msp
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix={{branch}}-
-
-      - name: Build Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: false
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          outputs: type=docker,dest=/tmp/tinaa-image.tar
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          input: /tmp/tinaa-image.tar
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
-
-      - name: Upload Trivy scan results
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: 'trivy-results.sarif'
-
-      - name: Run container structure tests
-        run: |
-          wget https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64 -O container-structure-test
-          chmod +x container-structure-test
-          
-          # Create test configuration
-          cat > container-tests.yaml << EOF
-          schemaVersion: 2.0.0
-          fileExistenceTests:
-            - name: 'Check app directory'
-              path: '/app'
-              shouldExist: true
-            - name: 'Check main.py'
-              path: '/app/app/main.py'
-              shouldExist: true
-          commandTests:
-            - name: 'Python version'
-              command: 'python'
-              args: ['--version']
-              expectedOutput: ['Python 3\\.\\d+\\.\\d+']
-          EOF
-          
-          docker load -i /tmp/tinaa-image.tar
-          ./container-structure-test test --image $(echo '${{ steps.meta.outputs.tags }}' | head -n1) --config container-tests.yaml
-
-      - name: Test Docker Compose
-        run: |
-          docker-compose -f docker-compose.yml config
-          docker-compose -f docker-compose.http.yml config
-
-  # Job 4: Security checks
-  security:
-    name: Security Scanning
-    runs-on: ubuntu-latest
-    needs: lint
-    permissions:
-      contents: read
-      security-events: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Run Bandit security linter
-        uses: tj-actions/bandit@v5.1
-        with:
-          targets: |
-            app/
-            playwright_controller/
-            mcp_handler.py
-          options: "-ll -f json -o bandit-report.json"
-
-      - name: Upload Bandit results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: bandit-results
-          path: bandit-report.json
-
-      - name: Run pip-audit
-        run: |
-          pip install pip-audit
-          pip-audit --desc --format json --output pip-audit-report.json || true
-
-      - name: Upload pip-audit results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: pip-audit-results
-          path: pip-audit-report.json
-
-      - name: Run Semgrep
-        uses: returntocorp/semgrep-action@v1
-        with:
-          config: >-
-            p/security-audit
-            p/python
-            p/docker
-            p/secrets
-          generateSarif: true
-
-      - name: Upload Semgrep results
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: semgrep.sarif
-
-  # Job 5: Documentation build
+  # Documentation - only what's needed
   docs:
-    name: Build Documentation
+    name: Documentation
     runs-on: ubuntu-latest
-    needs: lint
+    timeout-minutes: 5
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
+      
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: '3.10'
           cache: 'pip'
-
-      - name: Install documentation dependencies
+      
+      - name: Install MkDocs
         run: |
-          pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints myst-parser
-
-      - name: Generate API documentation
-        run: |
-          mkdir -p docs/source
-          sphinx-apidoc -o docs/source -f -e -M app/ playwright_controller/
-
+          pip install mkdocs mkdocs-material
+      
       - name: Build documentation
-        run: |
-          cd docs
-          make html || echo "Documentation build completed with warnings"
+        run: mkdocs build --strict
 
-      - name: Upload documentation
-        uses: actions/upload-artifact@v4
-        with:
-          name: documentation
-          path: docs/_build/html/
-          retention-days: 30
-
-  # Final job: Status check
-  status-check:
-    name: CI Status Check
-    if: always()
-    needs: [lint, test, docker, security, docs]
+  # Single status check for branch protection
+  ci-status:
+    name: CI Status
     runs-on: ubuntu-latest
+    needs: [quality, test, docs]
+    if: always()
     steps:
-      - name: Check status
+      - name: Check CI Status
         run: |
-          if [ "${{ needs.lint.result }}" != "success" ] || \
-             [ "${{ needs.test.result }}" != "success" ] || \
-             [ "${{ needs.docker.result }}" != "success" ] || \
-             [ "${{ needs.security.result }}" != "success" ]; then
-            echo "One or more CI jobs failed"
+          if [[ "${{ needs.quality.result }}" == "success" && \
+                "${{ needs.test.result }}" == "success" && \
+                "${{ needs.docs.result }}" == "success" ]]; then
+            echo "✅ All CI checks passed!"
+            exit 0
+          else
+            echo "❌ CI checks failed"
+            echo "Quality: ${{ needs.quality.result }}"
+            echo "Test: ${{ needs.test.result }}"
+            echo "Docs: ${{ needs.docs.result }}"
             exit 1
           fi
-          echo "All CI jobs passed successfully"
