@@ -578,7 +578,7 @@ class PlaywrightController:
                         .filter(el => el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA')
                         .filter(el => !['submit', 'button', 'image', 'reset', 'file', 'hidden'].includes(el.type))
                         .map(el => {{
-                            const label = el.id ? document.querySelector(`label[for="${el.id}"]`) : null;
+                            const label = el.id ? document.querySelector(`label[for="${{el.id}}"]`) : null;
                             
                             return {{
                                 type: el.type || 'text',
@@ -587,7 +587,7 @@ class PlaywrightController:
                                 placeholder: el.placeholder,
                                 label: label ? label.textContent.trim() : null,
                                 required: el.required,
-                                selector: el.id ? `#${el.id}` : `[name="${el.name}"]`,
+                                selector: el.id ? `#${{el.id}}` : `[name="${{el.name}}"]`,
                                 tag: el.tagName.toLowerCase()
                             }};
                         }});
