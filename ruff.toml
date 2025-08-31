@@ -53,7 +53,6 @@ ignore = [
     "B011",      # Do not assert False
     "PT015",     # Assertion always fails
     "PT017",     # Found assertion on exception
-    "PT028",     # Test function parameter has default argument
     "SIM103",    # Return the negated condition
     "SIM105",    # Use contextlib.suppress
     "SIM108",    # Use ternary operator

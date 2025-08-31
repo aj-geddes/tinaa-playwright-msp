@@ -99,11 +99,11 @@ async def start_lsp_server(
 
 
 @mcp.tool()
-async def test_browser_connectivity(
+async def check_browser_connectivity(
     url: str = "https://example.com", ctx: Context = None
 ) -> dict[str, Any]:
     """
-    Test TINAA's browser automation capabilities by visiting a URL and capturing basic information.
+    Check TINAA's browser automation capabilities by visiting a URL and capturing basic information.
 
     Verifies that Playwright browser automation is working correctly by navigating to a URL,
     capturing the page title, taking a screenshot, and reporting the results.
