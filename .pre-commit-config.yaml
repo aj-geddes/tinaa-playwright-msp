@@ -1,0 +1,70 @@
+# Pre-commit hooks that mirror CI setup
+# Install with: pip install pre-commit && pre-commit install
+repos:
+  # Black - code formatting (must run first)
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+        language_version: python3.10
+        exclude: ^venv/
+
+  # isort - import sorting (run after black)
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: ["--profile", "black"]
+        exclude: ^venv/
+
+  # Ruff - comprehensive linting (run after formatting)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.7.4
+    hooks:
+      - id: ruff
+        args: ["--fix", "--show-fixes"]
+        exclude: ^venv/
+
+  # Check for various issues
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-json
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+      - id: detect-private-key
+
+  # Type checking with mypy (optional but recommended)
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.2
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-all]
+        args: ["--ignore-missing-imports", "--no-strict-optional"]
+        exclude: ^(venv/|tests/)
+
+# Configuration
+default_language_version:
+  python: python3
+
+exclude: |
+  (?x)^(
+    venv/.*|
+    \.git/.*|
+    \.pytest_cache/.*|
+    __pycache__/.*|
+    \.mypy_cache/.*|
+    \.ruff_cache/.*|
+    build/.*|
+    dist/.*|
+    .*\.egg-info/.*
+  )$
+
+fail_fast: false  # Run all hooks even if one fails

@@ -7,7 +7,7 @@ Provides AI-powered features using Anthropic Claude API.
 
 import logging
 import os
-from typing import Optional, Any
+from typing import Any
 
 try:
     import anthropic
@@ -59,10 +59,10 @@ class AIManager:
     async def chat_completion(
         self,
         prompt: str,
-        system_prompt: Optional[str ] = None,
+        system_prompt: str | None = None,
         max_tokens: int = 4000,
         temperature: float = 0.7,
-    ) -> Optional[str ]:
+    ) -> str | None:
         """Generate a chat completion using the active provider"""
 
         if not self.active_provider:

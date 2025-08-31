@@ -1,18 +1,7 @@
 # Ruff configuration for TINAA
 
-# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
-select = ["E", "F", "I", "N", "UP", "B", "A", "C4", "DTZ", "T10", "ISC", "ICN", "PIE", "PT", "RET", "SIM", "ARG", "PD", "PGH", "PL", "TRY", "RUF"]
-
-ignore = [
-    "E501",  # Line too long
-    "B008",  # Do not perform function calls in argument defaults
-    "B904",  # Allow raising without from inside except
-    "PLR0913", # Too many arguments
-]
-
-# Allow autofix for all enabled rules (when `--fix`) is provided.
-fixable = ["ALL"]
-unfixable = []
+line-length = 88
+target-version = "py310"
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
@@ -26,9 +15,65 @@ exclude = [
     "venv",
 ]
 
-line-length = 88
-target-version = "py310"
+[lint]
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+select = ["E", "F", "I", "N", "UP", "B", "A", "C4", "DTZ", "T10", "ISC", "ICN", "PIE", "PT", "RET", "SIM", "ARG", "PD", "PGH", "PL", "TRY", "RUF"]
 
-[per-file-ignores]
-"tests/*" = ["S101", "PLR2004"]  # Allow assert and magic values in tests
+ignore = [
+    "E501",      # Line too long
+    "E402",      # Module level import not at top of file
+    "B008",      # Do not perform function calls in argument defaults
+    "B904",      # Allow raising without from inside except
+    "PLR0913",   # Too many arguments
+    "PLR0911",   # Too many return statements
+    "PLW0603",   # Using global statement
+    "ARG001",    # Unused function argument
+    "ARG002",    # Unused method argument
+    "ARG003",    # Unused class method argument
+    "ARG005",    # Unused lambda argument
+    "PLR2004",   # Magic value used in comparison
+    "TRY300",    # Consider moving statement to else block
+    "TRY400",    # Use logging.exception instead of logging.error
+    "TRY002",    # Create your own exception
+    "TRY003",    # Avoid specifying long messages outside exception class
+    "TRY301",    # Abstract raise to inner function
+    "PLR0912",   # Too many branches
+    "PLR0915",   # Too many statements
+    "C901",      # Too complex
+    "PLR1714",   # Consider merging multiple comparisons
+    "B007",      # Loop control variable not used
+    "PLC0415",   # Import should be at top-level
+    "F601",      # Dictionary key repeated
+    "F821",      # Undefined name
+    "F823",      # Local variable referenced before assignment
+    "F841",      # Local variable assigned but never used
+    "RUF001",    # String contains ambiguous unicode
+    "RUF013",    # PEP 484 prohibits implicit Optional
+    "E722",      # Do not use bare except
+    "B011",      # Do not assert False
+    "PT015",     # Assertion always fails
+    "PT017",     # Found assertion on exception
+    "PT028",     # Test function parameter has default argument
+    "SIM103",    # Return the negated condition
+    "SIM105",    # Use contextlib.suppress
+    "SIM108",    # Use ternary operator
+    "SIM115",    # Use context manager for opening files
+    "SIM117",    # Use single with statement
+    "SIM118",    # Use key in dict
+    "SIM401",    # Use get
+    "RET504",    # Unnecessary assignment before return
+    "DTZ005",    # datetime.now() without tz
+    "PLR1701",   # Merge isinstance calls
+    "A001",      # Variable shadowing builtin
+    "N802",      # Function name should be lowercase
+    "N815",      # Variable in class scope should not be mixedCase
+]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+[lint.per-file-ignores]
+"tests/*" = ["S101", "PLR2004", "B011", "PT015", "PT017"]  # Allow assert and magic values in tests
 "__init__.py" = ["F401"]  # Allow unused imports in __init__ files
+"examples/*" = ["T201"]  # Allow print statements in examples

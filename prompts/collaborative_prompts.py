@@ -7,17 +7,15 @@ collaborative design between TINAA and IDE LLMs.
 """
 
 import json
-from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class CollaborativePrompts:
     """Prompts for collaborative test design sessions"""
-    
+
     @staticmethod
     def discovery_analysis_prompt(
-        project_context: Dict[str, Any],
-        answers: Dict[str, str]
+        project_context: dict[str, Any], answers: dict[str, str]
     ) -> str:
         """Generate prompt for analyzing discovery question answers"""
         return f"""
@@ -68,8 +66,7 @@ Focus on creating actionable, specific requirements that will lead to effective 
 
     @staticmethod
     def scenario_generation_prompt(
-        requirements: Dict[str, Any],
-        project_context: Dict[str, Any]
+        requirements: dict[str, Any], project_context: dict[str, Any]
     ) -> str:
         """Generate prompt for creating test scenarios"""
         return f"""
@@ -131,9 +128,9 @@ Format as a JSON array of scenario objects that both TINAA and IDE can process a
 
     @staticmethod
     def scenario_refinement_prompt(
-        current_scenarios: List[Dict[str, Any]],
-        feedback: Dict[str, str],
-        additional_requirements: Optional[str] = None
+        current_scenarios: list[dict[str, Any]],
+        feedback: dict[str, str],
+        additional_requirements: str | None = None,
     ) -> str:
         """Generate prompt for refining test scenarios based on feedback"""
         return f"""
@@ -186,10 +183,10 @@ Include a summary of changes made and rationale for major modifications.
 
     @staticmethod
     def playbook_generation_prompt(
-        project_context: Dict[str, Any],
-        requirements: Dict[str, Any],
-        scenarios: List[Dict[str, Any]],
-        conversation_history: List[Dict[str, Any]]
+        project_context: dict[str, Any],
+        requirements: dict[str, Any],
+        scenarios: list[dict[str, Any]],
+        conversation_history: list[dict[str, Any]],
     ) -> str:
         """Generate prompt for creating comprehensive test playbook"""
         return f"""
@@ -270,8 +267,8 @@ Ensure the playbook reflects the collaborative design process and enables contin
     @staticmethod
     def problem_solving_prompt(
         problem_description: str,
-        context: Dict[str, Any],
-        session_context: Optional[Dict[str, Any]] = None
+        context: dict[str, Any],
+        session_context: dict[str, Any] | None = None,
     ) -> str:
         """Generate prompt for internal problem solving during design/testing"""
         return f"""
@@ -335,9 +332,7 @@ Provide actionable, specific guidance that can be implemented immediately while 
 
     @staticmethod
     def code_review_prompt(
-        code: str,
-        review_focus: str,
-        project_context: Dict[str, Any]
+        code: str, review_focus: str, project_context: dict[str, Any]
     ) -> str:
         """Generate prompt for collaborative code review"""
         return f"""
@@ -432,14 +427,13 @@ Provide specific, actionable feedback that enhances both the immediate code qual
    - Reusability and DRY principles
    - Version control considerations
    - Team collaboration support
-            """
+            """,
         }
         return focus_details.get(focus, "General code quality analysis")
 
     @staticmethod
     def session_summary_prompt(
-        session_data: Dict[str, Any],
-        outcomes: List[str]
+        session_data: dict[str, Any], outcomes: list[str]
     ) -> str:
         """Generate prompt for summarizing collaborative sessions"""
         return f"""
@@ -504,9 +498,10 @@ Generate a detailed session summary including:
 Create a summary that serves as both a record of accomplishments and a guide for future collaborative testing endeavors.
 """
 
+
 class PromptTemplates:
     """Template management for collaborative prompts"""
-    
+
     @staticmethod
     def get_template(template_name: str, **kwargs) -> str:
         """Get a formatted prompt template"""
@@ -517,39 +512,44 @@ class PromptTemplates:
             "playbook_generation": CollaborativePrompts.playbook_generation_prompt,
             "problem_solving": CollaborativePrompts.problem_solving_prompt,
             "code_review": CollaborativePrompts.code_review_prompt,
-            "session_summary": CollaborativePrompts.session_summary_prompt
+            "session_summary": CollaborativePrompts.session_summary_prompt,
         }
-        
+
         template_func = templates.get(template_name)
         if not template_func:
             raise ValueError(f"Unknown template: {template_name}")
-        
+
         return template_func(**kwargs)
-    
+
     @staticmethod
-    def customize_prompt(base_prompt: str, customizations: Dict[str, str]) -> str:
+    def customize_prompt(base_prompt: str, customizations: dict[str, str]) -> str:
         """Apply customizations to a base prompt"""
         customized = base_prompt
-        
+
         for placeholder, value in customizations.items():
             customized = customized.replace(f"{{{placeholder}}}", value)
-        
+
         return customized
-    
+
     @staticmethod
-    def validate_prompt_inputs(template_name: str, inputs: Dict[str, Any]) -> List[str]:
+    def validate_prompt_inputs(template_name: str, inputs: dict[str, Any]) -> list[str]:
         """Validate that all required inputs are provided for a template"""
         required_inputs = {
             "discovery_analysis": ["project_context", "answers"],
             "scenario_generation": ["requirements", "project_context"],
             "scenario_refinement": ["current_scenarios", "feedback"],
-            "playbook_generation": ["project_context", "requirements", "scenarios", "conversation_history"],
+            "playbook_generation": [
+                "project_context",
+                "requirements",
+                "scenarios",
+                "conversation_history",
+            ],
             "problem_solving": ["problem_description", "context"],
             "code_review": ["code", "review_focus", "project_context"],
-            "session_summary": ["session_data", "outcomes"]
+            "session_summary": ["session_data", "outcomes"],
         }
-        
+
         required = required_inputs.get(template_name, [])
         missing = [req for req in required if req not in inputs]
-        
+
         return missing

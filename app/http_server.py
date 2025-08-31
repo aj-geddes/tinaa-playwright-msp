@@ -7,7 +7,7 @@ import json
 import logging
 import uuid
 from datetime import datetime
-from typing import Optional, Any
+from typing import Any
 
 import uvicorn
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
@@ -118,11 +118,13 @@ manager = ConnectionManager()
 # Initialize workspace manager lazily
 workspace_manager = None
 
+
 def get_workspace_manager():
     """Get or create workspace manager instance"""
     global workspace_manager
     if workspace_manager is None:
         import tempfile
+
         default_workspace = os.path.join(tempfile.gettempdir(), "workspace")
         workspace_manager = WorkspaceManager(
             workspace_path=os.getenv("WORKSPACE_PATH", default_workspace)
@@ -134,15 +136,15 @@ def get_workspace_manager():
 class TestRequest(BaseModel):
     action: str
     parameters: dict[str, Any]
-    client_id: Optional[str ] = None
+    client_id: str | None = None
 
 
 class PlaybookStep(BaseModel):
     id: str
     action: str
     parameters: dict[str, Any]
-    description: Optional[str ] = None
-    expected_outcome: Optional[str ] = None
+    description: str | None = None
+    expected_outcome: str | None = None
 
 
 class PlaybookRequest(BaseModel):
@@ -156,12 +158,12 @@ class ProjectCreateRequest(BaseModel):
     name: str
     description: str = ""
     template: str = "basic-web-testing"
-    repository_url: Optional[str ] = None
+    repository_url: str | None = None
 
 
 class UrlProjectRequest(BaseModel):
     url: str
-    name: Optional[str ] = None
+    name: str | None = None
 
 
 # Progress tracking decorator

@@ -9,7 +9,7 @@ supporting both Personal Access Tokens (PAT) and GitHub App authentication.
 import logging
 import time
 from datetime import datetime, timedelta
-from typing import Optional, Any
+from typing import Any
 
 import aiohttp
 import git
@@ -215,7 +215,7 @@ class GitAuthenticator:
         repository_url: str,
         destination_path: str,
         auth_type: str = "auto",
-        branch: Optional[str ] = None,
+        branch: str | None = None,
     ) -> dict[str, Any]:
         """
         Clone a repository with authentication

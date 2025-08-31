@@ -14,7 +14,7 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Any
+from typing import Any
 
 import aiofiles
 
@@ -242,7 +242,7 @@ class AIManager:
     def __init__(self, ai_cache_path: str = "/app/ai-cache"):
         self.ai_cache_path = Path(ai_cache_path)
         self.providers: dict[str, AIProvider] = {}
-        self.active_provider: Optional[str ] = None
+        self.active_provider: str | None = None
 
         # Try to create cache directory, ignore if permission denied
         try:
@@ -250,6 +250,7 @@ class AIManager:
         except (PermissionError, OSError):
             # Fall back to temp directory if we can't create the requested path
             import tempfile
+
             self.ai_cache_path = Path(tempfile.gettempdir()) / "tinaa_ai_cache"
             try:
                 self.ai_cache_path.mkdir(parents=True, exist_ok=True)
@@ -491,7 +492,7 @@ class AIManager:
         return result
 
     async def chat_completion(
-        self, message: str, context: Optional[dict[str, Any] ] = None
+        self, message: str, context: dict[str, Any] | None = None
     ) -> str:
         """Handle chat-style interactions with AI"""
         if not self.active_provider:
@@ -521,9 +522,7 @@ class AIManager:
 
         return await provider.generate_completion(full_prompt, max_tokens=1500)
 
-    async def _cache_playbook(
-        self, playbook: dict[str, Any], project_id: Optional[str ]
-    ):
+    async def _cache_playbook(self, playbook: dict[str, Any], project_id: str | None):
         """Cache generated playbook"""
         cache_file = (
             self.ai_cache_path

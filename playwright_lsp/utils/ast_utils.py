@@ -11,13 +11,16 @@ def get_word_at_position(params):
     line_text = get_document_line(document, position.line)
     if not line_text:
         return None
-    
+
     # Extract the word at the current position
-    word_match = re.search(r'[\w_]+', line_text[max(0, position.character-10):position.character+10])
+    word_match = re.search(
+        r"[\w_]+", line_text[max(0, position.character - 10) : position.character + 10]
+    )
     if word_match:
         return word_match.group(0)
-    
+
     return None
+
 
 # Placeholder for getting a document line
 def get_document_line(document_uri, line_number):

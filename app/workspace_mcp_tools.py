@@ -6,7 +6,7 @@ Comprehensive MCP tools for workspace and project management with proper FastMCP
 """
 
 import logging
-from typing import Optional, Any
+from typing import Any
 
 from fastmcp import Context, FastMCP
 
@@ -21,6 +21,7 @@ workspace_mcp = FastMCP("TINAA Workspace Management")
 # Global workspace manager (lazy initialization)
 workspace_manager = None
 
+
 def get_workspace_manager():
     """Get or create workspace manager instance"""
     global workspace_manager
@@ -34,7 +35,7 @@ async def create_project(
     project_name: str,
     description: str = "",
     template: str = "basic-web-testing",
-    repository_url: Optional[str ] = None,
+    repository_url: str | None = None,
     ctx: Context = None,
 ) -> dict[str, Any]:
     """
@@ -108,7 +109,7 @@ async def create_project(
 
 @workspace_mcp.tool()
 async def create_project_from_url(
-    url: str, project_name: Optional[str ] = None, ctx: Context = None
+    url: str, project_name: str | None = None, ctx: Context = None
 ) -> dict[str, Any]:
     """
     Automatically create a Playwright testing project by analyzing a target URL.
@@ -230,7 +231,7 @@ async def list_projects(ctx: Context = None) -> list[dict[str, Any]]:
 
 
 @workspace_mcp.tool()
-async def get_project(project_id: str, ctx: Context = None) -> Optional[dict[str, Any] ]:
+async def get_project(project_id: str, ctx: Context = None) -> dict[str, Any] | None:
     """
     Retrieve detailed information about a specific project including configuration and status.
 
@@ -438,8 +439,8 @@ async def get_workspace_status(ctx: Context = None) -> dict[str, Any]:
 @workspace_mcp.tool()
 async def clone_repository(
     repository_url: str,
-    destination_name: Optional[str ] = None,
-    branch: Optional[str ] = None,
+    destination_name: str | None = None,
+    branch: str | None = None,
     auth_type: str = "auto",
     ctx: Context = None,
 ) -> dict[str, Any]:

@@ -12,7 +12,7 @@ import base64
 import logging
 import os
 from pathlib import Path
-from typing import Optional, Any
+from typing import Any
 
 logger = logging.getLogger("tinaa.secrets_manager")
 
@@ -31,7 +31,7 @@ class SecretsManager:
             or os.getenv("KUBERNETES_SERVICE_HOST") is not None
         )
 
-    async def get_secret(self, secret_name: str, key: str) -> Optional[str ]:
+    async def get_secret(self, secret_name: str, key: str) -> str | None:
         """
         Get a secret value by name and key
 
@@ -66,7 +66,7 @@ class SecretsManager:
 
         return secret_value
 
-    async def _get_kubernetes_secret(self, secret_name: str, key: str) -> Optional[str ]:
+    async def _get_kubernetes_secret(self, secret_name: str, key: str) -> str | None:
         """Get secret from Kubernetes secrets"""
         try:
             # Kubernetes mounts secrets as files in /var/run/secrets/
@@ -92,14 +92,12 @@ class SecretsManager:
             return await self._get_secret_via_kubernetes_api(secret_name, key)
 
         except Exception as e:
-            logger.error(
-                f"Failed to get Kubernetes secret {secret_name}:{key}: {e!s}"
-            )
+            logger.error(f"Failed to get Kubernetes secret {secret_name}:{key}: {e!s}")
             return None
 
     async def _get_secret_via_kubernetes_api(
         self, secret_name: str, key: str
-    ) -> Optional[str ]:
+    ) -> str | None:
         """Get secret via Kubernetes API (requires appropriate RBAC)"""
         try:
 
@@ -144,13 +142,11 @@ class SecretsManager:
                             return base64.b64decode(encoded_value).decode("utf-8")
 
         except Exception as e:
-            logger.error(
-                f"Failed to get secret via K8s API {secret_name}:{key}: {e!s}"
-            )
+            logger.error(f"Failed to get secret via K8s API {secret_name}:{key}: {e!s}")
 
         return None
 
-    def _get_environment_secret(self, secret_name: str, key: str) -> Optional[str ]:
+    def _get_environment_secret(self, secret_name: str, key: str) -> str | None:
         """Get secret from environment variables"""
 
         # Map secret names and keys to Vault environment variable patterns
@@ -311,7 +307,10 @@ class SecretsManager:
         if db_type == "sqlite":
             return {
                 "type": "sqlite",
-                "path": os.getenv("TINAA_DB_PATH", os.path.join(tempfile.gettempdir(), "workspace", "tinaa.db")),
+                "path": os.getenv(
+                    "TINAA_DB_PATH",
+                    os.path.join(tempfile.gettempdir(), "workspace", "tinaa.db"),
+                ),
             }
         if db_type == "postgresql":
             return {
@@ -324,9 +323,13 @@ class SecretsManager:
                 "ssl_mode": os.getenv("POSTGRES_SSL_MODE", "prefer"),
             }
 
-        import tempfile
         import os
-        return {"type": "sqlite", "path": os.path.join(tempfile.gettempdir(), "tinaa.db")}
+        import tempfile
+
+        return {
+            "type": "sqlite",
+            "path": os.path.join(tempfile.gettempdir(), "tinaa.db"),
+        }
 
     def clear_cache(self):
         """Clear the secrets cache (for security)"""
@@ -369,7 +372,7 @@ class SecretsManager:
 
         return config
 
-    async def _get_git_pat_config(self) -> Optional[dict[str, Any] ]:
+    async def _get_git_pat_config(self) -> dict[str, Any] | None:
         """Get Personal Access Token configuration"""
         # Try to get PAT from secrets
         pat_token = await self.get_secret("tinaa-git-secret", "pat-token")
@@ -390,7 +393,7 @@ class SecretsManager:
 
         return None
 
-    async def _get_github_app_config(self) -> Optional[dict[str, Any] ]:
+    async def _get_github_app_config(self) -> dict[str, Any] | None:
         """Get GitHub App authentication configuration"""
         app_id = await self.get_secret("tinaa-github-app-secret", "app-id")
         private_key = await self.get_secret("tinaa-github-app-secret", "private-key")
@@ -566,9 +569,7 @@ class SecretsManager:
                         return False
 
         except Exception as e:
-            logger.error(
-                f"Exception creating Kubernetes secret {secret_name}: {e!s}"
-            )
+            logger.error(f"Exception creating Kubernetes secret {secret_name}: {e!s}")
             return False
 
     async def validate_git_access(self) -> dict[str, Any]:

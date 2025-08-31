@@ -16,4 +16,3 @@ def test_placeholder():
 @pytest.mark.skip(reason="Integration tests not yet implemented")
 def test_future_integration():
     """Placeholder for future integration tests"""
-    pass

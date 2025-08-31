@@ -12,7 +12,7 @@ import shutil
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Any
+from typing import Any
 from urllib.parse import urlparse
 
 import aiofiles
@@ -25,9 +25,10 @@ logger = logging.getLogger("tinaa.workspace_manager")
 class WorkspaceManager:
     """Manages TINAA workspace with multiple projects"""
 
-    def __init__(self, workspace_path: Optional[str] = None):
+    def __init__(self, workspace_path: str | None = None):
         if workspace_path is None:
             import tempfile
+
             workspace_path = os.path.join(tempfile.gettempdir(), "tinaa_workspace")
         self.workspace_path = Path(workspace_path)
         self.projects_path = self.workspace_path / "projects"
@@ -57,7 +58,7 @@ class WorkspaceManager:
         name: str,
         description: str = "",
         template: str = "basic-web-testing",
-        repository_url: Optional[str ] = None,
+        repository_url: str | None = None,
     ) -> dict[str, Any]:
         """
         Create a new project in the workspace
@@ -125,7 +126,7 @@ class WorkspaceManager:
             return {"success": False, "error": str(e)}
 
     async def create_project_from_url(
-        self, url: str, name: Optional[str ] = None
+        self, url: str, name: str | None = None
     ) -> dict[str, Any]:
         """
         Create a project by analyzing a URL and generating appropriate test structure
@@ -437,7 +438,7 @@ test.describe('{analysis["domain"]} - Automated Tests', () => {{
 
         return projects
 
-    async def get_project(self, project_id: str) -> Optional[dict[str, Any] ]:
+    async def get_project(self, project_id: str) -> dict[str, Any] | None:
         """Get project information by ID"""
         project_path = self.projects_path / project_id
         config_path = project_path / ".tinaa" / "config.json"

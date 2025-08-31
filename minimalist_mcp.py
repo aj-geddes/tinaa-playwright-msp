@@ -17,7 +17,7 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[
         logging.FileHandler("logs/mcp_server.log"),
-    ]
+    ],
 )
 logger = logging.getLogger("tinaa-playwright-msp")
 
@@ -30,11 +30,13 @@ logger.info(f"Current directory: {os.getcwd()}")
 # Global flag to track running state
 running = True
 
+
 # Set up signal handling to exit gracefully
 def signal_handler(sig, frame):
     global running
     logger.info(f"Received signal {sig}, shutting down...")
     running = False
+
 
 # Register signal handlers
 signal.signal(signal.SIGINT, signal_handler)
@@ -49,6 +51,7 @@ try:
     # Log FastMCP version info
     try:
         import fastmcp
+
         logger.info(f"FastMCP version: {fastmcp.__version__}")
     except Exception as e:
         logger.error(f"Error importing FastMCP: {e}")
@@ -58,15 +61,16 @@ try:
     # Import and run the MCP server
     try:
         from app.main import mcp
+
         logger.info("Successfully imported MCP server from app.main")
     except Exception as e:
         logger.error(f"Error importing MCP server from app.main: {e}")
         logger.error(traceback.format_exc())
         sys.exit(1)
-    
+
     # Create an event to signal when MCP is running
     mcp_running = threading.Event()
-    
+
     def run_mcp():
         logger.info("Starting MCP server in thread...")
         try:
@@ -77,11 +81,11 @@ try:
             old_stderr = sys.stderr
             sys.stdout = stdout_log
             sys.stderr = stderr_log
-            
+
             # Run MCP server - this will block until shutdown
             logger.info("Running MCP server...")
             mcp.run()
-            
+
             logger.info("MCP server thread exited")
         except Exception as e:
             logger.error(f"Error in MCP server thread: {e}")
@@ -94,20 +98,20 @@ try:
             stderr_log.close()
             global running
             running = False
-    
+
     # Start MCP in a separate thread
     mcp_thread = threading.Thread(target=run_mcp)
     mcp_thread.daemon = True
     mcp_thread.start()
-    
+
     logger.info("MCP server started in background thread")
-    
+
     # Keep the main thread alive
     while running and mcp_thread.is_alive():
         time.sleep(1)
-    
+
     logger.info("MCP server shutting down...")
-    
+
 except Exception as e:
     logger.error(f"Error starting MCP server: {e}")
     logger.error(traceback.format_exc())

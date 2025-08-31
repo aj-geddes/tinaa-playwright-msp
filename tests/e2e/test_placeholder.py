@@ -16,4 +16,3 @@ def test_placeholder():
 @pytest.mark.skip(reason="E2E tests not yet implemented")
 def test_future_e2e():
     """Placeholder for future E2E tests"""
-    pass

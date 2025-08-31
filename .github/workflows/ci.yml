@@ -34,7 +34,7 @@ jobs:
           pip install ruff black isort
       
       - name: Run Ruff
-        run: ruff check . --output-format=github --ignore UP045,PLW0603,ARG001
+        run: ruff check . --output-format=github
       
       - name: Check Black formatting
         run: black --check --diff .

@@ -9,18 +9,18 @@ Enables collaborative test design between TINAA AI and IDE LLMs.
 import asyncio
 import json
 import logging
+import os
 
 # Import collaborative prompts
 import sys
 from datetime import datetime
-from typing import Optional, Any
+from typing import Any
 
 from fastmcp import Context, FastMCP
 
 from app.ai_integration import AIManager
 from app.workspace_manager import WorkspaceManager
 
-import os
 # Add prompts directory to path (relative to this file)
 prompts_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "prompts")
 if os.path.exists(prompts_dir):
@@ -53,7 +53,7 @@ class CollaborativeSession:
         }
         self.created_at = datetime.now()
 
-    def add_interaction(self, source: str, message: str, data: Optional[dict ] = None):
+    def add_interaction(self, source: str, message: str, data: dict | None = None):
         """Add an interaction to the session history"""
         self.conversation_history.append(
             {
@@ -104,8 +104,8 @@ async def initialize_global_components():
 async def start_collaborative_session(
     project_name: str,
     project_description: str = "",
-    target_url: Optional[str ] = None,
-    existing_code_context: Optional[str ] = None,
+    target_url: str | None = None,
+    existing_code_context: str | None = None,
     ctx: Context = None,
 ) -> dict[str, Any]:
     """
@@ -252,7 +252,7 @@ async def answer_discovery_questions(
 async def refine_test_scenarios(
     session_id: str,
     scenario_feedback: dict[str, str],
-    additional_requirements: Optional[str ] = None,
+    additional_requirements: str | None = None,
     ctx: Context = None,
 ) -> dict[str, Any]:
     """
@@ -325,7 +325,7 @@ async def refine_test_scenarios(
 @tinaa_mcp.tool()
 async def create_comprehensive_playbook(
     session_id: str,
-    playbook_preferences: Optional[dict[str, Any] ] = None,
+    playbook_preferences: dict[str, Any] | None = None,
     ctx: Context = None,
 ) -> dict[str, Any]:
     """
@@ -459,8 +459,8 @@ async def get_session_status(session_id: str, ctx: Context = None) -> dict[str, 
 @tinaa_mcp.tool()
 async def internal_problem_solving(
     problem_description: str,
-    context: Optional[dict[str, Any] ] = None,
-    session_id: Optional[str ] = None,
+    context: dict[str, Any] | None = None,
+    session_id: str | None = None,
     ctx: Context = None,
 ) -> dict[str, Any]:
     """
@@ -546,7 +546,7 @@ async def internal_problem_solving(
 async def collaborative_code_review(
     code: str,
     review_focus: str = "general",
-    session_id: Optional[str ] = None,
+    session_id: str | None = None,
     ctx: Context = None,
 ) -> dict[str, Any]:
     """
@@ -994,7 +994,7 @@ async def _generate_test_scenarios(
 async def _refine_scenarios_with_ai(
     session: CollaborativeSession,
     feedback: dict[str, str],
-    additional_requirements: Optional[str ],
+    additional_requirements: str | None,
 ) -> list[dict[str, Any]]:
     """Refine scenarios based on feedback using collaborative prompts"""
     await initialize_global_components()
