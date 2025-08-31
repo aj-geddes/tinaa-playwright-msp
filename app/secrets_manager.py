@@ -11,6 +11,7 @@ Handles secure retrieval of API keys and sensitive configuration from:
 import base64
 import logging
 import os
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -322,9 +323,6 @@ class SecretsManager:
                 "password": os.getenv("POSTGRES_PASSWORD", ""),
                 "ssl_mode": os.getenv("POSTGRES_SSL_MODE", "prefer"),
             }
-
-        import os
-        import tempfile
 
         return {
             "type": "sqlite",

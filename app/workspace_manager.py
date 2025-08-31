@@ -8,7 +8,9 @@ for multiple Playwright testing projects.
 
 import json
 import logging
+import os
 import shutil
+import tempfile
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -27,8 +29,6 @@ class WorkspaceManager:
 
     def __init__(self, workspace_path: str | None = None):
         if workspace_path is None:
-            import tempfile
-
             workspace_path = os.path.join(tempfile.gettempdir(), "tinaa_workspace")
         self.workspace_path = Path(workspace_path)
         self.projects_path = self.workspace_path / "projects"
