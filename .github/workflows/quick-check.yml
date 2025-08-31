@@ -26,6 +26,8 @@ jobs:
           pip install ruff pytest
           # Only install core dependencies for import checks
           pip install fastmcp pydantic fastapi
+          # Install playwright for import checks (no browsers needed)
+          pip install playwright
       
       - name: Quick lint check
         run: |
