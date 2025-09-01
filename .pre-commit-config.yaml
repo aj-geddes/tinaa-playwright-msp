@@ -46,8 +46,8 @@ repos:
     rev: v1.11.2
     hooks:
       - id: mypy
-        additional_dependencies: [types-all]
-        args: ["--ignore-missing-imports", "--no-strict-optional"]
+        additional_dependencies: []
+        args: ["--ignore-missing-imports", "--no-strict-optional", "--check-untyped-defs"]
         exclude: ^(venv/|tests/)
 
 # Configuration

@@ -170,3 +170,15 @@ test-results/
 # Cursor
 .cursorignore
 .cursorindexingignore
+
+# Temporary and generated files
+*.bak
+*.tmp
+*.temp
+tina
+fix_broken_links.py
+install-mkdocs.sh
+WORKFLOW_FIXES.md
+GITHUB_PAGES_SETUP.md
+README_HTTP.md
+CLAUDE.md
