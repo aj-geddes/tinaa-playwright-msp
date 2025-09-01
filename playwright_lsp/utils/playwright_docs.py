@@ -18,7 +18,6 @@ Response: The main resource response. In case of multiple redirects, the navigat
 await page.goto('https://example.com')
 ```
 """,
-    
     "click": """
 **page.click(selector: str, **kwargs) -> None**
 
@@ -37,7 +36,6 @@ Clicks an element matched by the selector.
 await page.click('button#submit')
 ```
 """,
-    
     "fill": """
 **page.fill(selector: str, value: str, **kwargs) -> None**
 
@@ -53,7 +51,6 @@ Fills an input field with the specified value.
 await page.fill('input#search', 'query text')
 ```
 """,
-    
     "locator": """
 **page.locator(selector: str) -> Locator**
 
@@ -71,7 +68,6 @@ locator = page.locator('div.article')
 await locator.click()
 ```
 """,
-    
     "wait_for_selector": """
 **page.wait_for_selector(selector: str, **kwargs) -> ElementHandle**
 
@@ -90,7 +86,6 @@ ElementHandle: An element handle that can be used for further operations or None
 button = await page.wait_for_selector('button.ready')
 ```
 """,
-    
     "screenshot": """
 **page.screenshot(**kwargs) -> bytes**
 
@@ -111,7 +106,6 @@ bytes: Binary image data
 await page.screenshot(path='screenshot.png', full_page=True)
 ```
 """,
-    
     "type": """
 **page.type(selector: str, text: str, **kwargs) -> None**
 
@@ -127,5 +121,5 @@ Types text into the focused element.
 ```python
 await page.type('textarea#editor', 'Hello world!')
 ```
-"""
+""",
 }

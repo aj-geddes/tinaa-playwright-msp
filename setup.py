@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name="tinaa-playwright-msp",
@@ -12,7 +12,7 @@ setup(
         "pytest>=7.0.0",
         "pytest-playwright>=0.3.0",
         "fastmcp==2.8.0",
-        "pydantic>=2.0.0"
+        "pydantic>=2.0.0",
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",

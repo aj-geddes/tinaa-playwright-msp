@@ -1,0 +1,17 @@
+apiVersion: v2
+name: tinaa-playwright-msp
+description: A Helm chart for TINAA - Testing Intelligence Network Automation Assistant
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - playwright
+  - testing
+  - automation
+  - mcp
+home: https://github.com/aj-geddes/tinaa-playwright-msp
+sources:
+  - https://github.com/aj-geddes/tinaa-playwright-msp
+maintainers:
+  - name: TINAA Team
+    url: https://github.com/aj-geddes

@@ -19,7 +19,7 @@ hide:
 
 </div>
 
-TINAA is an enterprise-grade AI-powered testing platform that revolutionizes how you create, maintain, and scale Playwright browser automation tests. Instead of writing complex test code from scratch, TINAA generates intelligent tests, provides real-time guidance, and automates tedious testing tasks.
+TINAA is a revolutionary AI-powered testing platform that transforms browser automation through intelligent collaboration between developers, AI, and testing tools. By combining advanced Playwright automation with collaborative AI capabilities and seamless IDE integration, TINAA enables teams to design, execute, and maintain comprehensive test suites through natural language interactions and intelligent automation.
 
 <div class="grid cards" markdown>
 
@@ -55,18 +55,18 @@ TINAA is an enterprise-grade AI-powered testing platform that revolutionizes how
 
 <div class="annotate" markdown>
 
-- **🤖 Intelligent Test Execution** - AI analyzes your application and generates comprehensive test scenarios (1)
-- **🔄 Multi-Protocol Support** - HTTP API, MCP, WebSocket, and LSP for maximum flexibility
-- **📦 25+ Testing Resources** - Pre-built tools, quickstarts, examples, and documentation
-- **🔒 Enterprise Security** - Production-ready with OAuth2, SAML, and audit logging
-- **📊 Real-Time Progress** - WebSocket updates and live progress tracking
-- **🚀 Scalable Architecture** - Horizontal scaling with Kubernetes and Docker Swarm
-- **🧪 Comprehensive Testing** - Accessibility, security, responsive, and exploratory testing
-- **🛠️ Extensible Framework** - Custom resources, plugins, and integrations
+- **🤝 Collaborative AI Testing** - Work directly with AI in your IDE to design comprehensive test playbooks (1)
+- **🧠 Multi-LLM Integration** - Support for OpenAI, Anthropic, and local models with intelligent prompt engineering
+- **🔌 MCP Protocol Native** - Full FastMCP 2.8.0 support for seamless IDE integration with 20+ documented tools
+- **🗂️ Intelligent Workspace** - AI-powered project management with 50GB storage and automatic URL analysis
+- **🔒 Enterprise Security** - Kubernetes secrets, GitHub App authentication, and production-ready deployment
+- **📊 Real-Time Collaboration** - Live progress tracking, interactive sessions, and WebSocket communication
+- **🚀 Kubernetes Native** - Helm charts, auto-scaling, and enterprise-grade deployment capabilities
+- **🛠️ Advanced Tooling** - LSP server, static analysis, code review, and comprehensive automation framework
 
 </div>
 
-1. TINAA uses advanced heuristics and AI to understand your application structure, identify test scenarios, and generate maintainable test code.
+1. TINAA enables collaborative test design where you and AI work together through your IDE to create intelligent, comprehensive test suites. The AI asks smart questions, analyzes your answers, and generates executable test playbooks tailored to your specific needs.
 
 ---
 

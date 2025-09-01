@@ -1,0 +1,44 @@
+1. Get the application URL by running these commands:
+{{- if .Values.ingress.enabled }}
+{{- range $host := .Values.ingress.hosts }}
+  {{- range .paths }}
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
+  {{- end }}
+{{- end }}
+{{- else if contains "NodePort" .Values.service.type }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "tinaa-playwright-msp.fullname" . }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
+{{- else if contains "LoadBalancer" .Values.service.type }}
+     NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+           You can watch its status by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "tinaa-playwright-msp.fullname" . }}'
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "tinaa-playwright-msp.fullname" . }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
+  echo http://$SERVICE_IP:{{ .Values.service.port }}
+{{- else if contains "ClusterIP" .Values.service.type }}
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "tinaa-playwright-msp.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+  export CONTAINER_PORT=$(kubectl get pod --namespace {{ .Release.Namespace }} $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
+  echo "Visit http://127.0.0.1:8765 to use your application"
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8765:$CONTAINER_PORT
+{{- end }}
+
+2. Verify TINAA is running:
+  curl http://127.0.0.1:8765/health
+
+3. Test browser connectivity:
+  curl -X POST http://127.0.0.1:8765/test/connectivity
+
+4. Run your first test:
+  curl -X POST http://127.0.0.1:8765/test/exploratory \
+    -H "Content-Type: application/json" \
+    -d '{"action": "exploratory", "parameters": {"url": "https://example.com"}}'
+
+5. View logs:
+  kubectl logs -f --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "tinaa-playwright-msp.name" . }},app.kubernetes.io/instance={{ .Release.Name }}"
+
+{{- if .Values.tinaa.persistence.logs.enabled }}
+
+6. Access persistent logs:
+  kubectl exec -it --namespace {{ .Release.Namespace }} $POD_NAME -- ls -la /app/logs
+{{- end }}
+
+For more information, visit: https://aj-geddes.github.io/tinaa-playwright-msp

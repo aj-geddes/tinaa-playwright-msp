@@ -1,7 +1,8 @@
 # Simple version of hover.py that doesn't depend on pygls.lsp.types
 
-from playwright_lsp.utils.playwright_docs import PLAYWRIGHT_DOCS
 from playwright_lsp.utils.ast_utils import get_word_at_position
+from playwright_lsp.utils.playwright_docs import PLAYWRIGHT_DOCS
+
 
 # Provide hover documentation for recognized Playwright terms
 def get_hover_response(params):

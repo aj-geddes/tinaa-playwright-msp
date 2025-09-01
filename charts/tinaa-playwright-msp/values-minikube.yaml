@@ -1,0 +1,20 @@
+# Values for Minikube deployment
+image:
+  pullPolicy: Never  # Don't try to pull from registry, use local image
+
+# Reduced resources for local development
+resources:
+  limits:
+    cpu: 1
+    memory: 2Gi
+  requests:
+    cpu: 250m
+    memory: 1Gi
+
+# Disable persistence for local testing
+tinaa:
+  persistence:
+    logs:
+      enabled: false
+    workspace:
+      enabled: false
