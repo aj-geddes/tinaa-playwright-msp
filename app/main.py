@@ -7,7 +7,7 @@ import logging
 import os
 import threading
 from contextlib import redirect_stderr, redirect_stdout
-from typing import Any
+from typing import Any, Optional
 
 from fastmcp import Context, FastMCP
 
@@ -30,7 +30,7 @@ mcp = FastMCP("TINAA - Testing Intelligence Network Automation Assistant")
 
 @mcp.tool()
 async def start_lsp_server(
-    tcp: bool = False, port: int = 8765, ctx: Context = None
+    tcp: bool = False, port: int = 8765, ctx: Optional[Context] = None
 ) -> str:
     """
     Start TINAA's Playwright Language Server Protocol (LSP) server for IDE integration.
@@ -100,39 +100,47 @@ async def start_lsp_server(
 
 @mcp.tool()
 async def check_browser_connectivity(
-    url: str = "https://example.com", ctx: Context = None
+    url: str = "https://example.com", ctx: Optional[Context] = None
 ) -> dict[str, Any]:
     """
-    Check TINAA's browser automation capabilities by visiting a URL and capturing basic information.
+    Check browser automation connectivity and capabilities.
 
-    Verifies that Playwright browser automation is working correctly by navigating to a URL,
-    capturing the page title, taking a screenshot, and reporting the results.
+    This tool verifies that Playwright browser automation is functioning correctly
+    by navigating to a URL, capturing the page title, taking a screenshot, and
+    reporting the results. It's a comprehensive diagnostic tool.
 
     Args:
-        url: The URL to visit for testing browser connectivity (default: "https://example.com")
+        url: The URL to visit for testing connectivity (default: "https://example.com").
+             Must be a valid HTTP or HTTPS URL.
         ctx: Execution context (automatically provided by FastMCP)
 
     Returns:
         Dictionary containing:
-        - success: Boolean indicating if the test passed
-        - url: The URL that was tested
-        - title: Page title from the visited URL
-        - status: HTTP status code of the response
-        - screenshot: Base64-encoded screenshot of the page
-        - error: Error message if the test failed
+        - success (bool): True if browser automation is working
+        - url (str): The URL that was tested
+        - title (str): Page title from the visited URL
+        - status (int): HTTP status code of the response
+        - screenshot (str): Base64-encoded PNG screenshot
+        - error (str): Error message if the test failed
 
-    This tool is useful for:
-        - Verifying TINAA's browser automation setup
-        - Testing network connectivity and proxy settings
-        - Validating that Playwright can launch browsers successfully
-        - Getting a quick visual confirmation of a webpage
+    Use Cases:
+        - Verify browser automation setup after installation
+        - Test network connectivity and firewall rules
+        - Validate Playwright browser drivers are installed
+        - Quick visual confirmation of webpage rendering
+        - Troubleshooting browser automation issues
 
     Example:
-        >>> result = await test_browser_connectivity("https://playwright.dev")
-        >>> print(f"Page title: {result['title']}")
-        "Page title: Playwright"
-        >>> print(f"Success: {result['success']}")
-        "Success: True"
+        >>> result = await check_browser_connectivity("https://playwright.dev")
+        >>> if result["success"]:
+        ...     print(f"✓ Browser working - Page title: {result['title']}")
+        ...     print(f"  HTTP Status: {result['status']}")
+        ... else:
+        ...     print(f"✗ Error: {result['error']}")
+
+    Note:
+        This tool creates a temporary browser instance that is automatically
+        cleaned up after execution. It does not use the global controller instance.
     """
     if ctx:
         await ctx.info(f"Testing browser connectivity to {url}...")
@@ -189,7 +197,7 @@ async def check_browser_connectivity(
 
 
 @mcp.tool()
-async def analyze_script(script_path: str, ctx: Context = None) -> dict:
+async def analyze_script(script_path: str, ctx: Optional[Context] = None) -> dict:
     """
     Analyze a Playwright test script for common issues, errors, and improvement opportunities.
 

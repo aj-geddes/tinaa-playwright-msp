@@ -8,6 +8,16 @@ TINAA provides three different API interfaces for browser automation and testing
 2. **HTTP REST API** - Traditional REST endpoints with WebSocket support
 3. **LSP (Language Server Protocol)** - For IDE integration
 
+> **✨ Recent Updates (2025-11-07)**
+> The MCP server has been comprehensively refactored with:
+> - ✅ Complete type hints (100% coverage)
+> - ✅ Enhanced error handling and input validation
+> - ✅ Comprehensive docstrings with examples
+> - ✅ Improved progress reporting via Context
+> - ✅ Better structured error responses
+>
+> See [MCP_IMPROVEMENTS.md](../MCP_IMPROVEMENTS.md) for complete details.
+
 ## Resources API
 
 TINAA includes a comprehensive resources framework with 25 specialized resources following the gofastmcp.com v2.8.0 specification. All resources are accessible via HTTP endpoints:
@@ -55,74 +65,139 @@ async def start_lsp_server(tcp: bool = False, port: int = 8765) -> str
 
 ---
 
-### test_browser_connectivity
+### check_browser_connectivity
 
-Tests if the browser can be launched and is working correctly.
+Tests browser automation connectivity and capabilities.
 
 ```python
 @mcp.tool()
-async def test_browser_connectivity() -> str
+async def check_browser_connectivity(url: str = "https://example.com", ctx: Optional[Context] = None) -> dict[str, Any]
 ```
 
-**Returns:** Success message or error details
+**Parameters:**
+- `url` (str): URL to test connectivity with (default: "https://example.com")
+- `ctx` (Optional[Context]): Execution context for progress reporting
+
+**Returns:** Dictionary containing:
+- `success` (bool): Whether browser automation is working
+- `url` (str): The tested URL
+- `title` (str): Page title
+- `status` (int): HTTP status code
+- `screenshot` (str): Base64-encoded PNG screenshot
+- `error` (str): Error message if failed
+
+**Use Cases:**
+- Verify browser automation setup
+- Test network connectivity
+- Validate Playwright installation
+- Troubleshooting browser issues
 
 ---
 
 ### navigate_to_url
 
-Navigates the browser to a specified URL.
+Navigates the browser to a specified URL and captures page information.
 
 ```python
 @mcp.tool()
-async def navigate_to_url(url: str) -> str
+async def navigate_to_url(url: str, ctx: Optional[Context] = None) -> dict[str, Any]
 ```
 
 **Parameters:**
-- `url` (str): The URL to navigate to
+- `url` (str): The URL to navigate to (must start with http:// or https://)
+- `ctx` (Optional[Context]): Execution context for progress reporting
 
-**Returns:** Navigation result with page title and URL
+**Returns:** Dictionary containing:
+- `success` (bool): Whether navigation succeeded
+- `url` (str): The requested URL
+- `current_url` (str): Actual URL after redirects
+- `title` (str): Page title
+- `error` (str): Error message if failed
+
+**Example:**
+```python
+result = await navigate_to_url("https://example.com")
+print(result["title"])  # "Example Domain"
+```
 
 ---
 
 ### take_page_screenshot
 
-Takes a screenshot of the current page.
+Takes a PNG screenshot of the current page.
 
 ```python
 @mcp.tool()
-async def take_page_screenshot(name: str = "screenshot") -> str
+async def take_page_screenshot(full_page: bool = False, ctx: Optional[Context] = None) -> dict[str, Any]
 ```
 
 **Parameters:**
-- `name` (str): Name for the screenshot
+- `full_page` (bool): If True, captures entire page by scrolling. If False, captures only viewport (default: False)
+- `ctx` (Optional[Context]): Execution context for progress reporting
 
-**Returns:** Success message with screenshot details
+**Returns:** Dictionary containing:
+- `success` (bool): Whether screenshot was captured
+- `screenshot` (str): Base64-encoded PNG image data
+- `type` (str): MIME type ("image/png")
+- `full_page` (bool): Whether full page was captured
+- `error` (str): Error message if failed
+
+**Example:**
+```python
+result = await take_page_screenshot(full_page=True)
+if result["success"]:
+    import base64
+    with open("screenshot.png", "wb") as f:
+        f.write(base64.b64decode(result["screenshot"]))
+```
 
 ---
 
 ### fill_login_form
 
-Fills and submits a login form on the current page.
+Fills and submits a login form with credentials.
 
 ```python
 @mcp.tool()
 async def fill_login_form(
+    username_selector: str,
+    password_selector: str,
+    submit_selector: str,
     username: str,
     password: str,
-    username_selector: str = None,
-    password_selector: str = None,
-    submit_selector: str = None
-) -> str
+    ctx: Optional[Context] = None
+) -> dict[str, Any]
 ```
 
 **Parameters:**
-- `username` (str): Username to enter
-- `password` (str): Password to enter
-- `username_selector` (str): CSS selector for username field
-- `password_selector` (str): CSS selector for password field
-- `submit_selector` (str): CSS selector for submit button
+- `username_selector` (str): CSS selector for username/email input field (required)
+- `password_selector` (str): CSS selector for password input field (required)
+- `submit_selector` (str): CSS selector for submit button (required)
+- `username` (str): Username or email to enter (required)
+- `password` (str): Password to enter (required)
+- `ctx` (Optional[Context]): Execution context for progress reporting
 
-**Returns:** Login result status
+**Returns:** Dictionary containing:
+- `success` (bool): Whether form was filled and submitted
+- `username_selector` (str): Username field selector used
+- `password_selector` (str): Password field selector used
+- `submit_selector` (str): Submit button selector used
+- `url_after_submit` (str): URL after form submission
+- `error` (str): Error message if failed
+
+**Example:**
+```python
+result = await fill_login_form(
+    username_selector="#username",
+    password_selector="#password",
+    submit_selector="button[type='submit']",
+    username="testuser",
+    password="testpass123"
+)
+print(result["success"])  # True
+```
+
+**Note:** For security testing purposes only. Never use real credentials in tests.
 
 ---
 
