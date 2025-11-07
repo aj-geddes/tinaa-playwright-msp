@@ -5,7 +5,7 @@ Settings API for TINAA - Configuration and preferences management
 import json
 import logging
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
@@ -15,17 +15,21 @@ logger = logging.getLogger("tinaa-settings")
 
 class BrowserSettings(BaseModel):
     """Browser configuration settings."""
+
     headless: bool = Field(True, description="Run browser in headless mode")
     timeout: int = Field(30000, description="Default timeout in milliseconds")
     viewport_width: int = Field(1280, description="Default viewport width")
     viewport_height: int = Field(720, description="Default viewport height")
-    user_agent: Optional[str] = Field(None, description="Custom user agent string")
+    user_agent: str | None = Field(None, description="Custom user agent string")
     locale: str = Field("en-US", description="Browser locale")
 
 
 class TestSettings(BaseModel):
     """Test execution settings."""
-    screenshot_on_failure: bool = Field(True, description="Capture screenshots on test failures")
+
+    screenshot_on_failure: bool = Field(
+        True, description="Capture screenshots on test failures"
+    )
     video_recording: bool = Field(False, description="Record videos of test execution")
     retry_failures: bool = Field(True, description="Retry failed tests")
     max_retries: int = Field(2, description="Maximum number of retries")
@@ -34,14 +38,18 @@ class TestSettings(BaseModel):
 
 class ReportSettings(BaseModel):
     """Test report settings."""
+
     format: str = Field("html", description="Report format (html, json, markdown)")
-    include_screenshots: bool = Field(True, description="Include screenshots in reports")
+    include_screenshots: bool = Field(
+        True, description="Include screenshots in reports"
+    )
     include_traces: bool = Field(False, description="Include execution traces")
     output_dir: str = Field("reports", description="Output directory for reports")
 
 
 class Settings(BaseModel):
     """Complete TINAA settings."""
+
     browser: BrowserSettings = Field(default_factory=BrowserSettings)
     testing: TestSettings = Field(default_factory=TestSettings)
     reporting: ReportSettings = Field(default_factory=ReportSettings)
@@ -50,7 +58,7 @@ class Settings(BaseModel):
 class SettingsManager:
     """Manages application settings persistence and retrieval."""
 
-    def __init__(self, settings_file: Optional[str] = None):
+    def __init__(self, settings_file: str | None = None):
         """
         Initialize settings manager.
 
@@ -65,7 +73,7 @@ class SettingsManager:
             config_dir.mkdir(exist_ok=True)
             self.settings_path = config_dir / "settings.json"
 
-        self._settings: Optional[Settings] = None
+        self._settings: Settings | None = None
         logger.info(f"Settings manager initialized: {self.settings_path}")
 
     def load(self) -> Settings:
@@ -79,7 +87,7 @@ class SettingsManager:
         """
         try:
             if self.settings_path.exists():
-                with open(self.settings_path, "r") as f:
+                with open(self.settings_path) as f:
                     data = json.load(f)
                     self._settings = Settings(**data)
                     logger.info("Settings loaded from file")
@@ -161,7 +169,7 @@ class SettingsManager:
 
 
 # Global settings manager instance
-_settings_manager: Optional[SettingsManager] = None
+_settings_manager: SettingsManager | None = None
 
 
 def get_settings_manager() -> SettingsManager:
@@ -197,10 +205,9 @@ def setup_settings_api(app) -> None:
             return {
                 "success": True,
                 "message": "Settings updated successfully",
-                "settings": settings
+                "settings": settings,
             }
-        else:
-            raise HTTPException(status_code=500, detail="Failed to save settings")
+        raise HTTPException(status_code=500, detail="Failed to save settings")
 
     @router.patch("/")
     async def patch_settings(updates: dict[str, Any]) -> dict[str, Any]:
@@ -212,12 +219,11 @@ def setup_settings_api(app) -> None:
             return {
                 "success": True,
                 "message": "Settings updated successfully",
-                "settings": updated
+                "settings": updated,
             }
         except Exception as e:
             raise HTTPException(
-                status_code=400,
-                detail=f"Failed to update settings: {str(e)}"
+                status_code=400, detail=f"Failed to update settings: {e!s}"
             )
 
     @router.post("/reset")
@@ -230,7 +236,7 @@ def setup_settings_api(app) -> None:
         return {
             "success": True,
             "message": "Settings reset to defaults",
-            "settings": defaults
+            "settings": defaults,
         }
 
     @router.get("/browser")

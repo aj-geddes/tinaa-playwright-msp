@@ -3,7 +3,6 @@ Simple document store for LSP server
 
 Maintains in-memory cache of document contents for LSP operations.
 """
-from typing import Dict, List, Optional
 
 
 class Document:
@@ -21,7 +20,7 @@ class Document:
         self.uri = uri
         self.version = version
         self._text = text
-        self._lines: Optional[List[str]] = None
+        self._lines: list[str] | None = None
 
     @property
     def text(self) -> str:
@@ -35,13 +34,13 @@ class Document:
         self._lines = None
 
     @property
-    def lines(self) -> List[str]:
+    def lines(self) -> list[str]:
         """Get document lines (cached)."""
         if self._lines is None:
             self._lines = self._text.splitlines()
         return self._lines
 
-    def get_line(self, line_number: int) -> Optional[str]:
+    def get_line(self, line_number: int) -> str | None:
         """
         Get a specific line from the document.
 
@@ -72,7 +71,7 @@ class DocumentStore:
 
     def __init__(self):
         """Initialize empty document store."""
-        self._documents: Dict[str, Document] = {}
+        self._documents: dict[str, Document] = {}
 
     def open(self, uri: str, text: str, version: int = 0) -> Document:
         """
@@ -100,7 +99,7 @@ class DocumentStore:
         if uri in self._documents:
             del self._documents[uri]
 
-    def get(self, uri: str) -> Optional[Document]:
+    def get(self, uri: str) -> Document | None:
         """
         Get a document by URI.
 
@@ -112,7 +111,7 @@ class DocumentStore:
         """
         return self._documents.get(uri)
 
-    def update(self, uri: str, text: str, version: int) -> Optional[Document]:
+    def update(self, uri: str, text: str, version: int) -> Document | None:
         """
         Update an existing document.
 
@@ -141,7 +140,7 @@ class DocumentStore:
         """
         return uri in self._documents
 
-    def all_uris(self) -> List[str]:
+    def all_uris(self) -> list[str]:
         """
         Get all document URIs in the store.
 
@@ -152,7 +151,7 @@ class DocumentStore:
 
 
 # Global document store instance
-_document_store: Optional[DocumentStore] = None
+_document_store: DocumentStore | None = None
 
 
 def get_document_store() -> DocumentStore:

@@ -2,7 +2,6 @@
 """
 TINAA HTTP Server with WebSocket support for streaming and real-time interaction
 """
-import asyncio
 import json
 import logging
 import uuid

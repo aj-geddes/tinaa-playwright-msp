@@ -7,7 +7,7 @@ import logging
 import shutil
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 from uuid import uuid4
 
 logger = logging.getLogger("tinaa-workspace")
@@ -53,8 +53,8 @@ class WorkspaceManager:
     async def create_project(
         self,
         name: str,
-        description: Optional[str] = None,
-        project_type: str = "playwright"
+        description: str | None = None,
+        project_type: str = "playwright",
     ) -> dict[str, Any]:
         """
         Create a new test project.
@@ -110,9 +110,7 @@ class WorkspaceManager:
             }
 
     async def create_project_from_url(
-        self,
-        url: str,
-        name: Optional[str] = None
+        self, url: str, name: str | None = None
     ) -> dict[str, Any]:
         """
         Create a project based on a target URL.
@@ -132,8 +130,7 @@ class WorkspaceManager:
 
             # Create project
             result = await self.create_project(
-                name=project_name,
-                description=f"Testing project for {url}"
+                name=project_name, description=f"Testing project for {url}"
             )
 
             if result["success"]:
@@ -141,7 +138,7 @@ class WorkspaceManager:
                 project_id = result["project_id"]
                 metadata_path = self._get_project_metadata_path(project_id)
 
-                with open(metadata_path, "r") as f:
+                with open(metadata_path) as f:
                     metadata = json.load(f)
 
                 metadata["target_url"] = url
@@ -176,16 +173,13 @@ class WorkspaceManager:
                 if project_dir.is_dir():
                     metadata_path = project_dir / "project.json"
                     if metadata_path.exists():
-                        with open(metadata_path, "r") as f:
+                        with open(metadata_path) as f:
                             metadata = json.load(f)
                             metadata["path"] = str(project_dir)
                             projects.append(metadata)
 
             # Sort by creation date (newest first)
-            projects.sort(
-                key=lambda x: x.get("created_at", ""),
-                reverse=True
-            )
+            projects.sort(key=lambda x: x.get("created_at", ""), reverse=True)
 
             return projects
 
@@ -193,7 +187,7 @@ class WorkspaceManager:
             logger.error(f"Failed to list projects: {e}", exc_info=True)
             return []
 
-    async def get_project(self, project_id: str) -> Optional[dict[str, Any]]:
+    async def get_project(self, project_id: str) -> dict[str, Any] | None:
         """
         Get a specific project by ID.
 
@@ -209,7 +203,7 @@ class WorkspaceManager:
             if not metadata_path.exists():
                 return None
 
-            with open(metadata_path, "r") as f:
+            with open(metadata_path) as f:
                 metadata = json.load(f)
                 metadata["path"] = str(self._get_project_path(project_id))
                 return metadata
@@ -245,11 +239,7 @@ class WorkspaceManager:
             logger.error(f"Failed to delete project {project_id}: {e}", exc_info=True)
             return False
 
-    async def update_project(
-        self,
-        project_id: str,
-        updates: dict[str, Any]
-    ) -> bool:
+    async def update_project(self, project_id: str, updates: dict[str, Any]) -> bool:
         """
         Update project metadata.
 
@@ -266,7 +256,7 @@ class WorkspaceManager:
             if not metadata_path.exists():
                 return False
 
-            with open(metadata_path, "r") as f:
+            with open(metadata_path) as f:
                 metadata = json.load(f)
 
             # Update fields

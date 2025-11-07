@@ -7,7 +7,7 @@ import logging
 import os
 import threading
 from contextlib import redirect_stderr, redirect_stdout
-from typing import Any, Optional
+from typing import Any
 
 from fastmcp import Context, FastMCP
 
@@ -30,7 +30,7 @@ mcp = FastMCP("TINAA - Testing Intelligence Network Automation Assistant")
 
 @mcp.tool()
 async def start_lsp_server(
-    tcp: bool = False, port: int = 8765, ctx: Optional[Context] = None
+    tcp: bool = False, port: int = 8765, ctx: Context | None = None
 ) -> str:
     """
     Start TINAA's Playwright Language Server Protocol (LSP) server for IDE integration.
@@ -100,7 +100,7 @@ async def start_lsp_server(
 
 @mcp.tool()
 async def check_browser_connectivity(
-    url: str = "https://example.com", ctx: Optional[Context] = None
+    url: str = "https://example.com", ctx: Context | None = None
 ) -> dict[str, Any]:
     """
     Check browser automation connectivity and capabilities.
@@ -197,7 +197,7 @@ async def check_browser_connectivity(
 
 
 @mcp.tool()
-async def analyze_script(script_path: str, ctx: Optional[Context] = None) -> dict:
+async def analyze_script(script_path: str, ctx: Context | None = None) -> dict:
     """
     Analyze a Playwright test script for common issues, errors, and improvement opportunities.
 

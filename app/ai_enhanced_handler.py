@@ -10,9 +10,7 @@ from typing import Any
 logger = logging.getLogger("tinaa-ai")
 
 
-async def generate_exploratory_insights(
-    test_result: dict[str, Any]
-) -> dict[str, Any]:
+async def generate_exploratory_insights(test_result: dict[str, Any]) -> dict[str, Any]:
     """
     Generate AI-powered insights for exploratory test results.
 
@@ -56,52 +54,58 @@ async def generate_exploratory_insights(
             focus_areas = exploratory.get("focus_areas", [])
 
             for area in focus_areas[:3]:  # Top 3 focus areas
-                insights.append({
-                    "category": "test_coverage",
-                    "finding": f"Recommended focus area: {area}",
-                    "severity": "medium",
-                    "recommendation": f"Ensure thorough testing of {area} functionality"
-                })
+                insights.append(
+                    {
+                        "category": "test_coverage",
+                        "finding": f"Recommended focus area: {area}",
+                        "severity": "medium",
+                        "recommendation": f"Ensure thorough testing of {area} functionality",
+                    }
+                )
 
         # Analyze heuristics coverage
         if heuristics:
             applied_heuristics = len(heuristics)
             if applied_heuristics < 5:
-                insights.append({
-                    "category": "methodology",
-                    "finding": f"Limited heuristic coverage ({applied_heuristics} heuristics)",
-                    "severity": "medium",
-                    "recommendation": "Consider applying additional testing heuristics for more thorough coverage"
-                })
+                insights.append(
+                    {
+                        "category": "methodology",
+                        "finding": f"Limited heuristic coverage ({applied_heuristics} heuristics)",
+                        "severity": "medium",
+                        "recommendation": "Consider applying additional testing heuristics for more thorough coverage",
+                    }
+                )
 
         # General recommendations based on page analysis
-        insights.extend([
-            {
-                "category": "accessibility",
-                "finding": "Page requires accessibility validation",
-                "severity": "high",
-                "recommendation": "Run accessibility test to ensure WCAG compliance"
-            },
-            {
-                "category": "responsive",
-                "finding": "Responsive design not verified",
-                "severity": "medium",
-                "recommendation": "Test page layout across multiple device sizes"
-            },
-            {
-                "category": "security",
-                "finding": "Security checks recommended",
-                "severity": "high",
-                "recommendation": "Run security tests to identify potential vulnerabilities"
-            }
-        ])
+        insights.extend(
+            [
+                {
+                    "category": "accessibility",
+                    "finding": "Page requires accessibility validation",
+                    "severity": "high",
+                    "recommendation": "Run accessibility test to ensure WCAG compliance",
+                },
+                {
+                    "category": "responsive",
+                    "finding": "Responsive design not verified",
+                    "severity": "medium",
+                    "recommendation": "Test page layout across multiple device sizes",
+                },
+                {
+                    "category": "security",
+                    "finding": "Security checks recommended",
+                    "severity": "high",
+                    "recommendation": "Run security tests to identify potential vulnerabilities",
+                },
+            ]
+        )
 
         # Identify priority areas
         priority_areas = [
             "User authentication flows",
             "Form validation and error handling",
             "Cross-browser compatibility",
-            "Performance and load times"
+            "Performance and load times",
         ]
 
         # Test coverage analysis
@@ -111,7 +115,7 @@ async def generate_exploratory_insights(
             "responsive": "recommended",
             "security": "recommended",
             "performance": "not_started",
-            "overall_score": 25  # 1 out of 4 test types completed
+            "overall_score": 25,  # 1 out of 4 test types completed
         }
 
         # Recommended next steps
@@ -120,7 +124,7 @@ async def generate_exploratory_insights(
             "Execute responsive design test for mobile compatibility",
             "Perform security scan for common vulnerabilities",
             "Test critical user journeys end-to-end",
-            "Validate form inputs and error messaging"
+            "Validate form inputs and error messaging",
         ]
 
         return {
@@ -132,9 +136,11 @@ async def generate_exploratory_insights(
             "summary": {
                 "total_insights": len(insights),
                 "high_severity": len([i for i in insights if i["severity"] == "high"]),
-                "medium_severity": len([i for i in insights if i["severity"] == "medium"]),
+                "medium_severity": len(
+                    [i for i in insights if i["severity"] == "medium"]
+                ),
                 "low_severity": len([i for i in insights if i["severity"] == "low"]),
-            }
+            },
         }
 
     except Exception as e:
@@ -145,12 +151,12 @@ async def generate_exploratory_insights(
             "insights": [],
             "priority_areas": [],
             "test_coverage": {},
-            "next_steps": []
+            "next_steps": [],
         }
 
 
 async def generate_accessibility_insights(
-    test_result: dict[str, Any]
+    test_result: dict[str, Any],
 ) -> dict[str, Any]:
     """
     Generate AI-powered insights for accessibility test results.
@@ -180,12 +186,7 @@ async def generate_accessibility_insights(
         logger.info(f"Generating accessibility insights for {issues_count} issues")
 
         # Analyze severity distribution
-        severity_analysis = {
-            "critical": 0,
-            "serious": 0,
-            "moderate": 0,
-            "minor": 0
-        }
+        severity_analysis = {"critical": 0, "serious": 0, "moderate": 0, "minor": 0}
 
         # Analyze issues from results
         issues = results.get("issues", [])
@@ -200,66 +201,74 @@ async def generate_accessibility_insights(
             "level_aa": "non_compliant" if issues_count > 5 else "needs_review",
             "level_aaa": "non_compliant",
             "overall_score": max(0, 100 - (issues_count * 10)),  # Rough score
-            "guidelines_checked": len(guidelines)
+            "guidelines_checked": len(guidelines),
         }
 
         # Generate remediation steps
         remediation_steps = []
 
         if severity_analysis["critical"] > 0:
-            remediation_steps.append({
-                "priority": 1,
-                "category": "critical_fixes",
-                "action": f"Address {severity_analysis['critical']} critical accessibility issues immediately",
-                "details": "Critical issues prevent users from accessing core functionality"
-            })
+            remediation_steps.append(
+                {
+                    "priority": 1,
+                    "category": "critical_fixes",
+                    "action": f"Address {severity_analysis['critical']} critical accessibility issues immediately",
+                    "details": "Critical issues prevent users from accessing core functionality",
+                }
+            )
 
         if severity_analysis["serious"] > 0:
-            remediation_steps.append({
-                "priority": 2,
-                "category": "serious_fixes",
-                "action": f"Fix {severity_analysis['serious']} serious accessibility violations",
-                "details": "Serious issues significantly impact user experience"
-            })
+            remediation_steps.append(
+                {
+                    "priority": 2,
+                    "category": "serious_fixes",
+                    "action": f"Fix {severity_analysis['serious']} serious accessibility violations",
+                    "details": "Serious issues significantly impact user experience",
+                }
+            )
 
         # Add common remediation patterns
-        remediation_steps.extend([
-            {
-                "priority": 3,
-                "category": "alt_text",
-                "action": "Add descriptive alt text to all images",
-                "details": "Images without alt text are inaccessible to screen readers"
-            },
-            {
-                "priority": 4,
-                "category": "aria_labels",
-                "action": "Ensure all interactive elements have proper ARIA labels",
-                "details": "ARIA labels help assistive technologies understand element purpose"
-            },
-            {
-                "priority": 5,
-                "category": "keyboard_navigation",
-                "action": "Verify full keyboard navigation support",
-                "details": "All functionality must be accessible via keyboard only"
-            },
-            {
-                "priority": 6,
-                "category": "color_contrast",
-                "action": "Check color contrast ratios meet WCAG AA standards",
-                "details": "Minimum 4.5:1 for normal text, 3:1 for large text"
-            }
-        ])
+        remediation_steps.extend(
+            [
+                {
+                    "priority": 3,
+                    "category": "alt_text",
+                    "action": "Add descriptive alt text to all images",
+                    "details": "Images without alt text are inaccessible to screen readers",
+                },
+                {
+                    "priority": 4,
+                    "category": "aria_labels",
+                    "action": "Ensure all interactive elements have proper ARIA labels",
+                    "details": "ARIA labels help assistive technologies understand element purpose",
+                },
+                {
+                    "priority": 5,
+                    "category": "keyboard_navigation",
+                    "action": "Verify full keyboard navigation support",
+                    "details": "All functionality must be accessible via keyboard only",
+                },
+                {
+                    "priority": 6,
+                    "category": "color_contrast",
+                    "action": "Check color contrast ratios meet WCAG AA standards",
+                    "details": "Minimum 4.5:1 for normal text, 3:1 for large text",
+                },
+            ]
+        )
 
         # Effort estimation
         estimated_effort = {
             "total_hours": issues_count * 0.5,  # Rough estimate: 30min per issue
             "developer_hours": issues_count * 0.3,
             "testing_hours": issues_count * 0.2,
-            "complexity": "medium" if issues_count < 20 else "high"
+            "complexity": "medium" if issues_count < 20 else "high",
         }
 
         # Business impact
-        business_impact = self._assess_accessibility_impact(issues_count, severity_analysis)
+        business_impact = self._assess_accessibility_impact(
+            issues_count, severity_analysis
+        )
 
         return {
             "success": True,
@@ -271,21 +280,16 @@ async def generate_accessibility_insights(
             "summary": {
                 "total_issues": issues_count,
                 "compliance_score": wcag_compliance["overall_score"],
-                "action_items": len(remediation_steps)
-            }
+                "action_items": len(remediation_steps),
+            },
         }
 
     except Exception as e:
         logger.error(f"Failed to generate accessibility insights: {e}", exc_info=True)
-        return {
-            "success": False,
-            "error": str(e)
-        }
+        return {"success": False, "error": str(e)}
 
 
-async def generate_security_insights(
-    test_result: dict[str, Any]
-) -> dict[str, Any]:
+async def generate_security_insights(test_result: dict[str, Any]) -> dict[str, Any]:
     """
     Generate AI-powered insights for security test results.
 
@@ -329,7 +333,7 @@ async def generate_security_insights(
             "csrf": 0,
             "misconfiguration": 0,
             "sensitive_data": 0,
-            "other": 0
+            "other": 0,
         }
 
         # Analyze specific issues
@@ -344,70 +348,88 @@ async def generate_security_insights(
         # Risk assessment
         risk_assessment = {
             "overall_risk": threat_level,
-            "data_breach_risk": "high" if vulnerability_breakdown["sensitive_data"] > 0 else "medium",
-            "unauthorized_access_risk": "high" if vulnerability_breakdown["authentication"] > 0 else "low",
-            "code_injection_risk": "critical" if vulnerability_breakdown["injection"] > 0 else "low",
-            "owasp_top10_coverage": self._check_owasp_coverage(vulnerability_breakdown)
+            "data_breach_risk": (
+                "high" if vulnerability_breakdown["sensitive_data"] > 0 else "medium"
+            ),
+            "unauthorized_access_risk": (
+                "high" if vulnerability_breakdown["authentication"] > 0 else "low"
+            ),
+            "code_injection_risk": (
+                "critical" if vulnerability_breakdown["injection"] > 0 else "low"
+            ),
+            "owasp_top10_coverage": self._check_owasp_coverage(vulnerability_breakdown),
         }
 
         # Prioritized remediation
         remediation_priority = []
 
         if vulnerability_breakdown["injection"] > 0:
-            remediation_priority.append({
-                "priority": 1,
-                "category": "injection",
-                "severity": "critical",
-                "action": "Implement input validation and parameterized queries",
-                "cve_risk": "Very High"
-            })
+            remediation_priority.append(
+                {
+                    "priority": 1,
+                    "category": "injection",
+                    "severity": "critical",
+                    "action": "Implement input validation and parameterized queries",
+                    "cve_risk": "Very High",
+                }
+            )
 
         if vulnerability_breakdown["authentication"] > 0:
-            remediation_priority.append({
-                "priority": 2,
-                "category": "authentication",
-                "severity": "high",
-                "action": "Strengthen authentication mechanisms and session management",
-                "cve_risk": "High"
-            })
+            remediation_priority.append(
+                {
+                    "priority": 2,
+                    "category": "authentication",
+                    "severity": "high",
+                    "action": "Strengthen authentication mechanisms and session management",
+                    "cve_risk": "High",
+                }
+            )
 
         if vulnerability_breakdown["xss"] > 0:
-            remediation_priority.append({
-                "priority": 3,
-                "category": "xss",
-                "severity": "high",
-                "action": "Implement output encoding and Content Security Policy",
-                "cve_risk": "High"
-            })
+            remediation_priority.append(
+                {
+                    "priority": 3,
+                    "category": "xss",
+                    "severity": "high",
+                    "action": "Implement output encoding and Content Security Policy",
+                    "cve_risk": "High",
+                }
+            )
 
         # Add general security recommendations
-        remediation_priority.extend([
-            {
-                "priority": 4,
-                "category": "headers",
-                "severity": "medium",
-                "action": "Implement security headers (HSTS, X-Frame-Options, etc.)",
-                "cve_risk": "Medium"
-            },
-            {
-                "priority": 5,
-                "category": "tls",
-                "severity": "medium",
-                "action": "Ensure TLS 1.2+ with strong cipher suites",
-                "cve_risk": "Medium"
-            }
-        ])
+        remediation_priority.extend(
+            [
+                {
+                    "priority": 4,
+                    "category": "headers",
+                    "severity": "medium",
+                    "action": "Implement security headers (HSTS, X-Frame-Options, etc.)",
+                    "cve_risk": "Medium",
+                },
+                {
+                    "priority": 5,
+                    "category": "tls",
+                    "severity": "medium",
+                    "action": "Ensure TLS 1.2+ with strong cipher suites",
+                    "cve_risk": "Medium",
+                },
+            ]
+        )
 
         # Compliance impact
         compliance_impact = {
-            "gdpr": "requires_review" if vulnerability_breakdown["sensitive_data"] > 0 else "likely_compliant",
+            "gdpr": (
+                "requires_review"
+                if vulnerability_breakdown["sensitive_data"] > 0
+                else "likely_compliant"
+            ),
             "pci_dss": "non_compliant" if issues_count > 3 else "requires_review",
             "hipaa": "requires_review" if issues_count > 0 else "likely_compliant",
             "recommendations": [
                 "Conduct full security audit before production deployment",
                 "Implement security logging and monitoring",
-                "Establish incident response procedures"
-            ]
+                "Establish incident response procedures",
+            ],
         }
 
         return {
@@ -419,29 +441,29 @@ async def generate_security_insights(
             "compliance_impact": compliance_impact,
             "summary": {
                 "total_vulnerabilities": issues_count,
-                "critical_fixes": len([r for r in remediation_priority if r["severity"] == "critical"]),
-                "estimated_remediation_time": f"{issues_count * 2}-{issues_count * 4} hours"
-            }
+                "critical_fixes": len(
+                    [r for r in remediation_priority if r["severity"] == "critical"]
+                ),
+                "estimated_remediation_time": f"{issues_count * 2}-{issues_count * 4} hours",
+            },
         }
 
     except Exception as e:
         logger.error(f"Failed to generate security insights: {e}", exc_info=True)
-        return {
-            "success": False,
-            "error": str(e)
-        }
+        return {"success": False, "error": str(e)}
 
 
 def _assess_accessibility_impact(issues_count: int, severity: dict) -> str:
     """Assess business impact of accessibility issues."""
     if severity["critical"] > 0:
         return "CRITICAL: Site may be unusable for users with disabilities. Legal risk of ADA/Section 508 lawsuits."
-    elif severity["serious"] > 5:
+    if severity["serious"] > 5:
         return "HIGH: Significant barriers prevent access to key features. Reputation and legal risks present."
-    elif issues_count > 10:
+    if issues_count > 10:
         return "MEDIUM: Multiple accessibility barriers may frustrate users and limit market reach."
-    else:
-        return "LOW: Minor improvements needed to enhance accessibility and user experience."
+    return (
+        "LOW: Minor improvements needed to enhance accessibility and user experience."
+    )
 
 
 def _check_owasp_coverage(vulnerabilities: dict) -> int:
@@ -451,6 +473,16 @@ def _check_owasp_coverage(vulnerabilities: dict) -> int:
     Returns percentage of OWASP Top 10 categories checked.
     """
     # Simple check: did we find issues in OWASP categories?
-    owasp_categories = ["injection", "authentication", "xss", "misconfiguration", "sensitive_data"]
-    checked = sum(1 for cat in owasp_categories if cat in vulnerabilities and vulnerabilities[cat] >= 0)
+    owasp_categories = [
+        "injection",
+        "authentication",
+        "xss",
+        "misconfiguration",
+        "sensitive_data",
+    ]
+    checked = sum(
+        1
+        for cat in owasp_categories
+        if cat in vulnerabilities and vulnerabilities[cat] >= 0
+    )
     return int((checked / len(owasp_categories)) * 100)

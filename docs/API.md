@@ -713,9 +713,9 @@ All tools accept an optional `ctx: Optional[Context]` parameter provided by Fast
 
 ## See Also
 
-- **[MCP_IMPROVEMENTS.md](../MCP_IMPROVEMENTS.md)** - Recent refactoring improvements
+- **[MCP_IMPROVEMENTS.md](MCP_IMPROVEMENTS.md)** - Recent refactoring improvements
 - **[API_AUDIT_REPORT.md](API_AUDIT_REPORT.md)** - Detailed audit findings
-- **[TESTING_GUIDE.md](../TESTING_GUIDE.md)** - Testing procedures
+- **[TESTING_GUIDE.md](TESTING_GUIDE.md)** - Testing procedures
 - **[DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)** - Advanced integration
 
 ---

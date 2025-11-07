@@ -16,7 +16,7 @@ TINAA provides three different API interfaces for browser automation and testing
 > - ✅ Improved progress reporting via Context
 > - ✅ Better structured error responses
 >
-> See [MCP_IMPROVEMENTS.md](../MCP_IMPROVEMENTS.md) for complete details.
+> See [MCP_IMPROVEMENTS.md](MCP_IMPROVEMENTS.md) for complete details.
 
 ## Resources API
 

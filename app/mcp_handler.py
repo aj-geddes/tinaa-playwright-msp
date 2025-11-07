@@ -6,7 +6,7 @@ Provides all the core tools for browser automation and testing.
 """
 
 import logging
-from typing import Any, Optional
+from typing import Any
 
 # Import from fastmcp 2.8.0
 # Using the decorator pattern from FastMCP
@@ -51,7 +51,7 @@ async def get_controller() -> PlaywrightController:
 # This will be imported after app.main initializes it
 
 
-async def navigate_to_url(url: str, ctx: Optional[Context] = None) -> dict[str, Any]:
+async def navigate_to_url(url: str, ctx: Context | None = None) -> dict[str, Any]:
     """
     Navigate to a specified URL in the browser.
 
@@ -80,7 +80,7 @@ async def navigate_to_url(url: str, ctx: Optional[Context] = None) -> dict[str, 
             await ctx.info(f"Navigating to URL: {url}")
 
         # Validate URL format
-        if not url.startswith(('http://', 'https://')):
+        if not url.startswith(("http://", "https://")):
             error_msg = "URL must start with http:// or https://"
             if ctx:
                 await ctx.error(error_msg)
@@ -93,7 +93,9 @@ async def navigate_to_url(url: str, ctx: Optional[Context] = None) -> dict[str, 
             "success": success,
             "url": url,
             "current_url": controller.page.url if success and controller.page else None,
-            "title": await controller.page.title() if success and controller.page else None,
+            "title": (
+                await controller.page.title() if success and controller.page else None
+            ),
         }
 
         if ctx:
@@ -111,7 +113,7 @@ async def navigate_to_url(url: str, ctx: Optional[Context] = None) -> dict[str, 
 
 
 async def take_page_screenshot(
-    full_page: bool = False, ctx: Optional[Context] = None
+    full_page: bool = False, ctx: Context | None = None
 ) -> dict[str, Any]:
     """
     Take a screenshot of the current page.
@@ -170,7 +172,9 @@ async def take_page_screenshot(
         return {"success": False, "error": str(e)}
 
 
-async def take_element_screenshot(selector: str, ctx: Optional[Context] = None) -> dict[str, Any]:
+async def take_element_screenshot(
+    selector: str, ctx: Context | None = None
+) -> dict[str, Any]:
     """
     Take a screenshot of a specific element on the page.
 
@@ -237,7 +241,7 @@ async def fill_login_form(
     submit_selector: str,
     username: str,
     password: str,
-    ctx: Optional[Context] = None,
+    ctx: Context | None = None,
 ) -> dict[str, Any]:
     """
     Fill and submit a login form with credentials.
@@ -281,8 +285,12 @@ async def fill_login_form(
             await ctx.info(f"Filling login form with username: {username}")
 
         # Validate inputs
-        if not all([username_selector, password_selector, submit_selector, username, password]):
-            error_msg = "All parameters (selectors, username, and password) are required"
+        if not all(
+            [username_selector, password_selector, submit_selector, username, password]
+        ):
+            error_msg = (
+                "All parameters (selectors, username, and password) are required"
+            )
             if ctx:
                 await ctx.error(error_msg)
             return {"success": False, "error": error_msg}
@@ -311,7 +319,7 @@ async def fill_login_form(
 
 
 async def detect_form_fields(
-    form_selector: Optional[str] = None, ctx: Optional[Context] = None
+    form_selector: str | None = None, ctx: Context | None = None
 ) -> dict[str, Any]:
     """
     Detect form fields on the current page
@@ -354,7 +362,9 @@ async def detect_form_fields(
 
 
 async def fill_form_fields(
-    fields: dict[str, str], submit_selector: Optional[str] = None, ctx: Optional[Context] = None
+    fields: dict[str, str],
+    submit_selector: str | None = None,
+    ctx: Context | None = None,
 ) -> dict[str, Any]:
     """
     Fill form fields on the current page
@@ -396,7 +406,7 @@ async def fill_form_fields(
         return {"error": str(e)}
 
 
-async def run_accessibility_test(ctx: Optional[Context] = None) -> dict[str, Any]:
+async def run_accessibility_test(ctx: Context | None = None) -> dict[str, Any]:
     """
     Run accessibility tests on the current page
 
@@ -443,7 +453,7 @@ async def run_accessibility_test(ctx: Optional[Context] = None) -> dict[str, Any
         return {"error": str(e)}
 
 
-async def run_responsive_test(ctx: Optional[Context] = None) -> dict[str, Any]:
+async def run_responsive_test(ctx: Context | None = None) -> dict[str, Any]:
     """
     Run responsive design tests on the current page
 
@@ -503,7 +513,7 @@ async def run_responsive_test(ctx: Optional[Context] = None) -> dict[str, Any]:
         return {"error": str(e)}
 
 
-async def run_security_test(ctx: Optional[Context] = None) -> dict[str, Any]:
+async def run_security_test(ctx: Context | None = None) -> dict[str, Any]:
     """
     Run basic security tests on the current page
 
@@ -546,7 +556,7 @@ async def run_security_test(ctx: Optional[Context] = None) -> dict[str, Any]:
 
 
 async def generate_test_report(
-    test_type: str, url: str, ctx: Optional[Context] = None
+    test_type: str, url: str, ctx: Context | None = None
 ) -> dict[str, Any]:
     """
     Generate a test report
@@ -625,9 +635,9 @@ async def generate_test_report(
 
 async def prompt_for_credentials(
     site: str,
-    username_field: Optional[str] = None,
-    password_field: Optional[str] = None,
-    ctx: Optional[Context] = None,
+    username_field: str | None = None,
+    password_field: str | None = None,
+    ctx: Context | None = None,
 ) -> dict[str, Any]:
     """
     Prompt the user for credentials
@@ -655,7 +665,7 @@ async def prompt_for_credentials(
 
 
 async def run_exploratory_test(
-    url: str, focus_area: str = "general", ctx: Optional[Context] = None
+    url: str, focus_area: str = "general", ctx: Context | None = None
 ) -> dict[str, Any]:
     """
     Run an exploratory test on a website

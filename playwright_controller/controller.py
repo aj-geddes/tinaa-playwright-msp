@@ -804,6 +804,7 @@ class PlaywrightController:
 
         # Assemble report
         from datetime import datetime
+
         report = {
             "test_type": test_type,
             "url": url,
