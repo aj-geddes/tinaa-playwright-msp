@@ -39,9 +39,6 @@ RUN mkdir -p /app/app && touch /app/app/__init__.py
 # Copy the application files
 COPY . /app/
 
-# Make the script executable
-RUN chmod +x /app/minimalist_mcp.py
-
 # Debug check of the FastMCP version and APIs
 RUN python -c "import fastmcp; print('FastMCP version:', fastmcp.__version__)" > /app/logs/fastmcp_check.log 2>&1
 
@@ -54,7 +51,7 @@ echo "Python path: $PYTHONPATH" >> /app/logs/startup.log\n\
 echo "Available files:" >> /app/logs/startup.log\n\
 ls -la >> /app/logs/startup.log\n\
 # Execute Python script directly - important to use exec to receive signals\n\
-exec python /app/minimalist_mcp.py\n\
+exec python /app/app/main.py\n\
 ' > /app/startup.sh && chmod +x /app/startup.sh
 
 # Copy and make HTTP startup script executable
@@ -71,6 +68,14 @@ else\n\
     exec /app/startup.sh\n\
 fi\n\
 ' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+
+# Create non-root user for security (required for Docker MCP Registry)
+RUN groupadd -g 1001 appgroup && \
+    useradd -u 1001 -g appgroup -m appuser && \
+    chown -R appuser:appgroup /app /mnt/workspace /ms-playwright
+
+# Switch to non-root user
+USER appuser
 
 # Set working directory to the mounted workspace path
 WORKDIR /mnt/workspace

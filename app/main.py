@@ -337,3 +337,9 @@ for func in [
 
 # Log successful initialization
 logger.info("MCP server initialized with Playwright browser tools")
+
+
+if __name__ == "__main__":
+    # Run the MCP server with stdio transport (required for Docker MCP Registry)
+    logger.info("Starting MCP server with stdio transport")
+    mcp.run(transport="stdio")
