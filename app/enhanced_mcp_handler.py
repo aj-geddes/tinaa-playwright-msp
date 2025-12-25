@@ -75,7 +75,7 @@ async def handle_run_exploratory_test(client_id: str | None = None) -> str:
 
     try:
         # Get current page info
-        controller = get_controller()
+        controller = await get_controller()
         page = controller.page if controller else None
         if page:
             url = page.url
@@ -111,8 +111,10 @@ async def handle_run_exploratory_test(client_id: str | None = None) -> str:
             try:
                 if "findings" in result:
                     findings_count = result.count("Finding:")
-            except:
-                pass
+            except (AttributeError, TypeError) as e:
+                # Result might not be a string or might not have count method
+                logger.warning(f"Failed to parse findings count: {e}")
+                findings_count = 0
 
             await tracker.test_completed(findings_count)
 

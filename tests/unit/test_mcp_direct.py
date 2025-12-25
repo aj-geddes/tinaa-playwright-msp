@@ -21,7 +21,7 @@ def send_mcp_request(request):
     )
 
     # Send request
-    stdout, stderr = process.communicate(input=json_request, timeout=10)
+    stdout, _stderr = process.communicate(input=json_request, timeout=10)
 
     # Parse response
     if stdout:

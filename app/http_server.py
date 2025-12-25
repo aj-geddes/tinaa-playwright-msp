@@ -2,7 +2,6 @@
 """
 TINAA HTTP Server with WebSocket support for streaming and real-time interaction
 """
-import asyncio
 import json
 import logging
 import uuid
@@ -123,11 +122,14 @@ def get_workspace_manager():
     """Get or create workspace manager instance"""
     global workspace_manager
     if workspace_manager is None:
-        import tempfile
+        from pathlib import Path
 
-        default_workspace = os.path.join(tempfile.gettempdir(), "workspace")
+        # Use a proper persistent location in user's home directory
+        default_workspace = Path.home() / ".tinaa" / "workspace"
+        default_workspace.mkdir(parents=True, exist_ok=True)
+
         workspace_manager = WorkspaceManager(
-            workspace_path=os.getenv("WORKSPACE_PATH", default_workspace)
+            workspace_path=os.getenv("WORKSPACE_PATH", str(default_workspace))
         )
     return workspace_manager
 
@@ -314,13 +316,13 @@ async def workspace_status():
 async def test_connectivity(request: TestRequest):
     # Test browser connectivity by getting controller
     try:
-        # get_controller returns a controller synchronously
-        controller = await asyncio.to_thread(get_controller)
+        # get_controller is an async function
+        controller = await get_controller()
         if controller and hasattr(controller, "browser") and controller.browser:
             result = "Browser connectivity test successful. Playwright is ready."
         else:
             result = "Browser not initialized. Starting browser..."
-            controller = await asyncio.to_thread(get_controller)
+            controller = await get_controller()
             result = "Browser started successfully."
     except Exception as e:
         result = f"Browser connectivity test failed: {e!s}"

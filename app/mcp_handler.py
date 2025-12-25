@@ -1,7 +1,8 @@
 """
 MCP Function Handler for Tinaa Playwright MSP
 
-This module connects MCP functions with the Playwright controller
+This module connects MCP functions with the Playwright controller.
+Provides all the core tools for browser automation and testing.
 """
 
 import logging
@@ -11,7 +12,8 @@ from typing import Any
 # Using the decorator pattern from FastMCP
 from fastmcp import Context
 
-from playwright_controller import PlaywrightController
+# Import from local modules
+from playwright_controller.controller import PlaywrightController
 from prompts import (
     EXPLORATORY_TEST_PROMPT,
     TEST_REPORT_TEMPLATE,
@@ -25,12 +27,22 @@ controller: PlaywrightController | None = None
 
 
 async def get_controller() -> PlaywrightController:
-    """Get or create a Playwright controller instance"""
+    """
+    Get or create a Playwright controller instance.
+
+    Returns:
+        PlaywrightController: An initialized Playwright controller
+
+    Raises:
+        RuntimeError: If controller initialization fails
+    """
     global controller
 
     if controller is None or not controller.is_initialized:
         controller = PlaywrightController()
-        await controller.initialize()
+        success = await controller.initialize()
+        if not success:
+            raise RuntimeError("Failed to initialize Playwright controller")
 
     return controller
 
@@ -39,20 +51,40 @@ async def get_controller() -> PlaywrightController:
 # This will be imported after app.main initializes it
 
 
-async def navigate_to_url(url: str, ctx: Context = None) -> dict[str, Any]:
+async def navigate_to_url(url: str, ctx: Context | None = None) -> dict[str, Any]:
     """
-    Navigate to a URL
+    Navigate to a specified URL in the browser.
+
+    This tool opens a webpage in the browser and waits for it to load.
+    It captures the final URL (after any redirects) and page title.
 
     Args:
-        url: The URL to navigate to
-        ctx: The execution context
+        url: The URL to navigate to (must start with http:// or https://)
+        ctx: The execution context for progress reporting (optional)
 
     Returns:
-        Dictionary with navigation result
+        Dictionary containing:
+        - success: Boolean indicating if navigation succeeded
+        - url: The requested URL
+        - current_url: The actual URL after navigation and redirects
+        - title: The page title (if available)
+        - error: Error message if navigation failed
+
+    Example:
+        >>> result = await navigate_to_url("https://example.com")
+        >>> print(result["title"])
+        "Example Domain"
     """
     try:
         if ctx:
             await ctx.info(f"Navigating to URL: {url}")
+
+        # Validate URL format
+        if not url.startswith(("http://", "https://")):
+            error_msg = "URL must start with http:// or https://"
+            if ctx:
+                await ctx.error(error_msg)
+            return {"success": False, "url": url, "error": error_msg}
 
         controller = await get_controller()
         success = await controller.navigate(url)
@@ -60,7 +92,10 @@ async def navigate_to_url(url: str, ctx: Context = None) -> dict[str, Any]:
         result = {
             "success": success,
             "url": url,
-            "current_url": controller.page.url if success else None,
+            "current_url": controller.page.url if success and controller.page else None,
+            "title": (
+                await controller.page.title() if success and controller.page else None
+            ),
         }
 
         if ctx:
@@ -71,24 +106,39 @@ async def navigate_to_url(url: str, ctx: Context = None) -> dict[str, Any]:
 
         return result
     except Exception as e:
-        logger.error(f"Error in navigate_to_url: {e}")
+        logger.error(f"Error in navigate_to_url: {e}", exc_info=True)
         if ctx:
             await ctx.error(f"Error: {e!s}")
-        return {"error": str(e)}
+        return {"success": False, "url": url, "error": str(e)}
 
 
 async def take_page_screenshot(
-    full_page: bool = False, ctx: Context = None
+    full_page: bool = False, ctx: Context | None = None
 ) -> dict[str, Any]:
     """
-    Take a screenshot of the current page
+    Take a screenshot of the current page.
+
+    Captures a PNG screenshot of either the visible viewport or the entire page
+    including content that requires scrolling.
 
     Args:
-        full_page: Whether to take a full page screenshot
-        ctx: The execution context
+        full_page: If True, captures the entire page by scrolling.
+                   If False, captures only the visible viewport (default: False)
+        ctx: The execution context for progress reporting (optional)
 
     Returns:
-        Dictionary with screenshot data
+        Dictionary containing:
+        - success: Boolean indicating if screenshot was captured
+        - screenshot: Base64-encoded PNG image data
+        - type: MIME type (always "image/png")
+        - full_page: Boolean indicating if full page was captured
+        - error: Error message if screenshot failed
+
+    Example:
+        >>> result = await take_page_screenshot(full_page=True)
+        >>> if result["success"]:
+        ...     with open("screenshot.png", "wb") as f:
+        ...         f.write(base64.b64decode(result["screenshot"]))
     """
     try:
         if ctx:
@@ -116,26 +166,48 @@ async def take_page_screenshot(
 
         return result
     except Exception as e:
-        logger.error(f"Error in take_page_screenshot: {e}")
+        logger.error(f"Error in take_page_screenshot: {e}", exc_info=True)
         if ctx:
             await ctx.error(f"Error: {e!s}")
-        return {"error": str(e)}
+        return {"success": False, "error": str(e)}
 
 
-async def take_element_screenshot(selector: str, ctx: Context = None) -> dict[str, Any]:
+async def take_element_screenshot(
+    selector: str, ctx: Context | None = None
+) -> dict[str, Any]:
     """
-    Take a screenshot of a specific element
+    Take a screenshot of a specific element on the page.
+
+    Captures a PNG screenshot of a single element identified by a CSS selector.
+    The element will be scrolled into view if necessary before capture.
 
     Args:
-        selector: CSS selector for the element
-        ctx: The execution context
+        selector: CSS selector for the target element (e.g., "#login-button", ".header")
+        ctx: The execution context for progress reporting (optional)
 
     Returns:
-        Dictionary with screenshot data
+        Dictionary containing:
+        - success: Boolean indicating if screenshot was captured
+        - screenshot: Base64-encoded PNG image data of the element
+        - type: MIME type (always "image/png")
+        - selector: The CSS selector that was used
+        - error: Error message if screenshot failed
+
+    Example:
+        >>> result = await take_element_screenshot("#main-content")
+        >>> if result["success"]:
+        ...     print(f"Captured element: {result['selector']}")
     """
     try:
         if ctx:
             await ctx.info(f"Taking screenshot of element: {selector}")
+
+        # Validate selector
+        if not selector or not selector.strip():
+            error_msg = "Selector cannot be empty"
+            if ctx:
+                await ctx.error(error_msg)
+            return {"success": False, "selector": selector, "error": error_msg}
 
         controller = await get_controller()
         screenshot = await controller.take_screenshot(
@@ -157,10 +229,10 @@ async def take_element_screenshot(selector: str, ctx: Context = None) -> dict[st
 
         return result
     except Exception as e:
-        logger.error(f"Error in take_element_screenshot: {e}")
+        logger.error(f"Error in take_element_screenshot: {e}", exc_info=True)
         if ctx:
             await ctx.error(f"Error: {e!s}")
-        return {"error": str(e)}
+        return {"success": False, "selector": selector, "error": str(e)}
 
 
 async def fill_login_form(
@@ -169,25 +241,59 @@ async def fill_login_form(
     submit_selector: str,
     username: str,
     password: str,
-    ctx: Context = None,
+    ctx: Context | None = None,
 ) -> dict[str, Any]:
     """
-    Fill and submit a login form
+    Fill and submit a login form with credentials.
+
+    This tool fills in username and password fields and submits the form.
+    It's useful for testing authentication workflows.
 
     Args:
-        username_selector: CSS selector for username field
-        password_selector: CSS selector for password field
+        username_selector: CSS selector for username/email input field
+        password_selector: CSS selector for password input field
         submit_selector: CSS selector for submit button
-        username: Username value
-        password: Password value
-        ctx: The execution context
+        username: Username or email to enter
+        password: Password to enter
+        ctx: The execution context for progress reporting (optional)
 
     Returns:
-        Dictionary with login result
+        Dictionary containing:
+        - success: Boolean indicating if form was filled and submitted
+        - username_selector: The username field selector used
+        - password_selector: The password field selector used
+        - submit_selector: The submit button selector used
+        - url_after_submit: The URL after form submission
+        - error: Error message if operation failed
+
+    Example:
+        >>> result = await fill_login_form(
+        ...     username_selector="#username",
+        ...     password_selector="#password",
+        ...     submit_selector="button[type='submit']",
+        ...     username="testuser",
+        ...     password="testpass123"
+        ... )
+        >>> print(result["success"])
+        True
+
+    Note:
+        For security testing purposes only. Never use real credentials in tests.
     """
     try:
         if ctx:
             await ctx.info(f"Filling login form with username: {username}")
+
+        # Validate inputs
+        if not all(
+            [username_selector, password_selector, submit_selector, username, password]
+        ):
+            error_msg = (
+                "All parameters (selectors, username, and password) are required"
+            )
+            if ctx:
+                await ctx.error(error_msg)
+            return {"success": False, "error": error_msg}
 
         controller = await get_controller()
         result = await controller.test_login_form(
@@ -206,14 +312,14 @@ async def fill_login_form(
 
         return result
     except Exception as e:
-        logger.error(f"Error in fill_login_form: {e}")
+        logger.error(f"Error in fill_login_form: {e}", exc_info=True)
         if ctx:
             await ctx.error(f"Error: {e!s}")
-        return {"error": str(e)}
+        return {"success": False, "error": str(e)}
 
 
 async def detect_form_fields(
-    form_selector: str = None, ctx: Context = None
+    form_selector: str | None = None, ctx: Context | None = None
 ) -> dict[str, Any]:
     """
     Detect form fields on the current page
@@ -256,7 +362,9 @@ async def detect_form_fields(
 
 
 async def fill_form_fields(
-    fields: dict[str, str], submit_selector: str = None, ctx: Context = None
+    fields: dict[str, str],
+    submit_selector: str | None = None,
+    ctx: Context | None = None,
 ) -> dict[str, Any]:
     """
     Fill form fields on the current page
@@ -298,7 +406,7 @@ async def fill_form_fields(
         return {"error": str(e)}
 
 
-async def run_accessibility_test(ctx: Context = None) -> dict[str, Any]:
+async def run_accessibility_test(ctx: Context | None = None) -> dict[str, Any]:
     """
     Run accessibility tests on the current page
 
@@ -345,7 +453,7 @@ async def run_accessibility_test(ctx: Context = None) -> dict[str, Any]:
         return {"error": str(e)}
 
 
-async def run_responsive_test(ctx: Context = None) -> dict[str, Any]:
+async def run_responsive_test(ctx: Context | None = None) -> dict[str, Any]:
     """
     Run responsive design tests on the current page
 
@@ -405,7 +513,7 @@ async def run_responsive_test(ctx: Context = None) -> dict[str, Any]:
         return {"error": str(e)}
 
 
-async def run_security_test(ctx: Context = None) -> dict[str, Any]:
+async def run_security_test(ctx: Context | None = None) -> dict[str, Any]:
     """
     Run basic security tests on the current page
 
@@ -448,7 +556,7 @@ async def run_security_test(ctx: Context = None) -> dict[str, Any]:
 
 
 async def generate_test_report(
-    test_type: str, url: str, ctx: Context = None
+    test_type: str, url: str, ctx: Context | None = None
 ) -> dict[str, Any]:
     """
     Generate a test report
@@ -527,9 +635,9 @@ async def generate_test_report(
 
 async def prompt_for_credentials(
     site: str,
-    username_field: str = None,
-    password_field: str = None,
-    ctx: Context = None,
+    username_field: str | None = None,
+    password_field: str | None = None,
+    ctx: Context | None = None,
 ) -> dict[str, Any]:
     """
     Prompt the user for credentials
@@ -557,7 +665,7 @@ async def prompt_for_credentials(
 
 
 async def run_exploratory_test(
-    url: str, focus_area: str = "general", ctx: Context = None
+    url: str, focus_area: str = "general", ctx: Context | None = None
 ) -> dict[str, Any]:
     """
     Run an exploratory test on a website

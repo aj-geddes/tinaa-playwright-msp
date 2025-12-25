@@ -22,8 +22,25 @@ def get_word_at_position(params):
     return None
 
 
-# Placeholder for getting a document line
+# Get a document line from the document store
 def get_document_line(document_uri, line_number):
-    # In a real implementation, this would get the line from the document
-    # For now, just return a placeholder
-    return "page.locator('selector').click()"  # Placeholder
+    """
+    Get a specific line from a document.
+
+    Args:
+        document_uri: URI of the document
+        line_number: Zero-based line number
+
+    Returns:
+        Line text or None if document not found or line out of range
+    """
+    from playwright_lsp.document_store import get_document_store
+
+    store = get_document_store()
+    document = store.get(document_uri)
+
+    if document:
+        return document.get_line(line_number)
+
+    # If document not in store, return None
+    return None

@@ -803,11 +803,13 @@ class PlaywrightController:
             summary += f"Found {total_issues} issues ({len(self.findings['high'])} high, {len(self.findings['medium'])} medium, {len(self.findings['low'])} low priority)."
 
         # Assemble report
+        from datetime import datetime
+
         report = {
             "test_type": test_type,
             "url": url,
             "summary": summary,
-            "date": "2023-09-15",  # This would be the current date in production
+            "date": datetime.now().strftime("%Y-%m-%d"),
             "browser": browser_info,
             "viewport": f"{viewport_info['width']}x{viewport_info['height']}",
             "device": "Desktop",  # This would be determined based on viewport and user agent
