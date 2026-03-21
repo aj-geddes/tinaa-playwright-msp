@@ -10,23 +10,26 @@
   />
 
   <!-- Tailwind CSS via CDN (no build step required) -->
-  <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwindcss.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            primary: "#3B82F6",
-            "surface-dark": "#1E293B",
-            success: "#22C55E",
-            warning: "#F59E0B",
-            danger: "#EF4444",
+    // Pre-define config BEFORE Tailwind loads — Tailwind CDN reads this on init
+    window.tailwind = {
+      config: {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#3B82F6",
+              "surface-dark": "#1E293B",
+              success: "#22C55E",
+              warning: "#F59E0B",
+              danger: "#EF4444",
+            },
           },
         },
       },
     };
   </script>
+  <script src="https://cdn.tailwindcss.com"></script>
 
   <link rel="stylesheet" href="/static/css/app.css" />
 </head>
