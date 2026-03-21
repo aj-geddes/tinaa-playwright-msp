@@ -69,9 +69,18 @@ class TINAATestRunTable extends HTMLElement {
 
     if (this._runs.length === 0) {
       this.innerHTML = `
-        <p class="text-center text-slate-400 py-8 text-sm">
-          No test runs found. Trigger a run to get started.
-        </p>
+        <div class="text-center py-10 px-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mx-auto mb-3 text-slate-600"
+               viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               aria-hidden="true" focusable="false">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          <p class="text-slate-300 font-medium mb-1">No test runs yet</p>
+          <p class="text-slate-500 text-sm">
+            Select a product and click &ldquo;Run Tests&rdquo; to trigger your first test run.<br>
+            Results will appear here with pass/fail counts and duration.
+          </p>
+        </div>
       `;
       return;
     }

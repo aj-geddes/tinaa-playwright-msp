@@ -70,9 +70,21 @@ class TINAAPlaybookList extends HTMLElement {
 
     if (this._playbooks.length === 0) {
       this.innerHTML = `
-        <p class="text-center text-slate-400 py-8 text-sm">
-          No playbooks found. Create one to get started.
-        </p>
+        <div class="text-center py-10 px-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mx-auto mb-3 text-slate-600"
+               viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               aria-hidden="true" focusable="false">
+            <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+            <rect x="9" y="3" width="6" height="4" rx="1"/>
+            <line x1="9" y1="12" x2="15" y2="12"/>
+            <line x1="9" y1="16" x2="13" y2="16"/>
+          </svg>
+          <p class="text-slate-300 font-medium mb-1">No playbooks yet</p>
+          <p class="text-slate-500 text-sm mb-3">
+            Playbooks define what TINAA tests in each deployment.<br>
+            Create one above to start automating quality checks.
+          </p>
+        </div>
       `;
       return;
     }

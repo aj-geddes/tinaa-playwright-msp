@@ -31,6 +31,7 @@ import { renderTestRuns }      from "./pages/test-runs.js";
 import { renderAlerts }        from "./pages/alerts.js";
 import { renderSettings }      from "./pages/settings.js";
 import { renderDocs }          from "./pages/docs.js";
+import { renderIntegrations }  from "./pages/integrations.js";
 
 // -------------------------------------------------------------------- Router
 
@@ -161,14 +162,15 @@ function _esc(str) {
 
 function _announceNavigation(hash) {
   const ROUTE_NAMES = {
-    "/":           "Dashboard",
-    "/products":   "Products",
-    "/playbooks":  "Playbooks",
-    "/metrics":    "Metrics",
-    "/test-runs":  "Test Runs",
-    "/alerts":     "Alerts",
-    "/settings":   "Settings",
-    "/docs":       "Documentation",
+    "/":              "Dashboard",
+    "/products":      "Products",
+    "/playbooks":     "Playbooks",
+    "/metrics":       "Metrics",
+    "/test-runs":     "Test Runs",
+    "/alerts":        "Alerts",
+    "/settings":      "Settings",
+    "/integrations":  "Integrations",
+    "/docs":          "Documentation",
   };
   const name = ROUTE_NAMES[hash] || "Page";
   const announcer = document.getElementById("aria-announcer");
@@ -192,6 +194,7 @@ function init() {
   router.register("/test-runs",   (el) => renderTestRuns(el));
   router.register("/alerts",      (el) => renderAlerts(el));
   router.register("/settings",    (el) => renderSettings(el));
+  router.register("/integrations",(el) => renderIntegrations(el));
   router.register("/docs",        (el) => renderDocs(el));
 
   router.notFound((el) => {

@@ -228,10 +228,23 @@ function _renderEnvironmentTabs(container, environments, productId) {
   if (environments.length === 0) {
     tabList.innerHTML = "";
     panel.innerHTML = `
-      <p class="text-slate-400 text-sm py-4">
-        No environments configured. Add one in
-        <a href="#/settings" class="text-blue-400 hover:text-blue-300">Settings</a>.
-      </p>
+      <div class="py-6 text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mx-auto mb-2 text-slate-600"
+             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+             aria-hidden="true" focusable="false">
+          <rect x="2" y="3" width="20" height="14" rx="2"/>
+          <path d="M8 21h8M12 17v4"/>
+        </svg>
+        <p class="text-slate-300 font-medium text-sm mb-1">No environments configured</p>
+        <p class="text-slate-500 text-xs mb-3">
+          Environments represent where your app is deployed (production, staging, etc.).
+        </p>
+        <a href="#/settings"
+           class="text-blue-400 hover:text-blue-300 text-sm transition-colors
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded">
+          Add an environment in Settings &rarr;
+        </a>
+      </div>
     `;
     return;
   }

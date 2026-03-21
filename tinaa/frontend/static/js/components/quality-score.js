@@ -73,6 +73,7 @@ class TINAAQualityScore extends HTMLElement {
 
     const scoreColor = scoreToColor(score);
     const ariaLabel  = `Quality Score: ${score} out of 100, Grade ${grade}`;
+    const tooltipId  = `qs-tooltip-${Math.random().toString(36).slice(2, 7)}`;
 
     // Build the four component arcs
     const components = COMPONENT_CONFIG.map((cfg) => {
@@ -99,6 +100,24 @@ class TINAAQualityScore extends HTMLElement {
         aria-label="${ariaLabel}"
         role="img"
       >
+        <!-- Score heading with info tooltip -->
+        <div class="flex items-center gap-1.5 self-start w-full mb-1">
+          <span class="text-sm font-semibold text-slate-300">Quality Score</span>
+          <span
+            class="help-tooltip"
+            tabindex="0"
+            role="note"
+            aria-describedby="${tooltipId}"
+          >
+            <span class="text-slate-500 hover:text-slate-300 text-xs leading-none cursor-help"
+                  aria-hidden="true">ⓘ</span>
+            <span
+              id="${tooltipId}"
+              class="tooltip-text"
+              role="tooltip"
+            >Quality Score combines: Test Health (40%), Performance (30%), Security (15%), Accessibility (15%). Grade: A+ &ge;95, A &ge;85, B &ge;70, C &ge;55, D &ge;40, F &lt;40</span>
+          </span>
+        </div>
         <svg
           width="${size}"
           height="${size}"

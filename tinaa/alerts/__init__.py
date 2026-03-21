@@ -11,6 +11,7 @@ from tinaa.alerts.channels import (
     GitHubIssueChannel,
     PagerDutyChannel,
     SlackChannel,
+    TeamsChannel,
     WebhookChannel,
 )
 from tinaa.alerts.engine import AlertEngine
@@ -33,5 +34,6 @@ __all__ = [
     "GitHubIssueChannel",
     "PagerDutyChannel",
     "SlackChannel",
+    "TeamsChannel",
     "WebhookChannel",
 ]

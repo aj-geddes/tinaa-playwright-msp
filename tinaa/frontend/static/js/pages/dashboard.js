@@ -190,16 +190,60 @@ function _renderStats(container, products) {
     : 0;
 
   const stats = [
-    { label: "Total Products",      value: totalProducts, unit: "",  id: "stat-products" },
-    { label: "Avg Quality Score",   value: avgQuality,    unit: "/100", id: "stat-quality" },
-    { label: "Endpoints Monitored", value: "—",           unit: "",  id: "stat-endpoints" },
-    { label: "Active Alerts",       value: 0,             unit: "",  id: "stat-alerts" },
+    {
+      label: "Total Products",
+      value: totalProducts,
+      unit: "",
+      id: "stat-products",
+      help: "Applications registered for quality management",
+      tooltipId: "tt-products",
+    },
+    {
+      label: "Avg Quality Score",
+      value: avgQuality,
+      unit: "/100",
+      id: "stat-quality",
+      help: "Weighted composite of test health, performance, security, and accessibility (0–100)",
+      tooltipId: "tt-quality",
+    },
+    {
+      label: "Endpoints Monitored",
+      value: "—",
+      unit: "",
+      id: "stat-endpoints",
+      help: "URLs actively checked for health and performance",
+      tooltipId: "tt-endpoints",
+    },
+    {
+      label: "Active Alerts",
+      value: 0,
+      unit: "",
+      id: "stat-alerts",
+      help: "Unresolved quality issues requiring attention",
+      tooltipId: "tt-alerts",
+    },
   ];
 
   grid.setAttribute("aria-busy", "false");
   grid.innerHTML = stats.map(s => `
-    <div class="bg-slate-800 rounded-lg p-4 border border-slate-700">
-      <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">${s.label}</p>
+    <div class="bg-slate-800 rounded-lg p-4 border border-slate-700" title="${_esc(s.help)}">
+      <div class="flex items-center gap-1 mb-1">
+        <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">${s.label}</p>
+        <span
+          class="help-tooltip"
+          tabindex="0"
+          role="note"
+          aria-describedby="${s.tooltipId}"
+        >
+          <span class="text-slate-500 hover:text-slate-300 text-xs leading-none cursor-help"
+                aria-hidden="true">ⓘ</span>
+          <span
+            id="${s.tooltipId}"
+            class="tooltip-text"
+            role="tooltip"
+          >${_esc(s.help)}</span>
+        </span>
+      </div>
       <p class="text-2xl font-bold text-white tabular-nums" aria-live="polite">
         ${s.value}<span class="text-sm font-normal text-slate-400 ml-1">${s.unit}</span>
       </p>
@@ -214,11 +258,53 @@ function _renderProductCards(container, products) {
 
   if (products.length === 0) {
     grid.innerHTML = `
-      <div class="col-span-full text-center py-12 text-slate-400">
-        <p class="text-lg font-medium mb-2">No products registered yet</p>
-        <p class="text-sm">Use the Register Product button to add your first product.</p>
+      <div class="col-span-full">
+        <div class="welcome-banner bg-gradient-to-r from-blue-900/50 to-slate-800 rounded-xl p-8 border border-blue-500/20">
+          <h2 class="text-2xl font-bold mb-2">Welcome to TINAA MSP</h2>
+          <p class="text-slate-300 mb-4">Your continuous quality management platform. Get started in 3 simple steps:</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="step-card bg-slate-800/50 rounded-lg p-4 border border-slate-700">
+              <div class="step-number text-blue-400 text-sm font-mono mb-1">Step 1</div>
+              <h3 class="font-semibold mb-1">Connect GitHub</h3>
+              <p class="text-sm text-slate-400">Link your GitHub account to import repositories.</p>
+            </div>
+            <div class="step-card bg-slate-800/50 rounded-lg p-4 border border-slate-700">
+              <div class="step-number text-blue-400 text-sm font-mono mb-1">Step 2</div>
+              <h3 class="font-semibold mb-1">Register a Product</h3>
+              <p class="text-sm text-slate-400">Add your app with its environments and endpoints.</p>
+            </div>
+            <div class="step-card bg-slate-800/50 rounded-lg p-4 border border-slate-700">
+              <div class="step-number text-blue-400 text-sm font-mono mb-1">Step 3</div>
+              <h3 class="font-semibold mb-1">Start Testing</h3>
+              <p class="text-sm text-slate-400">TINAA will generate playbooks and monitor quality.</p>
+            </div>
+          </div>
+          <div class="flex gap-3 flex-wrap">
+            <a href="#/integrations"
+               class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium
+                      transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400
+                      focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900">
+              Connect GitHub →
+            </a>
+            <button
+              id="btn-welcome-register"
+              class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-lg font-medium
+                     transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
+              Register a Product
+            </button>
+            <a href="#/docs"
+               class="text-blue-400 hover:text-blue-300 px-4 py-2 transition-colors
+                      focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg">
+              Read the docs
+            </a>
+          </div>
+        </div>
       </div>
     `;
+    // Wire the welcome register button
+    grid.querySelector("#btn-welcome-register")?.addEventListener("click", () => {
+      window.location.hash = "/settings";
+    });
     return;
   }
 
@@ -258,7 +344,14 @@ async function _renderActivity(container, products) {
 
   if (allRuns.length === 0) {
     feed.innerHTML = `
-      <p class="text-center text-slate-400 py-6 text-sm">No recent test runs.</p>
+      <div class="text-center py-8 px-4">
+        <p class="text-slate-300 font-medium mb-1">No test runs yet</p>
+        <p class="text-slate-500 text-sm">
+          Test runs appear here after you trigger a run from the
+          <a href="#/test-runs" class="text-blue-400 hover:text-blue-300 transition-colors">Test Runs</a>
+          page or via CI/CD.
+        </p>
+      </div>
     `;
     return;
   }

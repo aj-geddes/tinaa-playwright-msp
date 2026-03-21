@@ -64,15 +64,6 @@
         aria-atomic="false"
       >
         <!-- Pages are rendered here by the router in app.js -->
-        <noscript>
-          <div class="p-8 text-center">
-            <h1 class="text-2xl font-bold mb-4">TINAA MSP Dashboard</h1>
-            <p class="text-slate-400">
-              JavaScript is required for the interactive dashboard.
-              Please enable JavaScript to continue.
-            </p>
-          </div>
-        </noscript>
       </main>
 
     </div>
@@ -86,6 +77,15 @@
     aria-atomic="true"
     class="sr-only"
   ></div>
+
+  <!-- Noscript fallback — shown only when JavaScript is disabled -->
+  <noscript>
+    <div style="padding: 2rem; text-align: center; font-family: system-ui; color: #e2e8f0; background: #0f172a; min-height: 100vh;">
+      <h1>TINAA MSP</h1>
+      <p>JavaScript is required to use the TINAA dashboard.</p>
+      <p>The API is still available at <a href="/api/docs" style="color: #60a5fa;">/api/docs</a></p>
+    </div>
+  </noscript>
 
   <!-- ES module entry point — loads the SPA router and all components -->
   <script type="module" src="/static/js/app.js"></script>

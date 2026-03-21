@@ -68,6 +68,48 @@ export async function renderAlerts(container) {
         </div>
       </div>
 
+      <!-- Severity legend -->
+      <section
+        aria-label="Alert severity guide"
+        class="bg-slate-800/60 rounded-lg border border-slate-700 p-4"
+      >
+        <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+          Severity Guide
+        </h2>
+        <dl class="space-y-2">
+          <div class="flex items-start gap-3">
+            <span class="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full
+                         text-xs font-medium bg-red-900 text-red-300"
+                  aria-hidden="true">
+              <span>✗</span> Critical
+            </span>
+            <dd class="text-xs text-slate-400">
+              Requires immediate attention. Quality or availability severely impacted.
+            </dd>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full
+                         text-xs font-medium bg-amber-900 text-amber-300"
+                  aria-hidden="true">
+              <span>△</span> Warning
+            </span>
+            <dd class="text-xs text-slate-400">
+              Should be investigated soon. Quality trending downward.
+            </dd>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full
+                         text-xs font-medium bg-blue-900 text-blue-300"
+                  aria-hidden="true">
+              <span>ℹ</span> Info
+            </span>
+            <dd class="text-xs text-slate-400">
+              Informational. No action required but worth noting.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
       <!-- Active alerts -->
       <section aria-labelledby="active-heading">
         <h2 id="active-heading" class="text-lg font-semibold text-white mb-4">
@@ -80,7 +122,12 @@ export async function renderAlerts(container) {
           aria-atomic="false"
         >
           ${active.length === 0
-            ? `<p class="text-slate-400 text-sm py-4 text-center">No active alerts.</p>`
+            ? `<div class="text-center py-8">
+                 <p class="text-green-400 font-medium mb-1">No active alerts</p>
+                 <p class="text-slate-500 text-sm">
+                   All systems are operating normally. Alerts will appear here when thresholds are exceeded.
+                 </p>
+               </div>`
             : active.map(a => _renderAlertCard(a)).join("")}
         </div>
       </section>
@@ -159,8 +206,14 @@ export async function renderAlerts(container) {
         _announce(`Alert resolved and removed.`);
         const remaining = container.querySelectorAll("[data-alert-id]").length;
         if (remaining === 0) {
-          container.querySelector("#active-alerts").innerHTML =
-            `<p class="text-slate-400 text-sm py-4 text-center">No active alerts.</p>`;
+          container.querySelector("#active-alerts").innerHTML = `
+            <div class="text-center py-8">
+              <p class="text-green-400 font-medium mb-1">No active alerts</p>
+              <p class="text-slate-500 text-sm">
+                All systems are operating normally. Alerts will appear here when thresholds are exceeded.
+              </p>
+            </div>
+          `;
         }
       }
     });

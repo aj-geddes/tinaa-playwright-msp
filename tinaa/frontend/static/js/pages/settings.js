@@ -145,8 +145,12 @@ function _productEditForm(product) {
           Product Name
         </label>
         <input id="edit-name" type="text" value="${_esc(product.name)}"
+               aria-describedby="edit-name-help"
                class="w-full bg-slate-700 border border-slate-600 rounded-md px-3 py-2 text-sm
                       text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        <p id="edit-name-help" class="mt-1 text-xs text-slate-500">
+          A human-readable name for your application (e.g., &ldquo;Acme Web App&rdquo;)
+        </p>
       </div>
       <div>
         <label for="edit-desc" class="block text-sm font-medium text-slate-300 mb-1">
@@ -163,8 +167,12 @@ function _productEditForm(product) {
         </label>
         <input id="edit-repo" type="url" value="${_esc(product.repository_url || "")}"
                placeholder="https://github.com/org/repo"
+               aria-describedby="edit-repo-help"
                class="w-full bg-slate-700 border border-slate-600 rounded-md px-3 py-2 text-sm
                       text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        <p id="edit-repo-help" class="mt-1 text-xs text-slate-500">
+          GitHub repository URL (e.g., github.com/acme/webapp). Used for codebase analysis and CI integration.
+        </p>
       </div>
       <button type="submit"
               class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium
@@ -188,7 +196,10 @@ function _registerProductForm() {
                class="w-full bg-slate-700 border border-slate-600 rounded-md px-3 py-2 text-sm
                       text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                aria-required="true"
-               aria-describedby="new-prod-name-error"/>
+               aria-describedby="new-prod-name-help new-prod-name-error"/>
+        <p id="new-prod-name-help" class="mt-1 text-xs text-slate-500">
+          A human-readable name for your application (e.g., &ldquo;Acme Web App&rdquo;)
+        </p>
         <p id="new-prod-name-error" class="hidden mt-1 text-xs text-red-400" role="alert"></p>
       </div>
       <div>
@@ -205,8 +216,12 @@ function _registerProductForm() {
           Repository URL
         </label>
         <input id="new-prod-repo" type="url" placeholder="https://github.com/org/repo"
+               aria-describedby="new-prod-repo-help"
                class="w-full bg-slate-700 border border-slate-600 rounded-md px-3 py-2 text-sm
                       text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        <p id="new-prod-repo-help" class="mt-1 text-xs text-slate-500">
+          GitHub repository URL (e.g., github.com/acme/webapp). Used for codebase analysis and CI integration.
+        </p>
       </div>
       <div id="register-result" class="hidden" aria-live="polite"></div>
       <button type="submit"
@@ -249,8 +264,12 @@ async function _renderEnvironmentsPanel(panel) {
         <div>
           <label for="env-url" class="block text-xs text-slate-400 mb-1">Base URL</label>
           <input id="env-url" type="url" placeholder="https://app.example.com" required
+                 aria-describedby="env-url-help"
                  class="w-full bg-slate-700 border border-slate-600 rounded-md px-3 py-2 text-sm
                         text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+          <p id="env-url-help" class="mt-1 text-xs text-slate-500">
+            The base URL where this environment is deployed (e.g., https://app.acme.com)
+          </p>
         </div>
         <div>
           <label for="env-type" class="block text-xs text-slate-400 mb-1">Type</label>

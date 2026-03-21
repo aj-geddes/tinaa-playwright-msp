@@ -13,10 +13,26 @@
 import { api } from "../api.js";
 
 const METRIC_TABS = [
-  { id: "response_time_ms", label: "Response Time" },
-  { id: "web_vitals",       label: "Web Vitals"    },
-  { id: "availability",     label: "Availability"  },
-  { id: "error_rate",       label: "Error Rate"    },
+  {
+    id: "response_time_ms",
+    label: "Response Time",
+    description: "Server response latency in milliseconds. Lower is better. P95 means 95% of requests are faster.",
+  },
+  {
+    id: "web_vitals",
+    label: "Web Vitals",
+    description: "Core Web Vitals measure real user experience. LCP (loading), CLS (visual stability), INP (interactivity).",
+  },
+  {
+    id: "availability",
+    label: "Availability",
+    description: "Percentage of successful health checks over time. Target: 99.9%+.",
+  },
+  {
+    id: "error_rate",
+    label: "Error Rate",
+    description: "Percentage of requests returning 4xx/5xx errors. Target: <1%.",
+  },
 ];
 
 const TIME_RANGES = [
@@ -84,9 +100,17 @@ export async function renderMetrics(container) {
                      ? "border-blue-500 text-white"
                      : "border-transparent text-slate-400 hover:text-white hover:border-slate-500"}"
             data-metric="${tab.id}"
+            data-description="${tab.description.replace(/"/g, '&quot;')}"
           >${tab.label}</button>
         `).join("")}
       </div>
+
+      <!-- Active metric description -->
+      <p
+        id="metric-description"
+        class="text-xs text-slate-400 -mt-2 mb-0"
+        aria-live="polite"
+      >${METRIC_TABS[0].description}</p>
 
       <!-- Chart area -->
       <section
@@ -149,7 +173,28 @@ export async function renderMetrics(container) {
   try {
     const products = await api.listProducts();
     if (products.length === 0) {
-      productSel.innerHTML = '<option value="">No products</option>';
+      productSel.innerHTML = '<option value="">No products — register one in Settings</option>';
+      const chartPanel = container.querySelector("#metric-panel");
+      if (chartPanel) {
+        chartPanel.innerHTML = `
+          <div class="text-center py-12">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mx-auto mb-3 text-slate-600"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                 aria-hidden="true" focusable="false">
+              <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+            </svg>
+            <p class="text-slate-300 font-medium mb-1">No metrics yet</p>
+            <p class="text-slate-500 text-sm mb-3">
+              Metrics appear after you register a product and run tests.
+            </p>
+            <a href="#/settings"
+               class="text-blue-400 hover:text-blue-300 text-sm transition-colors
+                      focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded">
+              Register your first product &rarr;
+            </a>
+          </div>
+        `;
+      }
     } else {
       productSel.innerHTML =
         '<option value="">Select product</option>' +
@@ -203,6 +248,9 @@ export async function renderMetrics(container) {
       const panel = container.querySelector("#metric-panel");
       panel?.setAttribute("aria-labelledby", `tab-${selectedMetric}`);
       container.querySelector("#chart-header h2").textContent = tab.textContent;
+      // Update description text
+      const descEl = container.querySelector("#metric-description");
+      if (descEl) descEl.textContent = tab.dataset.description || "";
       if (selectedProductId) {
         await _loadMetrics(container, selectedProductId, selectedHours, selectedMetric);
       }
@@ -388,7 +436,10 @@ async function _loadAnomalies(container, productId, hours) {
     const anomalies = await api.getAnomalies(productId, hours);
     if (!anomalies.length) {
       listEl.innerHTML = `
-        <p class="text-slate-400 text-sm py-4 text-center">No anomalies detected.</p>
+        <div class="text-center py-6">
+          <p class="text-green-400 font-medium text-sm mb-1">All clear</p>
+          <p class="text-slate-500 text-xs">No anomalies detected in the selected time range.</p>
+        </div>
       `;
       return;
     }

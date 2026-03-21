@@ -193,8 +193,8 @@ class TestHealthRoutes:
         response = client.get("/")
         assert response.status_code == 200
 
-    def test_root_body_shape(self, client: TestClient) -> None:
-        body = client.get("/").json()
+    def test_api_root_body_shape(self, client: TestClient) -> None:
+        body = client.get("/api").json()
         assert body["name"] == "TINAA MSP"
         assert body["version"] == "2.0.0"
         assert body["docs"] == "/api/docs"

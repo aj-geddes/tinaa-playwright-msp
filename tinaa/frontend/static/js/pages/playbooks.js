@@ -34,6 +34,67 @@ export async function renderPlaybooks(container) {
         </button>
       </div>
 
+      <!-- How Playbooks Work — collapsible help section -->
+      <section
+        id="playbook-help-section"
+        class="bg-slate-800/60 rounded-lg border border-slate-700"
+        aria-labelledby="playbook-help-heading"
+      >
+        <button
+          id="btn-toggle-help"
+          type="button"
+          aria-expanded="false"
+          aria-controls="playbook-help-body"
+          class="collapsible-toggle w-full flex items-center justify-between px-4 py-3
+                 text-sm font-medium text-slate-300 hover:text-white transition-colors
+                 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg"
+        >
+          <span id="playbook-help-heading" class="flex items-center gap-2">
+            <span aria-hidden="true" class="text-blue-400">?</span>
+            How Playbooks Work
+          </span>
+          <svg
+            class="chevron w-4 h-4 text-slate-400"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+        <div
+          id="playbook-help-body"
+          class="hidden px-4 pb-4 text-sm text-slate-400 space-y-3 border-t border-slate-700 pt-3"
+          role="region"
+          aria-labelledby="playbook-help-heading"
+        >
+          <p>Playbooks are declarative test plans that define <em class="text-slate-300">what</em> to test, not how. Each playbook contains:</p>
+          <ul class="space-y-1 ml-2">
+            <li class="flex items-start gap-2">
+              <span class="text-blue-400 mt-0.5 shrink-0" aria-hidden="true">•</span>
+              <span><span class="font-medium text-slate-300">Steps</span> — Actions like navigate, click, fill, assert (executed sequentially)</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-blue-400 mt-0.5 shrink-0" aria-hidden="true">•</span>
+              <span><span class="font-medium text-slate-300">Assertions</span> — Global checks like "no console errors" or "no network failures"</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-blue-400 mt-0.5 shrink-0" aria-hidden="true">•</span>
+              <span><span class="font-medium text-slate-300">Performance Gates</span> — Thresholds like "page must load in under 3 seconds"</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-blue-400 mt-0.5 shrink-0" aria-hidden="true">•</span>
+              <span><span class="font-medium text-slate-300">Triggers</span> — When to run: on deploy, on PR, on schedule, or when specific files change</span>
+            </li>
+          </ul>
+          <p>Playbooks can be auto-generated from codebase analysis or written manually in YAML.</p>
+        </div>
+      </section>
+
       <!-- Create playbook form (hidden by default) -->
       <section
         id="create-playbook-form"
@@ -182,6 +243,15 @@ export async function renderPlaybooks(container) {
   const validResult  = container.querySelector("#validation-result");
 
   listEl?.setLoading?.();
+
+  // Toggle help section
+  const helpBtn  = container.querySelector("#btn-toggle-help");
+  const helpBody = container.querySelector("#playbook-help-body");
+  helpBtn?.addEventListener("click", () => {
+    const isExpanded = helpBtn.getAttribute("aria-expanded") === "true";
+    helpBtn.setAttribute("aria-expanded", String(!isExpanded));
+    helpBody.classList.toggle("hidden", isExpanded);
+  });
 
   // Toggle create form
   newBtn?.addEventListener("click", () => {

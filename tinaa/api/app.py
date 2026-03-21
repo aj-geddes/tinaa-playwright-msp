@@ -50,8 +50,10 @@ def create_app() -> FastAPI:
 
     # ----------------------------------------------------------- Route modules
     from tinaa.api.routes import (
+        alerts_config,
         docs,
         health,
+        integrations,
         metrics,
         playbooks,
         products,
@@ -68,6 +70,8 @@ def create_app() -> FastAPI:
     app.include_router(quality.router, prefix="/api/v1", tags=["Quality"])
     app.include_router(webhooks.router, prefix="/api/v1", tags=["Webhooks"])
     app.include_router(docs.router, prefix="/api/v1", tags=["Documentation"])
+    app.include_router(integrations.router, prefix="/api/v1", tags=["Integrations"])
+    app.include_router(alerts_config.router, prefix="/api/v1", tags=["Alert Configuration"])
 
     # ------------------------------------------------------------ WebSocket
     from tinaa.api.websocket import setup_websocket

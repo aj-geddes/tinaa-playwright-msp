@@ -24,7 +24,7 @@ async def health_check() -> dict:
 
 
 @router.get(
-    "/",
+    "/api",
     summary="API root",
     description="Returns service name, version, and docs URL.",
 )

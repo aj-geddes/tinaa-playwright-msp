@@ -12,8 +12,19 @@ from typing import Any
 import httpx
 
 from tinaa.alerts.rules import Alert, AlertSeverity
+from tinaa.alerts.teams_channel import TeamsChannel
 
 logger = logging.getLogger(__name__)
+
+# Re-export so callers can use either tinaa.alerts.channels or tinaa.alerts.teams_channel
+__all__ = [
+    "EmailChannel",
+    "GitHubIssueChannel",
+    "PagerDutyChannel",
+    "SlackChannel",
+    "TeamsChannel",
+    "WebhookChannel",
+]
 
 # ---------------------------------------------------------------------------
 # Slack color constants
