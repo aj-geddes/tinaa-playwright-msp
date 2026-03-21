@@ -24,6 +24,7 @@ import "./components/docs-viewer.js";
 
 // ------------------------------------------------------------------- Pages
 import { renderDashboard }     from "./pages/dashboard.js";
+import { renderProducts }      from "./pages/products.js";
 import { renderProductDetail } from "./pages/product-detail.js";
 import { renderPlaybooks }     from "./pages/playbooks.js";
 import { renderMetrics }       from "./pages/metrics.js";
@@ -187,7 +188,7 @@ function init() {
 
   // --------------------------------- Route registrations
   router.register("/",            (el) => renderDashboard(el));
-  router.register("/products",    (el) => renderDashboard(el));
+  router.register("/products",    (el) => renderProducts(el));
   router.register("/products/:id",(el, p) => renderProductDetail(el, p.id));
   router.register("/playbooks",   (el) => renderPlaybooks(el));
   router.register("/metrics",     (el) => renderMetrics(el));
