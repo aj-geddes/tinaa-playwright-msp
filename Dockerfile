@@ -1,84 +1,115 @@
-FROM mcr.microsoft.com/playwright:v1.46.1-jammy
+# =============================================================================
+# Stage 1: builder
+# Install Python dependencies into a virtual environment for clean copying.
+# =============================================================================
+FROM mcr.microsoft.com/playwright/python:v1.46.1-jammy AS builder
 
-# Set environment variables
-ENV PYTHONUNBUFFERED=1
-ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    VENV_PATH=/opt/venv
 
-# Install Python and necessary dependencies
-RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
-    curl \
-    wget \
-    ca-certificates \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN python3 -m venv $VENV_PATH
+ENV PATH="$VENV_PATH/bin:$PATH"
 
-# Create symbolic links for python and pip commands
-RUN ln -sf /usr/bin/python3 /usr/bin/python && \
-    ln -sf /usr/bin/pip3 /usr/bin/pip
+# Upgrade pip once in the venv
+RUN pip install --upgrade pip
 
-# Create workspace directory for mounting local filesystem
-RUN mkdir -p /mnt/workspace
+# Copy dependency declarations first — this layer is cached until they change.
+WORKDIR /build
+COPY pyproject.toml ./
+# Install production dependencies only (no [dev] extras)
+RUN pip install .
 
-# Set up application
+# =============================================================================
+# Stage 2: development
+# Inherits the builder venv, adds the source tree, and runs with hot-reload.
+# Used only via docker-compose.dev.yml (target: development).
+# =============================================================================
+FROM mcr.microsoft.com/playwright/python:v1.46.1-jammy AS development
+
+LABEL org.opencontainers.image.title="TINAA MSP (dev)" \
+      org.opencontainers.image.version="2.0.0" \
+      org.opencontainers.image.description="TINAA MSP development image with hot reload"
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    VENV_PATH=/opt/venv \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
+    TINAA_MODE=api
+
+ENV PATH="$VENV_PATH/bin:$PATH"
+
+# Copy the venv from builder
+COPY --from=builder /opt/venv /opt/venv
+
+# Install Playwright browsers (chromium only — minimise image size)
+RUN playwright install chromium --with-deps
+
 WORKDIR /app
 
-# Install Python dependencies with exact version of playwright
-COPY requirements.txt /app/requirements.txt
-RUN pip install --upgrade pip && \
-    pip install -r /app/requirements.txt
+# In dev mode the source is bind-mounted; create the directory structure so
+# the container starts cleanly even before the mount lands.
+RUN mkdir -p /app/logs
 
-# Verify the Playwright installation
-RUN python -m playwright install chromium && \
-    python -c "from playwright.sync_api import sync_playwright; print('Playwright is working')"
+EXPOSE 8765
 
-# Create logs directory and app directory if needed
-RUN mkdir -p /app/logs && chmod 777 /app/logs
-RUN mkdir -p /app/app && touch /app/app/__init__.py
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+    CMD curl -f http://localhost:8765/health || exit 1
 
-# Copy the application files
-COPY . /app/
+# Dev runs as root so that bind-mounted files owned by the host user are
+# always writable. This is intentional and acceptable for dev-only images.
+CMD ["uvicorn", "tinaa.api.app:create_app", "--factory", \
+     "--host", "0.0.0.0", "--port", "8765", "--reload"]
 
-# Debug check of the FastMCP version and APIs
-RUN python -c "import fastmcp; print('FastMCP version:', fastmcp.__version__)" > /app/logs/fastmcp_check.log 2>&1
+# =============================================================================
+# Stage 3: production
+# Minimal runtime — no build tools, non-root user, read-only-friendly.
+# =============================================================================
+FROM mcr.microsoft.com/playwright/python:v1.46.1-jammy AS production
 
-# Create startup scripts for both MCP and HTTP modes
-RUN echo '#!/bin/bash\n\
-# Run MCP server directly\n\
-cd /app\n\
-echo "Starting MCP server in directory $(pwd)..." > /app/logs/startup.log\n\
-echo "Python path: $PYTHONPATH" >> /app/logs/startup.log\n\
-echo "Available files:" >> /app/logs/startup.log\n\
-ls -la >> /app/logs/startup.log\n\
-# Execute Python script directly - important to use exec to receive signals\n\
-exec python /app/app/main.py\n\
-' > /app/startup.sh && chmod +x /app/startup.sh
+LABEL org.opencontainers.image.title="TINAA MSP" \
+      org.opencontainers.image.version="2.0.0" \
+      org.opencontainers.image.description="TINAA MSP — Testing Intelligence Network Automation Assistant" \
+      org.opencontainers.image.licenses="MIT"
 
-# Copy and make HTTP startup script executable
-COPY scripts/startup_http.sh /app/startup_http.sh
-RUN chmod +x /app/startup_http.sh
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    VENV_PATH=/opt/venv \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
+    TINAA_MODE=api
 
-# Create a unified entrypoint that can run either MCP or HTTP mode
-RUN echo '#!/bin/bash\n\
-if [ "$TINAA_MODE" = "http" ]; then\n\
-    echo "Starting TINAA in HTTP mode..."\n\
-    exec /app/startup_http.sh\n\
-else\n\
-    echo "Starting TINAA in MCP mode..."\n\
-    exec /app/startup.sh\n\
-fi\n\
-' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+ENV PATH="$VENV_PATH/bin:$PATH"
 
-# Create non-root user for security (required for Docker MCP Registry)
-RUN groupadd -g 1001 appgroup && \
-    useradd -u 1001 -g appgroup -m appuser && \
-    chown -R appuser:appgroup /app /mnt/workspace /ms-playwright
+# Copy the venv from builder
+COPY --from=builder /opt/venv /opt/venv
 
-# Switch to non-root user
-USER appuser
+# Install Playwright browsers (chromium only)
+RUN playwright install chromium --with-deps
 
-# Set working directory to the mounted workspace path
-WORKDIR /mnt/workspace
+# Create a non-root user for the runtime process
+RUN groupadd -g 1001 tinaa && \
+    useradd -u 1001 -g tinaa -m -s /bin/bash tinaa && \
+    mkdir -p /app/logs && \
+    chown -R tinaa:tinaa /app /ms-playwright
 
-# Run the server with proper signal handling
-ENTRYPOINT ["/app/entrypoint.sh"]
+WORKDIR /app
+
+# Copy application source — code changes do NOT invalidate the dependency layer
+COPY --chown=tinaa:tinaa tinaa/ ./tinaa/
+
+USER tinaa
+
+EXPOSE 8765
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
+    CMD curl -f http://localhost:8765/health || exit 1
+
+# Entrypoint script honours TINAA_MODE:
+#   TINAA_MODE=mcp  -> runs the FastMCP stdio server
+#   TINAA_MODE=api  -> runs the FastAPI HTTP server (default)
+COPY --chown=tinaa:tinaa scripts/docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]

@@ -153,9 +153,14 @@ Thumbs.db
 logs/
 screenshots/
 credentials.json
-resources/credentials.json
 .env.local
 .dockerignore
+
+# Alembic / database
+tinaa.db
+tinaa.db-journal
+tinaa.db-wal
+tinaa.db-shm
 
 # Playwright
 playwright-report/

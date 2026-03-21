@@ -1,0 +1,223 @@
+/*
+ * TINAA MSP — Custom styles beyond Tailwind utilities.
+ *
+ * Design tokens are expressed as CSS custom properties so they can be
+ * consumed by both plain CSS and inline-style JS (for canvas/SVG work).
+ */
+
+/* ------------------------------------------------------------------ tokens */
+:root {
+  --color-primary:       #3B82F6; /* blue-500  */
+  --color-bg-dark:       #0F172A; /* slate-900 */
+  --color-surface-dark:  #1E293B; /* slate-800 */
+  --color-text-dark:     #F8FAFC; /* slate-50  */
+  --color-success:       #22C55E; /* green-500 */
+  --color-warning:       #F59E0B; /* amber-500 */
+  --color-danger:        #EF4444; /* red-500   */
+  --color-purple:        #A855F7; /* purple-500*/
+  --color-orange:        #F97316; /* orange-500*/
+
+  --nav-width:           16rem;   /* 256 px — sidebar collapsed width */
+  --nav-width-collapsed: 4rem;    /* 64 px  — icon-only sidebar      */
+  --header-height:       3.5rem;  /* 56 px                            */
+
+  --transition-fast:     150ms ease;
+  --transition-base:     250ms ease;
+}
+
+/* ------------------------------------------------ global resets/base rules */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Ensure :focus-visible ring is visible on all interactive elements */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Remove default outline only when focus-visible is supported */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ---------------------------------------------------------------- sidebar */
+tinaa-nav {
+  display: block;
+  width: var(--nav-width);
+  flex-shrink: 0;
+  transition: width var(--transition-base);
+}
+
+tinaa-nav.collapsed {
+  width: var(--nav-width-collapsed);
+}
+
+/* ----------------------------------------------------------------- charts */
+/*
+ * Canvas elements used for the line-chart in metrics.js.
+ * max-width ensures they don't overflow their container on small screens.
+ */
+canvas.tinaa-chart {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* -------------------------------------------------------- quality SVG gauge */
+.quality-gauge-ring {
+  transition: stroke-dashoffset 800ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quality-grade-label {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* -------------------------------------------------- scrollbar (WebKit) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155; /* slate-700 */
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569; /* slate-600 */
+}
+
+/* -------------------------------------------------- utility helpers */
+
+/* Screen-reader only text — revealed on focus */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only.focus\:not-sr-only:focus,
+.focus\:not-sr-only:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Smooth page-content transitions when the router swaps pages */
+#main-content > * {
+  animation: fadeIn var(--transition-base);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* -------------------------------------------- badge / severity colours */
+.badge-critical { background-color: var(--color-danger);   color: #fff; }
+.badge-warning  { background-color: var(--color-warning);  color: #000; }
+.badge-info     { background-color: var(--color-primary);  color: #fff; }
+.badge-success  { background-color: var(--color-success);  color: #000; }
+.badge-neutral  { background-color: #334155; color: #cbd5e1; }
+
+/* ------------------------------------ YAML / code editor textarea */
+.code-editor {
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, monospace;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  tab-size: 2;
+  resize: vertical;
+}
+
+/* ----------------------------------- mobile nav overlay */
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 40;
+  display: none;
+}
+
+.nav-overlay.open {
+  display: block;
+}
+
+/* ----------------------------- table striped rows (dark mode) */
+.table-dark tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.table-dark tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+/* ----------------------------- status dot pulse animation */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+.status-dot-pulse {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ----------------------------- docs viewer markdown */
+.docs-content h1 { font-size: 1.75rem; font-weight: 700; margin: 1.5rem 0 0.75rem; }
+.docs-content h2 { font-size: 1.375rem; font-weight: 600; margin: 1.25rem 0 0.5rem; }
+.docs-content h3 { font-size: 1.125rem; font-weight: 600; margin: 1rem 0 0.375rem; }
+.docs-content p  { margin: 0.5rem 0; line-height: 1.7; color: #cbd5e1; }
+.docs-content ul { list-style: disc; padding-left: 1.5rem; margin: 0.5rem 0; }
+.docs-content ol { list-style: decimal; padding-left: 1.5rem; margin: 0.5rem 0; }
+.docs-content li { margin: 0.25rem 0; color: #cbd5e1; }
+.docs-content code {
+  font-family: ui-monospace, monospace;
+  font-size: 0.8125rem;
+  background: #1e293b;
+  color: #93c5fd;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+}
+.docs-content pre {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 0.75rem 0;
+}
+.docs-content pre code { background: none; padding: 0; color: #e2e8f0; }
+.docs-content a { color: var(--color-primary); text-decoration: underline; }
+.docs-content hr { border-color: #334155; margin: 1.5rem 0; }
+.docs-content blockquote {
+  border-left: 3px solid var(--color-primary);
+  padding-left: 1rem;
+  color: #94a3b8;
+  font-style: italic;
+  margin: 0.75rem 0;
+}
+.docs-content table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; }
+.docs-content th, .docs-content td { padding: 0.5rem 0.75rem; border: 1px solid #334155; }
+.docs-content th { background: #1e293b; font-weight: 600; }

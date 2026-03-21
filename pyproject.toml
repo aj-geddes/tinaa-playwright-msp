@@ -1,14 +1,87 @@
-[tool.poetry]
-name = "tinaa-playwright-msp"
-version = "0.1.0"
-description = "Testing Intelligence Network Automation Assistant - MSP Integration with Playwright LSP"
-authors = ["TINAA Team"]
+[project]
+name = "tinaa-msp"
+version = "2.0.0"
+description = "TINAA MSP — Testing Intelligence Network Automation Assistant. Managed Service Platform for continuous quality management."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+authors = [{name = "TINAA Team"}]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-pygls = "^1.0.0"
-fastmcp = "^2.0.0"
+dependencies = [
+    # Web framework
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.0.0",
+
+    # MCP
+    "fastmcp>=2.0.0",
+
+    # Database
+    "sqlalchemy[asyncio]>=2.0.0",
+    "asyncpg>=0.29.0",
+    "aiosqlite>=0.20.0",
+    "alembic>=1.13.0",
+
+    # HTTP client
+    "httpx>=0.27.0",
+
+    # Browser automation
+    "playwright>=1.46.0",
+
+    # Auth
+    "PyJWT>=2.8.0",
+    "cryptography>=42.0.0",
+
+    # Configuration
+    "pyyaml>=6.0.0",
+
+    # Redis
+    "redis[hiredis]>=5.0.0",
+
+    # Utilities
+    "python-multipart>=0.0.9",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=5.0.0",
+    "pytest-httpx>=0.30.0",
+    "ruff>=0.5.0",
+    "mypy>=1.10.0",
+    "pre-commit>=3.7.0",
+]
+
+[project.scripts]
+tinaa = "tinaa.mcp_server.server:main"
+tinaa-api = "tinaa.api.app:main"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "A", "SIM"]
+ignore = [
+    "UP045",  # Allow Optional[X] style — both teams used it extensively
+    "UP042",  # Allow str+Enum inheritance — codebase uses this pattern pervasively
+    "E501",   # Line length — enforced by formatter; long strings in literals are unavoidable
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["tinaa"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true

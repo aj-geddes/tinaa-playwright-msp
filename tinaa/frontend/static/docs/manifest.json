@@ -1,0 +1,53 @@
+{
+  "sections": [
+    {
+      "id": "user",
+      "title": "User Guide",
+      "description": "Learn how to use TINAA MSP to manage your product quality",
+      "icon": "book",
+      "pages": [
+        {"id": "index", "title": "Overview", "file": "user/index.md"},
+        {"id": "getting-started", "title": "Getting Started", "file": "user/getting-started.md"},
+        {"id": "products", "title": "Managing Products", "file": "user/products.md"},
+        {"id": "playbooks", "title": "Test Playbooks", "file": "user/playbooks.md"},
+        {"id": "quality-scores", "title": "Quality Scores", "file": "user/quality-scores.md"},
+        {"id": "test-runs", "title": "Test Runs", "file": "user/test-runs.md"},
+        {"id": "metrics", "title": "Metrics & Monitoring", "file": "user/metrics.md"},
+        {"id": "alerts", "title": "Alerts & Notifications", "file": "user/alerts.md"},
+        {"id": "faq", "title": "FAQ", "file": "user/faq.md"}
+      ]
+    },
+    {
+      "id": "admin",
+      "title": "Admin Guide",
+      "description": "Set up and configure TINAA MSP for your organization",
+      "icon": "cog",
+      "pages": [
+        {"id": "index", "title": "Overview", "file": "admin/index.md"},
+        {"id": "installation", "title": "Installation", "file": "admin/installation.md"},
+        {"id": "configuration", "title": "Configuration", "file": "admin/configuration.md"},
+        {"id": "github-integration", "title": "GitHub Integration", "file": "admin/github-integration.md"},
+        {"id": "authentication", "title": "Authentication & API Keys", "file": "admin/authentication.md"},
+        {"id": "multi-tenancy", "title": "Multi-Tenancy", "file": "admin/multi-tenancy.md"},
+        {"id": "backup-restore", "title": "Backup & Restore", "file": "admin/backup-restore.md"},
+        {"id": "troubleshooting", "title": "Troubleshooting", "file": "admin/troubleshooting.md"}
+      ]
+    },
+    {
+      "id": "operations",
+      "title": "Operations Guide",
+      "description": "Run and maintain TINAA MSP in production",
+      "icon": "server",
+      "pages": [
+        {"id": "index", "title": "Overview", "file": "operations/index.md"},
+        {"id": "architecture", "title": "Architecture", "file": "operations/architecture.md"},
+        {"id": "deployment", "title": "Deployment", "file": "operations/deployment.md"},
+        {"id": "monitoring", "title": "Monitoring & Observability", "file": "operations/monitoring.md"},
+        {"id": "scaling", "title": "Scaling", "file": "operations/scaling.md"},
+        {"id": "database", "title": "Database Management", "file": "operations/database.md"},
+        {"id": "security", "title": "Security Hardening", "file": "operations/security.md"},
+        {"id": "runbooks", "title": "Runbooks", "file": "operations/runbooks.md"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+# docker-compose.dev.yml
+# Development overrides: hot reload, source bind-mount, debug env vars.
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+# Or via Makefile:
+#   make docker-dev
+
+services:
+  tinaa:
+    build:
+      context: .
+      target: development
+    volumes:
+      # Bind-mount source so uvicorn --reload picks up changes immediately
+      - .:/app
+      # Persist logs outside the container
+      - ./logs:/app/logs
+    environment:
+      - TINAA_DEBUG=true
+      - TINAA_MODE=api
+      - DATABASE_URL=postgresql+asyncpg://tinaa:tinaa@postgres:5432/tinaa
+      - REDIS_URL=redis://redis:6379/0
+      # Override API key for local dev — never use a real key here
+      - TINAA_API_KEY=dev-insecure-key
+    command: >
+      uvicorn tinaa.api.app:create_app
+      --factory
+      --host 0.0.0.0
+      --port 8765
+      --reload
+      --log-level debug
+    # In dev, relax the restart policy so crashes surface clearly
+    restart: "no"

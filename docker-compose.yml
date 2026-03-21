@@ -1,21 +1,62 @@
 services:
-  tinaa-playwright-msp:
-    build: .
-    image: tinaa-playwright-msp:latest
-    container_name: tinaa-playwright-msp  # Set explicit container name
-    volumes:
-      - ./logs:/app/logs
-      - ${PWD}:/mnt/workspace
-    environment:
-      - PYTHONUNBUFFERED=1
-      - PYTHONPATH=/app
-      - PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+  tinaa:
+    build:
+      context: .
+      target: production
+    image: tinaa-msp:latest
     ports:
       - "8765:8765"
-    working_dir: /mnt/workspace
-    stdin_open: true
-    tty: true
-    cap_add:
-      - SYS_ADMIN
-    stop_signal: SIGTERM
-    restart: "no"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://tinaa:tinaa@postgres:5432/tinaa
+      - REDIS_URL=redis://redis:6379/0
+      - GITHUB_APP_ID=${GITHUB_APP_ID}
+      - GITHUB_PRIVATE_KEY=${GITHUB_PRIVATE_KEY}
+      - GITHUB_WEBHOOK_SECRET=${GITHUB_WEBHOOK_SECRET}
+      - TINAA_API_KEY=${TINAA_API_KEY}
+      - TINAA_MODE=${TINAA_MODE:-api}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8765/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 3
+    restart: unless-stopped
+
+  postgres:
+    image: timescale/timescaledb:latest-pg16
+    environment:
+      POSTGRES_USER: tinaa
+      POSTGRES_PASSWORD: tinaa
+      POSTGRES_DB: tinaa
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tinaa"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
