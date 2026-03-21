@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tinaa
+  labels:
+    app.kubernetes.io/name: tinaa-msp
+    app.kubernetes.io/part-of: tinaa

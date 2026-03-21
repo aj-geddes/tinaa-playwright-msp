@@ -1,0 +1,79 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tinaa-postgres-pvc
+  namespace: tinaa
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tinaa-postgres
+  namespace: tinaa
+  labels:
+    app: tinaa-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tinaa-postgres
+  template:
+    metadata:
+      labels:
+        app: tinaa-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: timescale/timescaledb:latest-pg16
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: "tinaa"
+            - name: POSTGRES_PASSWORD
+              value: "tinaa"
+            - name: POSTGRES_DB
+              value: "tinaa"
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "tinaa"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "tinaa"]
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: tinaa-postgres-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tinaa-postgres
+  namespace: tinaa
+spec:
+  selector:
+    app: tinaa-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432

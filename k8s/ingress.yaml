@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tinaa-msp
+  namespace: tinaa
+  annotations:
+    cert-manager.io/cluster-issuer: hvs-internal-ca
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - tinaa.hvs
+      secretName: tinaa-tls
+  rules:
+    - host: tinaa.hvs
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tinaa-msp
+                port:
+                  number: 8765

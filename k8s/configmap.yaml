@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tinaa-config
+  namespace: tinaa
+data:
+  DATABASE_URL: "postgresql+asyncpg://tinaa:tinaa@tinaa-postgres:5432/tinaa"
+  REDIS_URL: "redis://tinaa-redis:6379/0"
+  TINAA_MODE: "api"
+  TINAA_CORS_ORIGINS: "https://tinaa.hvs,http://localhost:3000"
+  TINAA_DEBUG: "false"

@@ -2,7 +2,7 @@
 # Stage 1: builder
 # Install Python dependencies into a virtual environment for clean copying.
 # =============================================================================
-FROM mcr.microsoft.com/playwright/python:v1.46.1-jammy AS builder
+FROM mcr.microsoft.com/playwright/python:v1.52.0-noble AS builder
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -10,6 +10,7 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     VENV_PATH=/opt/venv
 
+RUN apt-get update && apt-get install -y --no-install-recommends python3-venv && rm -rf /var/lib/apt/lists/*
 RUN python3 -m venv $VENV_PATH
 ENV PATH="$VENV_PATH/bin:$PATH"
 
@@ -18,7 +19,8 @@ RUN pip install --upgrade pip
 
 # Copy dependency declarations first — this layer is cached until they change.
 WORKDIR /build
-COPY pyproject.toml ./
+COPY pyproject.toml README.md ./
+COPY tinaa/ ./tinaa/
 # Install production dependencies only (no [dev] extras)
 RUN pip install .
 
@@ -27,7 +29,7 @@ RUN pip install .
 # Inherits the builder venv, adds the source tree, and runs with hot-reload.
 # Used only via docker-compose.dev.yml (target: development).
 # =============================================================================
-FROM mcr.microsoft.com/playwright/python:v1.46.1-jammy AS development
+FROM mcr.microsoft.com/playwright/python:v1.52.0-noble AS development
 
 LABEL org.opencontainers.image.title="TINAA MSP (dev)" \
       org.opencontainers.image.version="2.0.0" \
@@ -67,7 +69,7 @@ CMD ["uvicorn", "tinaa.api.app:create_app", "--factory", \
 # Stage 3: production
 # Minimal runtime — no build tools, non-root user, read-only-friendly.
 # =============================================================================
-FROM mcr.microsoft.com/playwright/python:v1.46.1-jammy AS production
+FROM mcr.microsoft.com/playwright/python:v1.52.0-noble AS production
 
 LABEL org.opencontainers.image.title="TINAA MSP" \
       org.opencontainers.image.version="2.0.0" \
@@ -89,15 +91,18 @@ COPY --from=builder /opt/venv /opt/venv
 RUN playwright install chromium --with-deps
 
 # Create a non-root user for the runtime process
-RUN groupadd -g 1001 tinaa && \
-    useradd -u 1001 -g tinaa -m -s /bin/bash tinaa && \
+RUN groupadd -f tinaa && \
+    useradd -g tinaa -m -s /bin/bash tinaa || true && \
     mkdir -p /app/logs && \
-    chown -R tinaa:tinaa /app /ms-playwright
+    chown -R tinaa:tinaa /app || true && \
+    chown -R tinaa:tinaa /ms-playwright || true
 
 WORKDIR /app
 
-# Copy application source — code changes do NOT invalidate the dependency layer
+# Copy application source and Alembic migrations
 COPY --chown=tinaa:tinaa tinaa/ ./tinaa/
+COPY --chown=tinaa:tinaa alembic.ini ./
+COPY --chown=tinaa:tinaa alembic/ ./alembic/
 
 USER tinaa
 

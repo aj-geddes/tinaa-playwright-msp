@@ -1,0 +1,73 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tinaa-redis-pvc
+  namespace: tinaa
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tinaa-redis
+  namespace: tinaa
+  labels:
+    app: tinaa-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tinaa-redis
+  template:
+    metadata:
+      labels:
+        app: tinaa-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+          command: ["redis-server", "--appendonly", "yes"]
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+          readinessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+      volumes:
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: tinaa-redis-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tinaa-redis
+  namespace: tinaa
+spec:
+  selector:
+    app: tinaa-redis
+  ports:
+    - port: 6379
+      targetPort: 6379
