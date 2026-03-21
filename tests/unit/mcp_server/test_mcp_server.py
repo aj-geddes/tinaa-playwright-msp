@@ -61,7 +61,12 @@ class TestToolRegistration:
 
     def _get_tools(self) -> dict:
         from tinaa.mcp_server.server import mcp
-        return run(mcp.get_tools())
+        # FastMCP API varies across versions
+        if hasattr(mcp, "get_tools"):
+            return run(mcp.get_tools())
+        if hasattr(mcp, "_tool_manager"):
+            return {t.name: t for t in mcp._tool_manager._tools.values()}
+        pytest.skip("FastMCP version does not expose tool listing API")
 
     def test_all_expected_tools_registered(self):
         tools = self._get_tools()
@@ -103,11 +108,19 @@ class TestResourceRegistration:
 
     def _get_resources(self) -> dict:
         from tinaa.mcp_server.server import mcp
-        return run(mcp.get_resources())
+        if hasattr(mcp, "get_resources"):
+            return run(mcp.get_resources())
+        if hasattr(mcp, "_resource_manager"):
+            return {str(r.uri): r for r in mcp._resource_manager._resources.values()}
+        pytest.skip("FastMCP version does not expose resource listing API")
 
     def _get_templates(self) -> dict:
         from tinaa.mcp_server.server import mcp
-        return run(mcp.get_resource_templates())
+        if hasattr(mcp, "get_resource_templates"):
+            return run(mcp.get_resource_templates())
+        if hasattr(mcp, "_resource_manager"):
+            return {str(t.uri_template): t for t in mcp._resource_manager._templates.values()}
+        pytest.skip("FastMCP version does not expose template listing API")
 
     def test_static_products_resource_registered(self):
         resources = self._get_resources()
