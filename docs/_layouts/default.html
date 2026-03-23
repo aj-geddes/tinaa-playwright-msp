@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- SEO -->
+  <title>{% if page.title %}{{ page.title }} | {{ site.title }}{% else %}{{ site.title }} — {{ site.tagline }}{% endif %}</title>
+  <meta name="description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
+  <meta name="author" content="{{ site.author.name }}">
+  <link rel="canonical" href="{{ page.url | replace:'index.html','' | absolute_url }}">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{% if page.title %}{{ page.title }} | {{ site.title }}{% else %}{{ site.title }}{% endif %}">
+  <meta property="og:description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
+  <meta property="og:url" content="{{ page.url | absolute_url }}">
+  <meta property="og:site_name" content="{{ site.title }}">
+  {% if page.image %}
+  <meta property="og:image" content="{{ page.image | absolute_url }}">
+  {% endif %}
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}">
+  <meta name="twitter:description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
+
+  <!-- Fonts: Inter via Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Jekyll SEO tag plugin -->
+  {% seo %}
+
+  <!-- Sitemap -->
+  {% feed_meta %}
+
+  <style>
+    /* =========================================================
+       TINAA MSP — Design System
+       Color tokens:
+         bg:           #0f172a  (slate-900)
+         surface:      #1e293b  (slate-800)
+         surface-2:    #263248  (slate-750, interpolated)
+         border:       #334155  (slate-700)
+         border-light: #475569  (slate-600)
+         primary:      #3b82f6  (blue-500)
+         primary-h:    #2563eb  (blue-600)
+         primary-glow: rgba(59,130,246,0.15)
+         text:         #f8fafc  (slate-50)
+         text-muted:   #94a3b8  (slate-400)
+         text-subtle:  #64748b  (slate-500)
+         success:      #10b981  (emerald-500)
+         warning:      #f59e0b  (amber-500)
+         error:        #ef4444  (red-500)
+    ========================================================= */
+
+    /* ---- Reset & base ---- */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:            #0f172a;
+      --surface:       #1e293b;
+      --surface-2:     #263248;
+      --border:        #334155;
+      --border-light:  #475569;
+      --primary:       #3b82f6;
+      --primary-h:     #2563eb;
+      --primary-glow:  rgba(59,130,246,0.15);
+      --primary-glow2: rgba(59,130,246,0.08);
+      --text:          #f8fafc;
+      --text-muted:    #94a3b8;
+      --text-subtle:   #64748b;
+      --success:       #10b981;
+      --warning:       #f59e0b;
+      --error:         #ef4444;
+      --radius-sm:     4px;
+      --radius-md:     8px;
+      --radius-lg:     12px;
+      --radius-xl:     16px;
+      --shadow-sm:     0 1px 3px rgba(0,0,0,0.4);
+      --shadow-md:     0 4px 16px rgba(0,0,0,0.5);
+      --shadow-lg:     0 8px 32px rgba(0,0,0,0.6);
+      --nav-height:    64px;
+      --sidebar-width: 260px;
+      --content-max:   780px;
+      --page-max:      1200px;
+      --font-sans:     'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono:     'JetBrains Mono', 'Fira Code', monospace;
+      --transition:    150ms cubic-bezier(0.4,0,0.2,1);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    img { max-width: 100%; height: auto; }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    a:hover { color: var(--primary-h); }
+    a:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* ---- Selection ---- */
+    ::selection { background: var(--primary-glow); color: var(--text); }
+
+    /* ---- Scrollbar (WebKit) ---- */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
+
+    /* ================================================================
+       NAVIGATION
+    ================================================================ */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15,23,42,0.95);
+      backdrop-filter: blur(12px) saturate(1.5);
+      -webkit-backdrop-filter: blur(12px) saturate(1.5);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-container {
+      display: flex;
+      align-items: center;
+      max-width: var(--page-max);
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      height: var(--nav-height);
+      gap: 1.5rem;
+    }
+
+    /* Brand */
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .nav-brand__icon { display: flex; align-items: center; }
+    .nav-brand__text {
+      display: flex;
+      align-items: baseline;
+      gap: 0.25rem;
+      line-height: 1;
+    }
+    .nav-brand__name {
+      font-size: 1.125rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      transition: color var(--transition);
+    }
+    .nav-brand__suffix {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--primary);
+      background: var(--primary-glow2);
+      border: 1px solid rgba(59,130,246,0.25);
+      padding: 1px 5px;
+      border-radius: var(--radius-sm);
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .nav-brand:hover .nav-brand__name { color: var(--primary); }
+    .nav-brand:hover .nav-brand__suffix { background: var(--primary-glow); }
+
+    /* Links */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      list-style: none;
+      flex: 1;
+      justify-content: center;
+    }
+    .nav-links__item { display: flex; }
+    .nav-links__link {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      padding: 0.375rem 0.75rem;
+      border-radius: var(--radius-md);
+      transition: color var(--transition), background var(--transition);
+      white-space: nowrap;
+    }
+    .nav-links__link:hover {
+      color: var(--text);
+      background: rgba(248,250,252,0.06);
+    }
+    .nav-links__link--active {
+      color: var(--primary);
+      background: var(--primary-glow2);
+    }
+    .nav-links__link--active:hover {
+      color: var(--primary);
+      background: var(--primary-glow);
+    }
+
+    /* Actions */
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+    .nav-actions__github {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      padding: 0.375rem 0.875rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      transition: color var(--transition), border-color var(--transition), background var(--transition);
+    }
+    .nav-actions__github:hover {
+      color: var(--text);
+      border-color: var(--border-light);
+      background: var(--surface-2);
+    }
+    .nav-actions__github-label { display: inline; }
+
+    /* Hamburger */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      width: 36px;
+      height: 36px;
+      padding: 6px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: transparent;
+      cursor: pointer;
+      transition: border-color var(--transition), background var(--transition);
+    }
+    .nav-hamburger:hover { border-color: var(--border-light); background: var(--surface); }
+    .nav-hamburger__bar {
+      display: block;
+      width: 16px;
+      height: 1.5px;
+      background: var(--text-muted);
+      border-radius: 2px;
+      transition: transform var(--transition), opacity var(--transition);
+    }
+    .nav-hamburger[aria-expanded="true"] .nav-hamburger__bar:nth-child(1) {
+      transform: translateY(6.5px) rotate(45deg);
+    }
+    .nav-hamburger[aria-expanded="true"] .nav-hamburger__bar:nth-child(2) {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+    .nav-hamburger[aria-expanded="true"] .nav-hamburger__bar:nth-child(3) {
+      transform: translateY(-6.5px) rotate(-45deg);
+    }
+
+    /* Mobile menu */
+    .nav-mobile-menu {
+      display: none;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 0.5rem 1rem 1rem;
+    }
+    .nav-mobile-menu.is-open { display: block; }
+    .nav-mobile-menu ul { list-style: none; }
+    .nav-mobile-menu li { border-bottom: 1px solid var(--border); }
+    .nav-mobile-menu li:last-child { border-bottom: none; }
+    .nav-mobile-menu__divider { border-color: var(--border-light) !important; margin: 0.25rem 0; }
+    .nav-mobile-menu a {
+      display: block;
+      padding: 0.75rem 0.5rem;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: color var(--transition);
+    }
+    .nav-mobile-menu a:hover,
+    .nav-mobile-menu a.active { color: var(--primary); }
+
+    /* ================================================================
+       MAIN CONTENT WRAPPER
+    ================================================================ */
+    .site-main {
+      flex: 1;
+      width: 100%;
+    }
+
+    /* ================================================================
+       FOOTER
+    ================================================================ */
+    .site-footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      margin-top: auto;
+    }
+
+    .footer-inner {
+      max-width: var(--page-max);
+      margin: 0 auto;
+      padding: 3rem 1.5rem 2rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 2.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .footer-brand { max-width: 300px; }
+    .footer-brand__logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.875rem;
+    }
+    .footer-brand__name {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .footer-brand__desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+    }
+    .footer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--success);
+      background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.25);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .footer-badge__dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .footer-col h4 {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-subtle);
+      margin-bottom: 1rem;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .footer-col a {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      transition: color var(--transition);
+    }
+    .footer-col a:hover { color: var(--text); }
+
+    .footer-bottom {
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-bottom__copy {
+      font-size: 0.8125rem;
+      color: var(--text-subtle);
+    }
+    .footer-bottom__links {
+      display: flex;
+      gap: 1.25rem;
+    }
+    .footer-bottom__links a {
+      font-size: 0.8125rem;
+      color: var(--text-subtle);
+    }
+    .footer-bottom__links a:hover { color: var(--text-muted); }
+
+    /* ================================================================
+       PROSE — generic markdown content
+    ================================================================ */
+    .prose {
+      color: var(--text);
+      font-size: 1rem;
+      line-height: 1.75;
+    }
+
+    .prose h1, .prose h2, .prose h3,
+    .prose h4, .prose h5, .prose h6 {
+      color: var(--text);
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+      margin-top: 2em;
+      margin-bottom: 0.75em;
+      scroll-margin-top: calc(var(--nav-height) + 1rem);
+    }
+    .prose h1 { font-size: 2rem; font-weight: 800; }
+    .prose h2 { font-size: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+    .prose h3 { font-size: 1.25rem; }
+    .prose h4 { font-size: 1.0625rem; }
+
+    .prose p { margin-bottom: 1.25em; }
+
+    .prose a { color: var(--primary); text-decoration: underline; text-decoration-color: rgba(59,130,246,0.4); text-underline-offset: 3px; }
+    .prose a:hover { color: var(--primary-h); text-decoration-color: var(--primary-h); }
+
+    .prose strong { font-weight: 600; color: var(--text); }
+    .prose em { color: var(--text-muted); }
+
+    .prose ul, .prose ol {
+      padding-left: 1.5em;
+      margin-bottom: 1.25em;
+    }
+    .prose li { margin-bottom: 0.375em; }
+    .prose li::marker { color: var(--primary); }
+
+    .prose blockquote {
+      border-left: 3px solid var(--primary);
+      padding: 0.75rem 1.25rem;
+      margin: 1.5em 0;
+      background: var(--primary-glow2);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .prose code {
+      font-family: var(--font-mono);
+      font-size: 0.875em;
+      background: var(--surface-2);
+      color: #e2e8f0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.15em 0.4em;
+    }
+
+    .prose pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin: 1.5em 0;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      line-height: 1.7;
+    }
+    .prose pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: inherit;
+    }
+
+    .prose hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2.5em 0;
+    }
+
+    .prose table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5em 0;
+      font-size: 0.9375rem;
+    }
+    .prose th {
+      text-align: left;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-subtle);
+      background: var(--surface-2);
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .prose td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      vertical-align: top;
+    }
+    .prose tr:last-child td { border-bottom: none; }
+    .prose tr:hover td { background: rgba(248,250,252,0.02); }
+
+    .prose img {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+      margin: 1.5em 0;
+    }
+
+    /* ================================================================
+       HIGHLIGHT (Rouge syntax)
+    ================================================================ */
+    .highlight {
+      background: var(--surface) !important;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .highlight pre { background: none; border: none; margin: 0; }
+
+    /* ================================================================
+       UTILITIES
+    ================================================================ */
+    .visually-hidden {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .skip-link {
+      position: absolute;
+      top: -40px; left: 1rem;
+      background: var(--primary);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0 0 var(--radius-md) var(--radius-md);
+      font-weight: 600;
+      transition: top var(--transition);
+      z-index: 9999;
+    }
+    .skip-link:focus { top: 0; }
+
+    /* ================================================================
+       RESPONSIVE
+    ================================================================ */
+    @media (max-width: 1024px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-actions__github-label { display: none; }
+      .nav-hamburger { display: flex; }
+
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-brand { max-width: 100%; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (max-width: 480px) {
+      .nav-container { padding: 0 1rem; }
+      .nav-actions__github { padding: 0.375rem 0.625rem; }
+    }
+
+    /* ================================================================
+       REDUCED MOTION
+    ================================================================ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0ms !important; animation-duration: 0ms !important; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to content</a>
+
+  <header role="banner">
+    {% include nav.html %}
+  </header>
+
+  <main id="main-content" class="site-main" role="main" tabindex="-1">
+    {{ content }}
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-grid">
+
+        <!-- Brand column -->
+        <div class="footer-brand">
+          <div class="footer-brand__logo">
+            <svg width="24" height="24" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect width="28" height="28" rx="6" fill="#3b82f6"/>
+              <path d="M7 9h14M7 14h9M7 19h11" stroke="#f8fafc" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="21" cy="19" r="3" fill="#10b981"/>
+            </svg>
+            <span class="footer-brand__name">TINAA MSP</span>
+          </div>
+          <p class="footer-brand__desc">
+            Agent-based continuous quality platform. Fuses Playwright automated testing
+            with APM to deliver intelligence across every deployment.
+          </p>
+          <span class="footer-badge">
+            <span class="footer-badge__dot" aria-hidden="true"></span>
+            Deployed at tinaa.hvs
+          </span>
+        </div>
+
+        <!-- Docs column -->
+        <div class="footer-col">
+          <h4>Documentation</h4>
+          <ul>
+            <li><a href="{{ site.baseurl }}/guide/getting-started/">User Guide</a></li>
+            <li><a href="{{ site.baseurl }}/api-reference/">API Reference</a></li>
+            <li><a href="{{ site.baseurl }}/architecture/">Architecture</a></li>
+            <li><a href="{{ site.baseurl }}/deployment/">Deployment</a></li>
+          </ul>
+        </div>
+
+        <!-- Platform column -->
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="{{ site.baseurl }}/features/">Features</a></li>
+            <li><a href="https://github.com/{{ site.repository }}/releases" target="_blank" rel="noopener">Releases</a></li>
+            <li><a href="https://github.com/{{ site.repository }}/pkgs/container/tinaa-playwright-msp" target="_blank" rel="noopener">Docker Image</a></li>
+            <li><a href="{{ site.baseurl }}/deployment/#kubernetes">Kubernetes</a></li>
+          </ul>
+        </div>
+
+        <!-- Community column -->
+        <div class="footer-col">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="https://github.com/{{ site.repository }}" target="_blank" rel="noopener">GitHub</a></li>
+            <li><a href="https://github.com/{{ site.repository }}/issues" target="_blank" rel="noopener">Issues</a></li>
+            <li><a href="https://github.com/{{ site.repository }}/discussions" target="_blank" rel="noopener">Discussions</a></li>
+            <li><a href="https://github.com/{{ site.repository }}/blob/main/SECURITY.md" target="_blank" rel="noopener">Security</a></li>
+          </ul>
+        </div>
+
+      </div><!-- /.footer-grid -->
+
+      <div class="footer-bottom">
+        <p class="footer-bottom__copy">
+          &copy; {{ 'now' | date: "%Y" }} TINAA MSP. Released under the
+          <a href="https://github.com/{{ site.repository }}/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>.
+        </p>
+        <nav class="footer-bottom__links" aria-label="Footer legal links">
+          <a href="{{ site.baseurl }}/architecture/">Architecture</a>
+          <a href="https://github.com/{{ site.repository }}/blob/main/SECURITY.md" target="_blank" rel="noopener">Security</a>
+          <a href="{{ site.baseurl }}/deployment/">Deploy</a>
+        </nav>
+      </div>
+
+    </div><!-- /.footer-inner -->
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // Mobile menu toggle
+      var hamburger = document.getElementById('nav-hamburger');
+      var mobileMenu = document.getElementById('nav-mobile-menu');
+
+      if (hamburger && mobileMenu) {
+        hamburger.addEventListener('click', function () {
+          var expanded = hamburger.getAttribute('aria-expanded') === 'true';
+          hamburger.setAttribute('aria-expanded', String(!expanded));
+          mobileMenu.setAttribute('aria-hidden', String(expanded));
+          mobileMenu.classList.toggle('is-open', !expanded);
+        });
+
+        // Close on outside click
+        document.addEventListener('click', function (e) {
+          if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+            hamburger.setAttribute('aria-expanded', 'false');
+            mobileMenu.setAttribute('aria-hidden', 'true');
+            mobileMenu.classList.remove('is-open');
+          }
+        });
+
+        // Close on Escape
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') {
+            hamburger.setAttribute('aria-expanded', 'false');
+            mobileMenu.setAttribute('aria-hidden', 'true');
+            mobileMenu.classList.remove('is-open');
+            hamburger.focus();
+          }
+        });
+      }
+
+      // Smooth scroll for anchor links (supplement CSS scroll-behavior)
+      document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
+        anchor.addEventListener('click', function (e) {
+          var target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            e.preventDefault();
+            var navHeight = parseInt(
+              getComputedStyle(document.documentElement)
+                .getPropertyValue('--nav-height') || '64', 10
+            );
+            var targetY = target.getBoundingClientRect().top + window.scrollY - navHeight - 16;
+            window.scrollTo({ top: targetY, behavior: 'smooth' });
+            target.focus({ preventScroll: true });
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

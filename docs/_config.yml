@@ -1,24 +1,138 @@
-# GitHub Pages configuration for MkDocs site
-# This file helps GitHub Pages understand the site structure
+# TINAA MSP — Jekyll GitHub Pages Configuration
+# Testing Intelligence Network Automation Assistant — Managed Service Platform
 
-# Theme configuration (for GitHub Pages fallback)
-theme: jekyll-theme-minimal
+title: "TINAA MSP"
+tagline: "Agent-based continuous quality platform"
+description: >-
+  TINAA MSP fuses automated Playwright testing with APM through an
+  AI-agent architecture — delivering continuous quality intelligence
+  across every deployment.
 
-# Exclude files from GitHub Pages processing
+url: "https://aj-geddes.github.io"
+baseurl: "/tinaa-playwright-msp"
+
+# Repository
+repository: aj-geddes/tinaa-playwright-msp
+github_username: aj-geddes
+
+# Author
+author:
+  name: TINAA MSP Team
+  url: https://github.com/aj-geddes
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: "highlight"
+    span:
+      line_numbers: false
+    block:
+      line_numbers: true
+
+# Plugins (GitHub Pages safe-list)
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-feed
+  - jekyll-relative-links
+  - jekyll-optional-front-matter
+  - jekyll-titles-from-headings
+
+# Navigation structure — used by _includes/nav.html
+navigation:
+  - title: Home
+    url: /
+  - title: User Guide
+    url: /guide/getting-started/
+  - title: API Reference
+    url: /api/
+  - title: Deployment
+    url: /deployment/
+  - title: Architecture
+    url: /architecture/
+
+# SEO defaults
+twitter:
+  username: tinaamsp
+  card: summary_large_image
+
+social:
+  name: TINAA MSP
+  links:
+    - https://github.com/aj-geddes/tinaa-playwright-msp
+
+# Defaults — apply layouts automatically
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "page"
+      image: /assets/og-default.png
+  - scope:
+      path: "index.md"
+    values:
+      layout: "home"
+  - scope:
+      path: "index.html"
+    values:
+      layout: "home"
+
+# Collections
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:name/
+
+# Exclude from processing
 exclude:
   - Gemfile
   - Gemfile.lock
   - node_modules
-  - vendor/bundle/
-  - vendor/cache/
-  - vendor/gems/
-  - vendor/ruby/
-  - requirements*.txt
-  - mkdocs.yml
+  - vendor/
+  - .bundle/
+  - .sass-cache/
   - "*.py"
   - "*.sh"
+  - requirements*.txt
+  # mkdocs.yml removed — pure Jekyll site now
+  - "*.pyc"
+  - __pycache__/
+  - .github/
+  - k8s/
+  - tinaa/
+  - tests/
+  - alembic/
+  - scripts/
+  - Dockerfile
+  - docker-compose*.yml
+  - Makefile
+  - pyproject.toml
+  - alembic.ini
+  - coverage.xml
+  # Note: assets/ directory with screenshots is NOT excluded
 
-# Plugins (GitHub Pages safe)
-plugins:
-  - jekyll-redirect-from
-  - jekyll-sitemap
+# Include dotfiles that should be processed
+include:
+  - _pages
+
+# Sass/SCSS
+sass:
+  style: compressed
+
+# Permalink style
+permalink: pretty
+
+# Timezone
+timezone: America/New_York
+
+# Encoding
+encoding: utf-8
+
+# Liquid options
+liquid:
+  error_mode: warn

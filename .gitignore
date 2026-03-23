@@ -151,7 +151,8 @@ Thumbs.db
 
 # TINAA specific
 logs/
-screenshots/
+# Playwright test screenshots (not docs screenshots)
+/screenshots/
 credentials.json
 .env.local
 .dockerignore

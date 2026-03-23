@@ -1,0 +1,99 @@
+<!-- TINAA MSP — Reusable Navigation Component -->
+<nav class="site-nav" id="site-nav" aria-label="Main navigation">
+  <div class="nav-container">
+
+    <!-- Logo / Brand -->
+    <a href="{{ site.baseurl }}/" class="nav-brand" aria-label="TINAA MSP home">
+      <span class="nav-brand__icon" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="28" height="28" rx="6" fill="#3b82f6"/>
+          <path d="M7 9h14M7 14h9M7 19h11" stroke="#f8fafc" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="21" cy="19" r="3" fill="#10b981"/>
+        </svg>
+      </span>
+      <span class="nav-brand__text">
+        <span class="nav-brand__name">TINAA</span>
+        <span class="nav-brand__suffix">MSP</span>
+      </span>
+    </a>
+
+    <!-- Primary navigation links (center) -->
+    <ul class="nav-links" role="list">
+      {% assign current_path = page.url | remove: 'index.html' %}
+      {% for item in site.navigation %}
+        {% assign item_path = item.url %}
+        {% if current_path == item_path or current_path contains item_path and item_path != "/" %}
+          {% assign is_active = true %}
+        {% else %}
+          {% assign is_active = false %}
+        {% endif %}
+        <li class="nav-links__item">
+          <a href="{{ site.baseurl }}{{ item.url }}"
+             class="nav-links__link{% if is_active %} nav-links__link--active{% endif %}"
+             {% if is_active %}aria-current="page"{% endif %}>
+            {{ item.title }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <!-- Right actions -->
+    <div class="nav-actions">
+      <a href="https://github.com/{{ site.repository }}"
+         class="nav-actions__github"
+         target="_blank"
+         rel="noopener noreferrer"
+         aria-label="View TINAA MSP on GitHub">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+        </svg>
+        <span class="nav-actions__github-label">GitHub</span>
+      </a>
+
+      <!-- Mobile hamburger -->
+      <button class="nav-hamburger"
+              id="nav-hamburger"
+              aria-expanded="false"
+              aria-controls="nav-mobile-menu"
+              aria-label="Toggle navigation menu">
+        <span class="nav-hamburger__bar"></span>
+        <span class="nav-hamburger__bar"></span>
+        <span class="nav-hamburger__bar"></span>
+      </button>
+    </div>
+
+  </div><!-- /.nav-container -->
+
+  <!-- Mobile dropdown menu -->
+  <div class="nav-mobile-menu" id="nav-mobile-menu" aria-hidden="true">
+    <ul role="list">
+      {% for item in site.navigation %}
+        {% assign item_path = item.url %}
+        {% if current_path == item_path or current_path contains item_path and item_path != "/" %}
+          {% assign is_active = true %}
+        {% else %}
+          {% assign is_active = false %}
+        {% endif %}
+        <li>
+          <a href="{{ site.baseurl }}{{ item.url }}"
+             class="{% if is_active %}active{% endif %}"
+             {% if is_active %}aria-current="page"{% endif %}>
+            {{ item.title }}
+          </a>
+        </li>
+      {% endfor %}
+      <li class="nav-mobile-menu__divider" role="separator"></li>
+      <li>
+        <a href="https://github.com/{{ site.repository }}"
+           target="_blank"
+           rel="noopener noreferrer">
+          GitHub
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-left:4px" aria-hidden="true">
+            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+  </div><!-- /.nav-mobile-menu -->
+
+</nav><!-- /.site-nav -->

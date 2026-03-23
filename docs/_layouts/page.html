@@ -1,0 +1,408 @@
+---
+layout: default
+---
+<style>
+  /* ================================================================
+     PAGE LAYOUT — content + sidebar TOC
+  ================================================================ */
+
+  .page-wrapper {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr var(--sidebar-width);
+    grid-template-areas: "breadcrumbs breadcrumbs" "content sidebar";
+    gap: 0 3rem;
+    align-items: start;
+  }
+
+  /* ---- Breadcrumbs ---- */
+  .page-breadcrumbs {
+    grid-area: breadcrumbs;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.8125rem;
+    color: var(--text-subtle);
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  .page-breadcrumbs a {
+    color: var(--text-subtle);
+    transition: color var(--transition);
+  }
+  .page-breadcrumbs a:hover { color: var(--text-muted); }
+  .page-breadcrumbs__sep { color: var(--border-light); user-select: none; }
+  .page-breadcrumbs__current { color: var(--text-muted); }
+
+  /* ---- Main content area ---- */
+  .page-content {
+    grid-area: content;
+    min-width: 0; /* prevent grid blowout */
+  }
+
+  .page-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-header__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--primary);
+    background: var(--primary-glow2);
+    border: 1px solid rgba(59,130,246,0.2);
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .page-header__title {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+  }
+
+  .page-header__description {
+    font-size: 1.0625rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 68ch;
+  }
+
+  .page-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .page-meta__item {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.8125rem;
+    color: var(--text-subtle);
+  }
+
+  /* ---- Sidebar TOC ---- */
+  .page-sidebar {
+    grid-area: sidebar;
+    position: sticky;
+    top: calc(var(--nav-height) + 1.5rem);
+    max-height: calc(100vh - var(--nav-height) - 3rem);
+    overflow-y: auto;
+  }
+
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+  }
+
+  .toc__heading {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-subtle);
+    margin-bottom: 0.875rem;
+    padding-bottom: 0.625rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .toc__heading svg { flex-shrink: 0; }
+
+  .toc__list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .toc__item { }
+
+  .toc__link {
+    display: block;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    padding: 0.3125rem 0.625rem;
+    border-radius: var(--radius-sm);
+    border-left: 2px solid transparent;
+    transition: color var(--transition), background var(--transition), border-color var(--transition);
+    line-height: 1.4;
+  }
+  .toc__link:hover {
+    color: var(--text);
+    background: rgba(248,250,252,0.04);
+    border-left-color: var(--border-light);
+  }
+  .toc__link.is-active {
+    color: var(--primary);
+    background: var(--primary-glow2);
+    border-left-color: var(--primary);
+  }
+  .toc__link--h3 { padding-left: 1.375rem; font-size: 0.75rem; }
+  .toc__link--h4 { padding-left: 2.125rem; font-size: 0.75rem; color: var(--text-subtle); }
+
+  .toc__footer {
+    margin-top: 1rem;
+    padding-top: 0.875rem;
+    border-top: 1px solid var(--border);
+  }
+  .toc__edit-link {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    color: var(--text-subtle);
+    padding: 0.3125rem 0.625rem;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition), background var(--transition);
+  }
+  .toc__edit-link:hover { color: var(--text-muted); background: rgba(248,250,252,0.04); }
+
+  /* ---- Page navigation (prev/next) ---- */
+  .page-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .page-nav__item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    color: var(--text-muted);
+    transition: border-color var(--transition), background var(--transition), color var(--transition);
+  }
+  .page-nav__item:hover {
+    border-color: var(--primary);
+    background: var(--primary-glow2);
+    color: var(--text);
+  }
+  .page-nav__item--next { text-align: right; }
+  .page-nav__label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-subtle);
+  }
+  .page-nav__title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: inherit;
+    line-height: 1.4;
+  }
+
+  /* ================================================================
+     RESPONSIVE
+  ================================================================ */
+  @media (max-width: 1024px) {
+    .page-wrapper {
+      grid-template-columns: 1fr;
+      grid-template-areas: "breadcrumbs" "sidebar" "content";
+      gap: 2rem 0;
+    }
+    .page-sidebar {
+      position: static;
+      max-height: none;
+    }
+    .toc { max-height: 280px; overflow-y: auto; }
+  }
+
+  @media (max-width: 640px) {
+    .page-wrapper { padding: 1.5rem 1rem 3rem; }
+    .page-header__title { font-size: 1.625rem; }
+    .page-nav { grid-template-columns: 1fr; }
+    .page-nav__item--next { text-align: left; }
+  }
+</style>
+
+<div class="page-wrapper">
+
+  <!-- Breadcrumbs -->
+  <nav class="page-breadcrumbs" aria-label="Breadcrumb">
+    <a href="{{ site.baseurl }}/">Home</a>
+    <span class="page-breadcrumbs__sep" aria-hidden="true">/</span>
+    {% if page.section %}
+      <a href="{{ site.baseurl }}/{{ page.section | slugify }}/">{{ page.section }}</a>
+      <span class="page-breadcrumbs__sep" aria-hidden="true">/</span>
+    {% endif %}
+    <span class="page-breadcrumbs__current" aria-current="page">
+      {{ page.title | default: "Page" }}
+    </span>
+  </nav>
+
+  <!-- Main content -->
+  <article class="page-content">
+
+    <header class="page-header">
+      {% if page.section %}
+        <p class="page-header__eyebrow">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+            <circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M6 3.5v3l1.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          {{ page.section }}
+        </p>
+      {% endif %}
+      <h1 class="page-header__title">{{ page.title }}</h1>
+      {% if page.description %}
+        <p class="page-header__description">{{ page.description }}</p>
+      {% endif %}
+      {% if page.last_modified_at or page.date %}
+        <div class="page-meta">
+          <span class="page-meta__item">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M5 3.5h6M2.5 6.5h11M2.5 9.5h11M5 12.5h6" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" fill="none"/>
+              <rect x="1" y="1" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.25" fill="none"/>
+            </svg>
+            Updated
+            <time datetime="{{ page.last_modified_at | default: page.date | date_to_xmlschema }}">
+              {{ page.last_modified_at | default: page.date | date: "%B %-d, %Y" }}
+            </time>
+          </span>
+        </div>
+      {% endif %}
+    </header>
+
+    <!-- Page body -->
+    <div class="prose">
+      {{ content }}
+    </div>
+
+    <!-- Prev / Next page navigation -->
+    {% if page.prev or page.next %}
+      <nav class="page-nav" aria-label="Page navigation">
+        {% if page.prev %}
+          <a href="{{ site.baseurl }}{{ page.prev.url }}" class="page-nav__item page-nav__item--prev">
+            <span class="page-nav__label">&#8592; Previous</span>
+            <span class="page-nav__title">{{ page.prev.title }}</span>
+          </a>
+        {% else %}
+          <span></span>
+        {% endif %}
+        {% if page.next %}
+          <a href="{{ site.baseurl }}{{ page.next.url }}" class="page-nav__item page-nav__item--next">
+            <span class="page-nav__label">Next &#8594;</span>
+            <span class="page-nav__title">{{ page.next.title }}</span>
+          </a>
+        {% endif %}
+      </nav>
+    {% endif %}
+
+  </article><!-- /.page-content -->
+
+  <!-- Sidebar TOC (built via JS from headings in .prose) -->
+  <aside class="page-sidebar" aria-label="Table of contents">
+    <nav class="toc" id="toc" aria-label="On this page">
+      <h2 class="toc__heading">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+          <path d="M2 4h12M2 8h8M2 12h10"/>
+        </svg>
+        On this page
+      </h2>
+      <ul class="toc__list" id="toc-list">
+        <!-- Populated by JS -->
+      </ul>
+      {% if site.repository %}
+        <div class="toc__footer">
+          <a href="https://github.com/{{ site.repository }}/edit/main/docs/{{ page.path }}"
+             class="toc__edit-link"
+             target="_blank"
+             rel="noopener noreferrer">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M11.013 1.427a1.75 1.75 0 012.474 0l1.086 1.086a1.75 1.75 0 010 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 01-.927-.928l.929-3.25a1.75 1.75 0 01.445-.758l8.61-8.61zm1.414 1.06a.25.25 0 00-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 000-.354l-1.086-1.086zM11.189 6.25L9.75 4.81l-6.286 6.287a.25.25 0 00-.064.108l-.558 1.953 1.953-.558a.25.25 0 00.108-.064l6.286-6.286z"/>
+            </svg>
+            Edit this page
+          </a>
+        </div>
+      {% endif %}
+    </nav>
+  </aside><!-- /.page-sidebar -->
+
+</div><!-- /.page-wrapper -->
+
+<script>
+(function () {
+  'use strict';
+
+  // Build TOC from headings inside .prose
+  var prose = document.querySelector('.prose');
+  var tocList = document.getElementById('toc-list');
+  var toc = document.getElementById('toc');
+
+  if (!prose || !tocList) return;
+
+  var headings = prose.querySelectorAll('h2, h3, h4');
+  if (headings.length < 2) {
+    if (toc) toc.style.display = 'none';
+    return;
+  }
+
+  headings.forEach(function (h, i) {
+    // Assign id if missing
+    if (!h.id) {
+      h.id = 'heading-' + i + '-' + h.textContent.trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+    }
+
+    var li = document.createElement('li');
+    li.className = 'toc__item';
+
+    var a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent.replace(/¶$/, '').trim();
+    a.className = 'toc__link toc__link--' + h.tagName.toLowerCase();
+
+    li.appendChild(a);
+    tocList.appendChild(li);
+  });
+
+  // Highlight active section on scroll
+  var links = tocList.querySelectorAll('.toc__link');
+  var navHeight = parseInt(
+    getComputedStyle(document.documentElement).getPropertyValue('--nav-height') || '64', 10
+  );
+
+  function onScroll() {
+    var scrollY = window.scrollY + navHeight + 24;
+    var active = null;
+
+    headings.forEach(function (h) {
+      if (h.offsetTop <= scrollY) active = h;
+    });
+
+    links.forEach(function (link) {
+      link.classList.toggle('is-active', active && link.getAttribute('href') === '#' + active.id);
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>

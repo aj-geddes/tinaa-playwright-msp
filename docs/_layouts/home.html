@@ -1,0 +1,817 @@
+---
+layout: default
+---
+<style>
+  /* ================================================================
+     HOME LAYOUT — full-width landing page sections
+  ================================================================ */
+
+  /* ---- Hero ---- */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: 5rem 1.5rem 6rem;
+    text-align: center;
+    background: var(--bg);
+  }
+
+  /* Background radial glow effects */
+  .hero::before,
+  .hero::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hero::before {
+    width: 700px; height: 700px;
+    top: -250px; left: 50%;
+    transform: translateX(-50%);
+    background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%);
+  }
+  .hero::after {
+    width: 400px; height: 400px;
+    bottom: -100px; right: 10%;
+    background: radial-gradient(circle, rgba(16,185,129,0.07) 0%, transparent 70%);
+  }
+
+  .hero__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  .hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--primary);
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.25);
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 1.75rem;
+    letter-spacing: 0.02em;
+  }
+  .hero__badge-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 6px var(--success);
+    animation: live-pulse 2s infinite;
+  }
+  @keyframes live-pulse {
+    0%, 100% { box-shadow: 0 0 4px var(--success); opacity: 1; }
+    50% { box-shadow: 0 0 10px var(--success); opacity: 0.7; }
+  }
+
+  .hero__title {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+  }
+  .hero__title-accent {
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #10b981 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero__subtitle {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    color: var(--text-muted);
+    line-height: 1.65;
+    max-width: 580px;
+    margin: 0 auto 2.5rem;
+  }
+
+  .hero__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.875rem;
+    flex-wrap: wrap;
+    margin-bottom: 3.5rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    padding: 0.6875rem 1.5rem;
+    border-radius: var(--radius-md);
+    transition: background var(--transition), box-shadow var(--transition), transform var(--transition), border-color var(--transition);
+    cursor: pointer;
+    border: none;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .btn:active { transform: translateY(1px); }
+
+  .btn--primary {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 0 0 0 rgba(59,130,246,0);
+  }
+  .btn--primary:hover {
+    background: var(--primary-h);
+    color: white;
+    box-shadow: 0 0 20px rgba(59,130,246,0.35);
+  }
+
+  .btn--secondary {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn--secondary:hover {
+    background: var(--surface-2);
+    border-color: var(--border-light);
+    color: var(--text);
+  }
+
+  .hero__stats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+  }
+  .hero__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .hero__stat-value {
+    font-size: 1.625rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .hero__stat-label {
+    font-size: 0.75rem;
+    color: var(--text-subtle);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .hero__stat-sep {
+    width: 1px; height: 36px;
+    background: var(--border);
+  }
+
+  /* ---- Section wrapper ---- */
+  .home-section {
+    padding: 5rem 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .home-section--alt { background: var(--surface); }
+
+  .section-inner {
+    max-width: var(--page-max);
+    margin: 0 auto;
+  }
+
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.625rem, 3.5vw, 2.25rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    font-size: 1.0625rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+    max-width: 56ch;
+    margin-bottom: 3rem;
+  }
+
+  /* ---- Feature cards ---- */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 1.75rem;
+    transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  .home-section--alt .feature-card { background: var(--bg); }
+  .feature-card:hover {
+    border-color: rgba(59,130,246,0.4);
+    box-shadow: 0 0 0 1px rgba(59,130,246,0.1), var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .feature-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px; height: 44px;
+    border-radius: var(--radius-md);
+    margin-bottom: 1.125rem;
+    font-size: 1.375rem;
+  }
+
+  .feature-card__icon--blue    { background: rgba(59,130,246,0.15);  color: #60a5fa; }
+  .feature-card__icon--green   { background: rgba(16,185,129,0.15);  color: #34d399; }
+  .feature-card__icon--purple  { background: rgba(139,92,246,0.15);  color: #a78bfa; }
+  .feature-card__icon--amber   { background: rgba(245,158,11,0.15);  color: #fbbf24; }
+  .feature-card__icon--rose    { background: rgba(244,63,94,0.15);   color: #fb7185; }
+  .feature-card__icon--teal    { background: rgba(20,184,166,0.15);  color: #2dd4bf; }
+
+  .feature-card__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+
+  .feature-card__desc {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+
+  .feature-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 1rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--primary);
+    transition: gap var(--transition);
+  }
+  .feature-card__link:hover {
+    color: var(--primary-h);
+    gap: 0.5rem;
+  }
+
+  /* ---- Architecture diagram strip ---- */
+  .arch-strip {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 2.5rem 0;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+  .arch-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 120px;
+  }
+  .arch-node__box {
+    width: 100%;
+    max-width: 140px;
+    padding: 0.875rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    position: relative;
+  }
+  .arch-node__box--primary {
+    border-color: rgba(59,130,246,0.4);
+    background: rgba(59,130,246,0.06);
+  }
+  .arch-node__icon { font-size: 1.25rem; display: block; margin-bottom: 0.25rem; }
+  .arch-node__name { font-size: 0.75rem; font-weight: 600; color: var(--text); }
+  .arch-node__sub  { font-size: 0.6875rem; color: var(--text-subtle); }
+
+  .arch-arrow {
+    flex-shrink: 0;
+    color: var(--border-light);
+    font-size: 1.25rem;
+    padding: 0 0.25rem;
+    display: flex;
+    align-items: center;
+  }
+
+  /* ---- Quick start code block ---- */
+  .quick-start {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  .quick-start__step {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .quick-start__num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+  .quick-start__body { flex: 1; }
+  .quick-start__title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.375rem;
+  }
+  .quick-start__desc { font-size: 0.8125rem; color: var(--text-muted); line-height: 1.6; }
+
+  .code-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .code-block__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(0,0,0,0.2);
+  }
+  .code-block__dots { display: flex; gap: 6px; }
+  .code-block__dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+  .code-block__dot:nth-child(1) { background: #ef4444; }
+  .code-block__dot:nth-child(2) { background: #f59e0b; }
+  .code-block__dot:nth-child(3) { background: #10b981; }
+  .code-block__label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--text-subtle);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .code-block__body {
+    padding: 1.25rem 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.75;
+    color: #94a3b8;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .code-block__body .cmd { color: #e2e8f0; }
+  .code-block__body .comment { color: #475569; }
+  .code-block__body .flag { color: #7dd3fc; }
+  .code-block__body .string { color: #86efac; }
+  .code-block__body .url { color: #a5b4fc; }
+  .code-block__body .success { color: #34d399; }
+
+  /* ---- CTA section ---- */
+  .cta-section {
+    text-align: center;
+    padding: 5rem 1.5rem;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 400px;
+    background: radial-gradient(ellipse, rgba(59,130,246,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cta-section__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .cta-section__title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+  .cta-section__desc {
+    font-size: 1.0625rem;
+    color: var(--text-muted);
+    margin-bottom: 2.25rem;
+    line-height: 1.65;
+  }
+  .cta-section__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.875rem;
+    flex-wrap: wrap;
+  }
+
+  /* ================================================================
+     RESPONSIVE
+  ================================================================ */
+  @media (max-width: 900px) {
+    .quick-start { grid-template-columns: 1fr; }
+    .arch-strip { display: none; }
+  }
+
+  @media (max-width: 640px) {
+    .hero { padding: 3.5rem 1rem 4rem; }
+    .home-section { padding: 3.5rem 1rem; }
+    .hero__stats { gap: 1.25rem; }
+    .hero__stat-sep { display: none; }
+    .feature-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<!-- ================================================================
+     HERO
+================================================================ -->
+<section class="hero" aria-label="TINAA MSP introduction">
+  <div class="hero__inner">
+    <div class="hero__badge">
+      <span class="hero__badge-dot" aria-hidden="true"></span>
+      Now deployed at tinaa.hvs
+    </div>
+
+    <h1 class="hero__title">
+      Continuous Quality,<br>
+      <span class="hero__title-accent">Intelligently Automated</span>
+    </h1>
+
+    <p class="hero__subtitle">
+      TINAA MSP fuses Playwright automated testing with application performance
+      monitoring through an AI-agent architecture — delivering real-time quality
+      intelligence across every build and deployment.
+    </p>
+
+    <div class="hero__actions">
+      <a href="{{ site.baseurl }}/guide/getting-started/" class="btn btn--primary">
+        Get Started
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 8h10M9 4l4 4-4 4"/>
+        </svg>
+      </a>
+      <a href="{{ site.baseurl }}/features/" class="btn btn--secondary">Explore Features</a>
+      <a href="https://github.com/{{ site.repository }}" class="btn btn--secondary" target="_blank" rel="noopener noreferrer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+        </svg>
+        View on GitHub
+      </a>
+    </div>
+
+    <div class="hero__stats" role="list" aria-label="Platform metrics">
+      <div class="hero__stat" role="listitem">
+        <span class="hero__stat-value">90%</span>
+        <span class="hero__stat-label">Faster Test Creation</span>
+      </div>
+      <div class="hero__stat-sep" aria-hidden="true"></div>
+      <div class="hero__stat" role="listitem">
+        <span class="hero__stat-value">10x</span>
+        <span class="hero__stat-label">Coverage Increase</span>
+      </div>
+      <div class="hero__stat-sep" aria-hidden="true"></div>
+      <div class="hero__stat" role="listitem">
+        <span class="hero__stat-value">70%</span>
+        <span class="hero__stat-label">Cost Reduction</span>
+      </div>
+      <div class="hero__stat-sep" aria-hidden="true"></div>
+      <div class="hero__stat" role="listitem">
+        <span class="hero__stat-value">20+</span>
+        <span class="hero__stat-label">MCP Tools</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ================================================================
+     FEATURES
+================================================================ -->
+<section class="home-section" id="features" aria-labelledby="features-heading">
+  <div class="section-inner">
+    <p class="section-label">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+        <circle cx="6" cy="6" r="6"/>
+      </svg>
+      Platform Capabilities
+    </p>
+    <h2 class="section-title" id="features-heading">Everything quality requires</h2>
+    <p class="section-desc">
+      From test generation to performance monitoring, TINAA MSP closes the gap
+      between code and confidence at every stage of delivery.
+    </p>
+
+    <div class="feature-grid">
+
+      <div class="feature-card">
+        <div class="feature-card__icon feature-card__icon--blue" aria-hidden="true">&#129302;</div>
+        <h3 class="feature-card__title">AI-Driven Test Generation</h3>
+        <p class="feature-card__desc">
+          Describe a feature in natural language and TINAA generates executable Playwright
+          test suites — with assertions, selectors, and edge cases included.
+        </p>
+        <a href="{{ site.baseurl }}/features/#ai-testing" class="feature-card__link">
+          Learn more <span aria-hidden="true">&#8594;</span>
+        </a>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__icon feature-card__icon--green" aria-hidden="true">&#128200;</div>
+        <h3 class="feature-card__title">APM Integration</h3>
+        <p class="feature-card__desc">
+          Correlate test outcomes with real application performance data. Surface latency
+          regressions, error spikes, and anomalies the moment they occur.
+        </p>
+        <a href="{{ site.baseurl }}/features/#apm" class="feature-card__link">
+          Learn more <span aria-hidden="true">&#8594;</span>
+        </a>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__icon feature-card__icon--purple" aria-hidden="true">&#128279;</div>
+        <h3 class="feature-card__title">MCP Protocol Native</h3>
+        <p class="feature-card__desc">
+          Full FastMCP 2.8.0 support with 20+ documented tools. Works directly from
+          VS Code, Cursor, and any MCP-compatible IDE through the agent protocol.
+        </p>
+        <a href="{{ site.baseurl }}/api-reference/#mcp" class="feature-card__link">
+          Learn more <span aria-hidden="true">&#8594;</span>
+        </a>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__icon feature-card__icon--amber" aria-hidden="true">&#9881;</div>
+        <h3 class="feature-card__title">Kubernetes Native</h3>
+        <p class="feature-card__desc">
+          Helm charts, auto-scaling, and enterprise-grade deployment. Run at any scale
+          with built-in observability for Prometheus and Grafana.
+        </p>
+        <a href="{{ site.baseurl }}/deployment/#kubernetes" class="feature-card__link">
+          Learn more <span aria-hidden="true">&#8594;</span>
+        </a>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__icon feature-card__icon--rose" aria-hidden="true">&#128274;</div>
+        <h3 class="feature-card__title">Enterprise Security</h3>
+        <p class="feature-card__desc">
+          OAuth2, SAML, RBAC, audit logging, Kubernetes secrets, and GitHub App
+          authentication. Compliance-ready from day one.
+        </p>
+        <a href="{{ site.baseurl }}/architecture/#security" class="feature-card__link">
+          Learn more <span aria-hidden="true">&#8594;</span>
+        </a>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__icon feature-card__icon--teal" aria-hidden="true">&#9729;</div>
+        <h3 class="feature-card__title">Multi-LLM Support</h3>
+        <p class="feature-card__desc">
+          Connect OpenAI, Anthropic Claude, or local models. Intelligent prompt
+          engineering adapts to your model's strengths automatically.
+        </p>
+        <a href="{{ site.baseurl }}/architecture/#llm" class="feature-card__link">
+          Learn more <span aria-hidden="true">&#8594;</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ================================================================
+     QUICK START
+================================================================ -->
+<section class="home-section home-section--alt" id="quick-start" aria-labelledby="qs-heading">
+  <div class="section-inner">
+    <p class="section-label">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+        <circle cx="6" cy="6" r="6"/>
+      </svg>
+      Quick Start
+    </p>
+    <h2 class="section-title" id="qs-heading">Up and running in 60 seconds</h2>
+    <p class="section-desc">
+      Pull the pre-built Docker image and run your first AI-generated test in under a minute.
+    </p>
+
+    <div class="quick-start">
+
+      <div style="display:flex;flex-direction:column;gap:1.5rem;">
+        <div class="quick-start__step">
+          <div class="quick-start__num" aria-hidden="true">1</div>
+          <div class="quick-start__body">
+            <p class="quick-start__title">Pull the image</p>
+            <p class="quick-start__desc">Download the latest TINAA MSP image from GitHub Container Registry.</p>
+          </div>
+        </div>
+        <div class="quick-start__step">
+          <div class="quick-start__num" aria-hidden="true">2</div>
+          <div class="quick-start__body">
+            <p class="quick-start__title">Start the container</p>
+            <p class="quick-start__desc">Launch with Docker Compose. Playwright, the MCP server, and the HTTP API start together.</p>
+          </div>
+        </div>
+        <div class="quick-start__step">
+          <div class="quick-start__num" aria-hidden="true">3</div>
+          <div class="quick-start__body">
+            <p class="quick-start__title">Generate your first test</p>
+            <p class="quick-start__desc">Hit the exploratory endpoint with any URL and receive a ready-to-run Playwright test.</p>
+          </div>
+        </div>
+        <a href="{{ site.baseurl }}/guide/getting-started/" class="btn btn--primary" style="width:fit-content;">
+          Full User Guide
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="code-block" role="region" aria-label="Quick start shell commands">
+        <div class="code-block__header">
+          <div class="code-block__dots" aria-hidden="true">
+            <div class="code-block__dot"></div>
+            <div class="code-block__dot"></div>
+            <div class="code-block__dot"></div>
+          </div>
+          <span class="code-block__label">Terminal</span>
+          <span></span>
+        </div>
+        <div class="code-block__body" aria-label="Shell commands">
+<span class="comment"># 1. Pull the latest image</span>
+<span class="cmd">docker pull</span> <span class="url">ghcr.io/aj-geddes/tinaa-playwright-msp:latest</span>
+
+<span class="comment"># 2. Start with Docker Compose</span>
+<span class="cmd">curl</span> <span class="flag">-O</span> <span class="url">https://raw.githubusercontent.com/aj-geddes/\
+  tinaa-playwright-msp/main/docker-compose.prod.yml</span>
+<span class="cmd">docker-compose</span> <span class="flag">-f</span> docker-compose.prod.yml <span class="flag">up -d</span>
+
+<span class="comment"># 3. Verify it's healthy</span>
+<span class="cmd">curl</span> http://localhost:8765/health
+<span class="success">{"status":"healthy","version":"2.0.0"}</span>
+
+<span class="comment"># 4. Generate your first test</span>
+<span class="cmd">curl</span> <span class="flag">-X POST</span> http://localhost:8765/test/exploratory \
+  <span class="flag">-H</span> <span class="string">"Content-Type: application/json"</span> \
+  <span class="flag">-d</span> <span class="string">'{"url":"https://github.com","focus":"nav"}'</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ================================================================
+     ARCHITECTURE OVERVIEW
+================================================================ -->
+<section class="home-section" id="architecture" aria-labelledby="arch-heading">
+  <div class="section-inner">
+    <p class="section-label">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+        <circle cx="6" cy="6" r="6"/>
+      </svg>
+      Architecture
+    </p>
+    <h2 class="section-title" id="arch-heading">Agent-based quality pipeline</h2>
+    <p class="section-desc">
+      TINAA MSP sits between your IDE and your infrastructure, translating
+      intent into executable tests and correlating results with live APM data.
+    </p>
+
+    <!-- Simplified architecture flow -->
+    <div class="arch-strip" role="img" aria-label="Architecture flow: IDE to MCP Server to Playwright Agent to APM Collector to Reporting">
+      <div class="arch-node">
+        <div class="arch-node__box">
+          <span class="arch-node__icon" aria-hidden="true">&#128187;</span>
+          <span class="arch-node__name">IDE / CLI</span>
+          <span class="arch-node__sub">VS Code, Cursor</span>
+        </div>
+      </div>
+      <div class="arch-arrow" aria-hidden="true">&#8594;</div>
+      <div class="arch-node">
+        <div class="arch-node__box arch-node__box--primary">
+          <span class="arch-node__icon" aria-hidden="true">&#9881;</span>
+          <span class="arch-node__name">MCP Server</span>
+          <span class="arch-node__sub">FastMCP 2.8</span>
+        </div>
+      </div>
+      <div class="arch-arrow" aria-hidden="true">&#8594;</div>
+      <div class="arch-node">
+        <div class="arch-node__box arch-node__box--primary">
+          <span class="arch-node__icon" aria-hidden="true">&#129302;</span>
+          <span class="arch-node__name">AI Agent</span>
+          <span class="arch-node__sub">OpenAI / Claude</span>
+        </div>
+      </div>
+      <div class="arch-arrow" aria-hidden="true">&#8594;</div>
+      <div class="arch-node">
+        <div class="arch-node__box">
+          <span class="arch-node__icon" aria-hidden="true">&#127918;</span>
+          <span class="arch-node__name">Playwright</span>
+          <span class="arch-node__sub">Test Execution</span>
+        </div>
+      </div>
+      <div class="arch-arrow" aria-hidden="true">&#8594;</div>
+      <div class="arch-node">
+        <div class="arch-node__box">
+          <span class="arch-node__icon" aria-hidden="true">&#128200;</span>
+          <span class="arch-node__name">APM</span>
+          <span class="arch-node__sub">Prometheus/Grafana</span>
+        </div>
+      </div>
+      <div class="arch-arrow" aria-hidden="true">&#8594;</div>
+      <div class="arch-node">
+        <div class="arch-node__box">
+          <span class="arch-node__icon" aria-hidden="true">&#128203;</span>
+          <span class="arch-node__name">Reports</span>
+          <span class="arch-node__sub">HTML + JSON</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem;">
+      <a href="{{ site.baseurl }}/architecture/" class="btn btn--secondary">
+        Deep-dive Architecture
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 8h10M9 4l4 4-4 4"/>
+        </svg>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ================================================================
+     CTA
+================================================================ -->
+<section class="cta-section" aria-labelledby="cta-heading">
+  <div class="cta-section__inner">
+    <h2 class="cta-section__title" id="cta-heading">
+      Start shipping with confidence
+    </h2>
+    <p class="cta-section__desc">
+      Join teams who run continuous quality pipelines with TINAA MSP.
+      Deploy in minutes, scale to thousands of tests.
+    </p>
+    <div class="cta-section__actions">
+      <a href="{{ site.baseurl }}/guide/getting-started/" class="btn btn--primary">
+        Read the User Guide
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 8h10M9 4l4 4-4 4"/>
+        </svg>
+      </a>
+      <a href="https://github.com/{{ site.repository }}" class="btn btn--secondary" target="_blank" rel="noopener noreferrer">
+        View on GitHub
+      </a>
+    </div>
+  </div>
+</section>
+
+{{ content }}
