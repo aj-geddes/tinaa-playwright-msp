@@ -165,6 +165,23 @@ canvas.tinaa-chart {
   display: block;
 }
 
+/* Mobile: hide sidebar off-screen, show as overlay when toggled */
+@media (max-width: 767px) {
+  tinaa-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform var(--transition-base);
+  }
+
+  tinaa-nav.mobile-open {
+    transform: translateX(0);
+  }
+}
+
 /* ----------------------------- table striped rows (dark mode) */
 .table-dark tbody tr:nth-child(even) {
   background-color: rgba(255, 255, 255, 0.03);
@@ -280,4 +297,110 @@ canvas.tinaa-chart {
 }
 .collapsible-toggle[aria-expanded="true"] .chevron {
     transform: rotate(90deg);
+}
+
+/* ----------------------------------- light mode overrides */
+/* Applied when the `dark` class is removed from <html> */
+
+html:not(.dark) body {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+html:not(.dark) tinaa-nav nav,
+html:not(.dark) tinaa-header header {
+  background-color: #ffffff;
+  border-color: #e2e8f0;
+}
+
+html:not(.dark) tinaa-nav a.text-slate-400 {
+  color: #475569;
+}
+
+html:not(.dark) .bg-slate-800 {
+  background-color: #ffffff !important;
+}
+
+html:not(.dark) .bg-slate-900 {
+  background-color: #f1f5f9 !important;
+}
+
+html:not(.dark) .bg-slate-700 {
+  background-color: #e2e8f0 !important;
+}
+
+html:not(.dark) .border-slate-700,
+html:not(.dark) .border-slate-600 {
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) .text-white {
+  color: #0f172a !important;
+}
+
+html:not(.dark) .text-slate-400,
+html:not(.dark) .text-slate-300 {
+  color: #64748b !important;
+}
+
+html:not(.dark) .text-slate-200 {
+  color: #334155 !important;
+}
+
+html:not(.dark) .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+html:not(.dark) input,
+html:not(.dark) select,
+html:not(.dark) textarea {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+html:not(.dark) input::placeholder,
+html:not(.dark) textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+html:not(.dark) [class*="bg-slate-800/"],
+html:not(.dark) .bg-slate-800\/50 {
+  background-color: rgba(241, 245, 249, 0.8) !important;
+}
+
+html:not(.dark) ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+
+html:not(.dark) ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+html:not(.dark) .docs-content p,
+html:not(.dark) .docs-content li {
+  color: #334155;
+}
+
+html:not(.dark) .docs-content code {
+  background: #f1f5f9;
+  color: #1d4ed8;
+}
+
+html:not(.dark) .docs-content pre {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
+
+html:not(.dark) .docs-content pre code {
+  color: #334155;
+}
+
+html:not(.dark) .docs-content th {
+  background: #e2e8f0;
+}
+
+html:not(.dark) .docs-content td,
+html:not(.dark) .docs-content th {
+  border-color: #e2e8f0;
 }

@@ -377,6 +377,15 @@ async function _renderAlertRulesPanel(panel) {
       <div class="bg-slate-800 rounded-lg border border-slate-700 p-4 max-w-lg">
         <form class="space-y-4" novalidate>
           <div>
+            <label for="alert-rule-name" class="block text-xs text-slate-400 mb-1">
+              Rule Name <span aria-hidden="true" class="text-red-400">*</span>
+            </label>
+            <input id="alert-rule-name" type="text" placeholder="e.g. High Response Time"
+                   required aria-required="true"
+                   class="w-full bg-slate-700 border border-slate-600 rounded-md px-3 py-2 text-sm
+                          text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+          </div>
+          <div>
             <label for="alert-metric" class="block text-xs text-slate-400 mb-1">
               Metric
             </label>
@@ -405,9 +414,10 @@ async function _renderAlertRulesPanel(panel) {
             </div>
             <div>
               <label for="alert-threshold" class="block text-xs text-slate-400 mb-1">
-                Threshold
+                Threshold <span aria-hidden="true" class="text-red-400">*</span>
               </label>
               <input id="alert-threshold" type="number" placeholder="e.g. 2000"
+                     required aria-required="true"
                      class="w-full bg-slate-700 border border-slate-600 rounded-md px-3 py-2 text-sm
                             text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
             </div>
@@ -434,6 +444,51 @@ async function _renderAlertRulesPanel(panel) {
       </div>
     </section>
   `;
+
+  const ruleForm = panel.querySelector('form');
+  if (ruleForm) {
+    ruleForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name      = panel.querySelector('#alert-rule-name')?.value?.trim();
+      const metric    = panel.querySelector('#alert-metric')?.value;
+      const operator  = panel.querySelector('#alert-operator')?.value;
+      const threshold = panel.querySelector('#alert-threshold')?.value;
+      const severity  = panel.querySelector('#alert-severity')?.value;
+
+      if (!name) {
+        _showToast(panel, 'Rule name is required', 'warning');
+        panel.querySelector('#alert-rule-name')?.focus();
+        return;
+      }
+      if (!threshold) {
+        _showToast(panel, 'Threshold value is required', 'warning');
+        panel.querySelector('#alert-threshold')?.focus();
+        return;
+      }
+
+      const btn = e.target.querySelector('button[type="submit"]');
+      const origText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Saving\u2026';
+
+      try {
+        await api.request('POST', '/alerts/rules', {
+          name,
+          metric,
+          operator,
+          threshold: parseFloat(threshold),
+          severity,
+        });
+        _showToast(panel, `Alert rule "${name}" saved`, 'success');
+        e.target.reset();
+      } catch (err) {
+        _showToast(panel, `Failed to save rule: ${err.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = origText;
+      }
+    });
+  }
 }
 
 /** Panel 4: .tinaa.yml viewer/editor */
@@ -585,6 +640,33 @@ function _bindRegisterForm(panel, onSuccess) {
 function _announce(msg) {
   const el = document.getElementById("aria-announcer");
   if (el) { el.textContent = ""; setTimeout(() => { el.textContent = msg; }, 50); }
+}
+
+/**
+ * Show a transient toast notification inside a container element.
+ * @param {HTMLElement} container - Element to append the toast into.
+ * @param {string} message - Text to display.
+ * @param {'success'|'warning'|'error'|'info'} type - Visual style.
+ */
+function _showToast(container, message, type = "info") {
+  const COLOR_MAP = {
+    success: "bg-green-700 text-green-100",
+    warning: "bg-amber-700 text-amber-100",
+    error:   "bg-red-700   text-red-100",
+    info:    "bg-blue-700  text-blue-100",
+  };
+  const colors = COLOR_MAP[type] ?? COLOR_MAP.info;
+  const toast = document.createElement("div");
+  toast.className = `fixed bottom-4 right-4 z-50 px-4 py-3 rounded-lg text-sm font-medium
+                     shadow-lg transition-opacity duration-300 ${colors}`;
+  toast.textContent = message;
+  toast.setAttribute("role", "status");
+  toast.setAttribute("aria-live", "polite");
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
 }
 
 function _esc(str) {

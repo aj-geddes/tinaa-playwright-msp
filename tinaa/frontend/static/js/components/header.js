@@ -216,6 +216,31 @@ class TINAAHeader extends HTMLElement {
     if (themeBtn) {
       themeBtn.addEventListener("click", () => this._toggleTheme());
     }
+
+    const mobileBtn = this.querySelector("#mobile-menu-btn");
+    if (mobileBtn) {
+      mobileBtn.addEventListener("click", () => {
+        const nav = document.querySelector("tinaa-nav");
+        if (nav) {
+          nav.classList.toggle("mobile-open");
+          const isOpen = nav.classList.contains("mobile-open");
+          mobileBtn.setAttribute("aria-expanded", String(isOpen));
+
+          let overlay = document.querySelector(".nav-overlay");
+          if (!overlay) {
+            overlay = document.createElement("div");
+            overlay.className = "nav-overlay";
+            overlay.addEventListener("click", () => {
+              nav.classList.remove("mobile-open");
+              overlay.classList.remove("open");
+              mobileBtn.setAttribute("aria-expanded", "false");
+            });
+            document.body.appendChild(overlay);
+          }
+          overlay.classList.toggle("open", isOpen);
+        }
+      });
+    }
   }
 }
 
