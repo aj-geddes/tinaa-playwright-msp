@@ -84,9 +84,13 @@ export async function renderTestRuns(container) {
       productSel.value = selectedId;
       runBtn.disabled = false;
       await _loadRuns(container, runTable, selectedId);
+    } else {
+      // No products — show empty state instead of stuck loading skeleton
+      if (runTable) runTable.setRuns([]);
     }
   } catch {
     productSel.innerHTML = '<option value="">Error loading products</option>';
+    if (runTable) runTable.setRuns([]);
   }
 
   // Product change

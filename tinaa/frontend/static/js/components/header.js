@@ -17,7 +17,7 @@ class TINAAHeader extends HTMLElement {
   }
 
   connectedCallback() {
-    this.render();
+    this._updateBreadcrumbs();          // Set correct breadcrumbs on initial load
     window.addEventListener("hashchange", () => this._updateBreadcrumbs());
   }
 
@@ -38,6 +38,7 @@ class TINAAHeader extends HTMLElement {
       "/test-runs": "Test Runs",
       "/alerts": "Alerts",
       "/settings": "Settings",
+      "/integrations": "Integrations",
       "/docs": "Documentation",
     };
     const label = ROUTE_LABELS[hash] || hash;

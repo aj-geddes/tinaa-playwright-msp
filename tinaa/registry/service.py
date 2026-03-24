@@ -580,10 +580,10 @@ class ProductRegistryService:
     async def _fetch_first(session: Any, stmt: Any) -> Any:
         """Execute a statement and return the first scalar result or None."""
         result = await session.execute(stmt)
-        return result.first()
+        return result.scalars().first()
 
     @staticmethod
     async def _fetch_all(session: Any, stmt: Any) -> list[Any]:
         """Execute a statement and return all scalar results."""
         result = await session.execute(stmt)
-        return result.all()
+        return result.scalars().all()

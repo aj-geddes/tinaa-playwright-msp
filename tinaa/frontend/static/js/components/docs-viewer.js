@@ -37,14 +37,80 @@ function markdownToHtml(md) {
   const lines = html.split("\n");
   const output = [];
   let inList = null;   // "ul" | "ol" | null
-  let inOrderedList = false;
+  let inTable = false;
+  let tableHeaderDone = false;
 
   const closeList = () => {
     if (inList) { output.push(`</${inList}>`); inList = null; }
   };
 
+  const closeTable = () => {
+    if (inTable) {
+      output.push("</tbody></table>");
+      inTable = false;
+      tableHeaderDone = false;
+    }
+  };
+
+  /** Parse a pipe-delimited table row into cell strings. */
+  const parseTableRow = (line) => {
+    return line
+      .replace(/^\|/, "")
+      .replace(/\|$/, "")
+      .split("|")
+      .map((c) => c.trim());
+  };
+
+  /** Detect separator row like |---|---|---| */
+  const isSeparatorRow = (line) => /^\|?(\s*:?-+:?\s*\|)+\s*:?-+:?\s*\|?$/.test(line.trim());
+
   for (let i = 0; i < lines.length; i++) {
     let line = lines[i];
+
+    // ── Table rows ──────────────────────────────────
+    if (line.trim().startsWith("|") && line.trim().endsWith("|")) {
+      closeList();
+
+      // Separator row (e.g. |---|---|)
+      if (isSeparatorRow(line)) {
+        // If we already started a table with a header, just skip the separator
+        if (inTable) continue;
+        // Otherwise ignore stray separators
+        continue;
+      }
+
+      if (!inTable) {
+        // Start a new table — this first row becomes the header
+        inTable = true;
+        tableHeaderDone = false;
+        const cells = parseTableRow(line);
+        output.push(
+          `<table class="min-w-full text-sm text-left border border-slate-600 rounded overflow-hidden">` +
+          `<thead class="bg-slate-700 text-slate-200"><tr>` +
+          cells.map((c) => `<th class="px-3 py-2 font-semibold border-b border-slate-600">${inlineMarkdown(c)}</th>`).join("") +
+          `</tr></thead><tbody>`
+        );
+        tableHeaderDone = true;
+
+        // Peek ahead: if next line is a separator, skip it
+        if (i + 1 < lines.length && isSeparatorRow(lines[i + 1])) {
+          i++; // consume separator
+        }
+        continue;
+      }
+
+      // Body row
+      const cells = parseTableRow(line);
+      output.push(
+        `<tr class="border-b border-slate-700">` +
+        cells.map((c) => `<td class="px-3 py-2">${inlineMarkdown(c)}</td>`).join("") +
+        `</tr>`
+      );
+      continue;
+    }
+
+    // If we were in a table and hit a non-table line, close it
+    closeTable();
 
     // Headings
     const hMatch = line.match(/^(#{1,6})\s+(.*)/);
@@ -105,6 +171,7 @@ function markdownToHtml(md) {
   }
 
   closeList();
+  closeTable();
   return output.join("\n");
 }
 

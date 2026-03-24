@@ -102,6 +102,7 @@ async function _renderProductPanel(panel) {
         <p class="text-slate-400 text-sm">No products registered yet.</p>
         ${_registerProductForm()}
       `;
+      _bindRegisterForm(panel, () => _renderProductPanel(panel));
     } else {
       content.innerHTML = `
         <div class="mb-6">
@@ -121,6 +122,8 @@ async function _renderProductPanel(panel) {
         <h3 class="text-base font-semibold text-white mb-4">Register New Product</h3>
         ${_registerProductForm()}
       `;
+
+      _bindRegisterForm(panel, () => _renderProductPanel(panel));
 
       panel.querySelector("#settings-product-sel")?.addEventListener("change", (e) => {
         const p = products.find(x => x.id === e.target.value);
@@ -530,6 +533,52 @@ alerts:
   panel.querySelector("#btn-reset-config")?.addEventListener("click", () => {
     panel.querySelector("#config-editor").value = defaultConfig;
     _announce("Configuration reset to default.");
+  });
+}
+
+/** Bind the register-product-form to API submission. */
+function _bindRegisterForm(panel, onSuccess) {
+  panel.querySelector("#register-product-form")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name    = panel.querySelector("#new-prod-name")?.value.trim();
+    const desc    = panel.querySelector("#new-prod-desc")?.value.trim();
+    const repoUrl = panel.querySelector("#new-prod-repo")?.value.trim();
+    const result  = panel.querySelector("#register-result");
+    const errEl   = panel.querySelector("#new-prod-name-error");
+
+    // Client-side validation
+    if (!name) {
+      if (errEl) {
+        errEl.textContent = "Product name is required.";
+        errEl.classList.remove("hidden");
+      }
+      panel.querySelector("#new-prod-name")?.focus();
+      return;
+    }
+    if (errEl) errEl.classList.add("hidden");
+
+    const btn = e.target.querySelector('button[type="submit"]');
+    if (btn) { btn.disabled = true; btn.textContent = "Registering…"; }
+
+    try {
+      await api.createProduct({ name, description: desc, repository_url: repoUrl || null });
+      if (result) {
+        result.classList.remove("hidden");
+        result.innerHTML = `<tinaa-alert-banner severity="success"
+          message="Product '${_esc(name)}' registered successfully."></tinaa-alert-banner>`;
+      }
+      _announce(`Product ${name} registered successfully.`);
+      // Refresh the panel after a short delay to show the new product
+      setTimeout(() => { if (onSuccess) onSuccess(); }, 1000);
+    } catch (err) {
+      if (result) {
+        result.classList.remove("hidden");
+        result.innerHTML = `<tinaa-alert-banner severity="critical"
+          message="Failed: ${_esc(err.message)}"></tinaa-alert-banner>`;
+      }
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = "Register Product"; }
+    }
   });
 }
 
